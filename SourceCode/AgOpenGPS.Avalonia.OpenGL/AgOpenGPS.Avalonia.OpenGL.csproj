@@ -10,4 +10,8 @@
     <PackageReference Include="Avalonia" Version="11.3.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AgOpenGPS.Core\AgOpenGPS.Core.csproj" />
+  </ItemGroup>
+
 </Project>
