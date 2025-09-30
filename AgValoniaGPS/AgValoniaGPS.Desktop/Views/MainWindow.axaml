@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AgValoniaGPS.ViewModels"
+        xmlns:controls="using:AgValoniaGPS.Desktop.Controls"
         mc:Ignorable="d" d:DesignWidth="1366" d:DesignHeight="768"
         x:Class="AgValoniaGPS.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
@@ -64,14 +65,8 @@
     <!-- Main Canvas for absolute positioning -->
     <Canvas>
         <Grid Canvas.Left="0" Canvas.Top="0" Width="{Binding $parent[Window].Bounds.Width}" Height="{Binding $parent[Window].Bounds.Height}">
-            <!-- Central Map/Render Area (placeholder for now) -->
-            <Border Background="#2a2a2a">
-                <TextBlock Text="OpenGL Map Render Area"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="#666"
-                           FontSize="24"/>
-            </Border>
+            <!-- OpenGL Map Render Area -->
+            <controls:OpenGLMapControl x:Name="MapControl" />
 
         <!-- TOP STATUS BAR: RTK Status -->
         <Border Classes="FloatingPanel"

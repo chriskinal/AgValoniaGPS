@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -20,6 +21,31 @@ public partial class MainWindow : Window
         if (App.Services != null)
         {
             DataContext = App.Services.GetRequiredService<MainViewModel>();
+        }
+
+        // Handle window resize to keep section control in bounds
+        this.PropertyChanged += MainWindow_PropertyChanged;
+    }
+
+    private void MainWindow_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property.Name == nameof(Bounds) && SectionControlPanel != null)
+        {
+            // Constrain section control to new window bounds
+            double currentLeft = Canvas.GetLeft(SectionControlPanel);
+            double currentTop = Canvas.GetTop(SectionControlPanel);
+
+            if (double.IsNaN(currentLeft)) currentLeft = 900; // Default initial position
+            if (double.IsNaN(currentTop)) currentTop = 600;
+
+            double maxLeft = Bounds.Width - SectionControlPanel.Bounds.Width;
+            double maxTop = Bounds.Height - SectionControlPanel.Bounds.Height;
+
+            double newLeft = Math.Clamp(currentLeft, 0, Math.Max(0, maxLeft));
+            double newTop = Math.Clamp(currentTop, 0, Math.Max(0, maxTop));
+
+            Canvas.SetLeft(SectionControlPanel, newLeft);
+            Canvas.SetTop(SectionControlPanel, newTop);
         }
     }
 
@@ -66,9 +92,20 @@ public partial class MainWindow : Window
             var currentPoint = e.GetPosition(this);
             var delta = currentPoint - _dragStartPoint;
 
+            // Calculate new position
+            double newLeft = Canvas.GetLeft(border) + delta.X;
+            double newTop = Canvas.GetTop(border) + delta.Y;
+
+            // Constrain to window bounds
+            double maxLeft = Bounds.Width - border.Bounds.Width;
+            double maxTop = Bounds.Height - border.Bounds.Height;
+
+            newLeft = Math.Clamp(newLeft, 0, maxLeft);
+            newTop = Math.Clamp(newTop, 0, maxTop);
+
             // Update position
-            Canvas.SetLeft(border, Canvas.GetLeft(border) + delta.X);
-            Canvas.SetTop(border, Canvas.GetTop(border) + delta.Y);
+            Canvas.SetLeft(border, newLeft);
+            Canvas.SetTop(border, newTop);
 
             _dragStartPoint = currentPoint;
         }
