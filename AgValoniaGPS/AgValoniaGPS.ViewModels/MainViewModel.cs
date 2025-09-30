@@ -1,8 +1,10 @@
 using System;
+using System.Windows.Input;
 using ReactiveUI;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
+using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
 
@@ -12,6 +14,7 @@ public class MainViewModel : ReactiveObject
     private readonly IGpsService _gpsService;
     private readonly IFieldService _fieldService;
     private readonly IGuidanceService _guidanceService;
+    private readonly INtripClientService _ntripService;
     private readonly NmeaParserService _nmeaParser;
 
     private string _statusMessage = "Starting...";
@@ -38,21 +41,55 @@ public class MainViewModel : ReactiveObject
         IUdpCommunicationService udpService,
         IGpsService gpsService,
         IFieldService fieldService,
-        IGuidanceService guidanceService)
+        IGuidanceService guidanceService,
+        INtripClientService ntripService)
     {
         _udpService = udpService;
         _gpsService = gpsService;
         _fieldService = fieldService;
         _guidanceService = guidanceService;
+        _ntripService = ntripService;
         _nmeaParser = new NmeaParserService(gpsService);
 
         // Subscribe to events
         _gpsService.GpsDataUpdated += OnGpsDataUpdated;
         _udpService.DataReceived += OnUdpDataReceived;
         _udpService.ModuleConnectionChanged += OnModuleConnectionChanged;
+        _ntripService.ConnectionStatusChanged += OnNtripConnectionChanged;
+        _ntripService.RtcmDataReceived += OnRtcmDataReceived;
 
         // Start UDP communication
         InitializeAsync();
+    }
+
+    public async System.Threading.Tasks.Task ConnectToNtripAsync()
+    {
+        try
+        {
+            var config = new NtripConfiguration
+            {
+                CasterAddress = NtripCasterAddress,
+                CasterPort = NtripCasterPort,
+                MountPoint = NtripMountPoint,
+                Username = NtripUsername,
+                Password = NtripPassword,
+                SubnetAddress = "192.168.5",
+                UdpForwardPort = 2233,
+                GgaIntervalSeconds = 10,
+                UseManualPosition = false
+            };
+
+            await _ntripService.ConnectAsync(config);
+        }
+        catch (Exception ex)
+        {
+            NtripStatus = $"Error: {ex.Message}";
+        }
+    }
+
+    public async System.Threading.Tasks.Task DisconnectFromNtripAsync()
+    {
+        await _ntripService.DisconnectAsync();
     }
 
     private async void InitializeAsync()
@@ -199,6 +236,63 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _isGpsDataOk, value);
     }
 
+    // NTRIP properties
+    private bool _isNtripConnected;
+    private string _ntripStatus = "Not Connected";
+    private ulong _ntripBytesReceived;
+    private string _ntripCasterAddress = "rtk2go.com";
+    private int _ntripCasterPort = 2101;
+    private string _ntripMountPoint = "";
+    private string _ntripUsername = "";
+    private string _ntripPassword = "";
+
+    public bool IsNtripConnected
+    {
+        get => _isNtripConnected;
+        set => this.RaiseAndSetIfChanged(ref _isNtripConnected, value);
+    }
+
+    public string NtripStatus
+    {
+        get => _ntripStatus;
+        set => this.RaiseAndSetIfChanged(ref _ntripStatus, value);
+    }
+
+    public string NtripBytesReceived
+    {
+        get => $"{(_ntripBytesReceived / 1024):N0} KB";
+    }
+
+    public string NtripCasterAddress
+    {
+        get => _ntripCasterAddress;
+        set => this.RaiseAndSetIfChanged(ref _ntripCasterAddress, value);
+    }
+
+    public int NtripCasterPort
+    {
+        get => _ntripCasterPort;
+        set => this.RaiseAndSetIfChanged(ref _ntripCasterPort, value);
+    }
+
+    public string NtripMountPoint
+    {
+        get => _ntripMountPoint;
+        set => this.RaiseAndSetIfChanged(ref _ntripMountPoint, value);
+    }
+
+    public string NtripUsername
+    {
+        get => _ntripUsername;
+        set => this.RaiseAndSetIfChanged(ref _ntripUsername, value);
+    }
+
+    public string NtripPassword
+    {
+        get => _ntripPassword;
+        set => this.RaiseAndSetIfChanged(ref _ntripPassword, value);
+    }
+
     public string DebugLog
     {
         get => _debugLog;
@@ -258,6 +352,26 @@ public class MainViewModel : ReactiveObject
     private void OnModuleConnectionChanged(object? sender, ModuleConnectionEventArgs e)
     {
         // This event is no longer used - status is polled every 100ms
+    }
+
+    private void OnNtripConnectionChanged(object? sender, NtripConnectionEventArgs e)
+    {
+        // Marshal to UI thread
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            IsNtripConnected = e.IsConnected;
+            NtripStatus = e.Message ?? (e.IsConnected ? "Connected" : "Not Connected");
+        });
+    }
+
+    private void OnRtcmDataReceived(object? sender, RtcmDataReceivedEventArgs e)
+    {
+        // Marshal to UI thread
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            _ntripBytesReceived = _ntripService.TotalBytesReceived;
+            this.RaisePropertyChanged(nameof(NtripBytesReceived));
+        });
     }
 
     private void UpdateStatusMessage()

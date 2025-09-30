@@ -9,6 +9,7 @@
     <Application.Resources>
         <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
         <converters:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
+        <converters:FixQualityToColorConverter x:Key="FixQualityToColorConverter"/>
     </Application.Resources>
 
     <Application.DataTemplates>

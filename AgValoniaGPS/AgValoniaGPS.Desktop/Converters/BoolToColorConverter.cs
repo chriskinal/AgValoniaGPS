@@ -38,3 +38,25 @@ public class BoolToStatusConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class FixQualityToColorConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is string fixQuality)
+        {
+            return fixQuality switch
+            {
+                "RTK Fixed" => Brushes.LimeGreen,      // Green for RTK Fixed
+                "RTK Float" => Brushes.Yellow,          // Yellow for RTK Float
+                _ => Brushes.Red                        // Red for everything else (No Fix, GPS Fix, DGPS)
+            };
+        }
+        return Brushes.Red;
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

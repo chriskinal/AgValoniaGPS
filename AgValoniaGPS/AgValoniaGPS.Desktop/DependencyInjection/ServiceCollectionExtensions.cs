@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IGpsService, GpsService>();
         services.AddSingleton<IFieldService, FieldService>();
         services.AddSingleton<IGuidanceService, GuidanceService>();
+        services.AddSingleton<INtripClientService, NtripClientService>();
 
         return services;
     }
