@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using AgValoniaGPS.ViewModels;
+using AgValoniaGPS.Services;
 
 namespace AgValoniaGPS.Desktop.Views;
 
@@ -13,11 +15,6 @@ public partial class MainWindow : Window
     private MainViewModel? ViewModel => DataContext as MainViewModel;
     private bool _isDraggingSection = false;
     private Avalonia.Point _dragStartPoint;
-
-    // Camera control state
-    private bool _isPanningCamera = false;
-    private bool _isRotatingCamera = false;
-    private Point _lastCameraMousePosition;
 
     public MainWindow()
     {
@@ -36,6 +33,30 @@ public partial class MainWindow : Window
         if (ViewModel != null)
         {
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
+
+        // Add keyboard shortcut for 3D mode toggle (F3)
+        this.KeyDown += MainWindow_KeyDown;
+    }
+
+    private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F3 && MapControl != null)
+        {
+            MapControl.Toggle3DMode();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.PageUp && MapControl != null)
+        {
+            // Increase pitch (tilt camera up)
+            MapControl.SetPitch(0.05);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.PageDown && MapControl != null)
+        {
+            // Decrease pitch (tilt camera down)
+            MapControl.SetPitch(-0.05);
+            e.Handled = true;
         }
     }
 
@@ -84,6 +105,65 @@ public partial class MainWindow : Window
             DataContext = ViewModel
         };
         dialog.ShowDialog(this);
+    }
+
+    private void Btn3DToggle_Click(object? sender, RoutedEventArgs e)
+    {
+        if (MapControl != null)
+        {
+            MapControl.Toggle3DMode();
+        }
+    }
+
+    private async void BtnFields_Click(object? sender, RoutedEventArgs e)
+    {
+        if (App.Services == null) return;
+
+        var fieldService = App.Services.GetRequiredService<IFieldService>();
+
+        // Get or set default fields directory
+        string fieldsDir = ViewModel?.FieldsRootDirectory ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(fieldsDir))
+        {
+            // Default to Documents/AgOpenGPS/Fields
+            fieldsDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "AgOpenGPS",
+                "Fields");
+        }
+
+        var dialog = new FieldSelectionDialog(fieldService, fieldsDir);
+        var result = await dialog.ShowDialog<bool>(this);
+
+        if (result && dialog.SelectedField != null && ViewModel != null)
+        {
+            // Update ViewModel with selected field directory
+            ViewModel.FieldsRootDirectory = fieldsDir;
+
+            // Pass boundary to MapControl for rendering and center camera on it
+            if (MapControl != null && dialog.SelectedField.Boundary != null)
+            {
+                MapControl.SetBoundary(dialog.SelectedField.Boundary);
+
+                // Center camera on boundary
+                var boundary = dialog.SelectedField.Boundary;
+                if (boundary.OuterBoundary != null && boundary.OuterBoundary.Points.Count > 0)
+                {
+                    // Calculate boundary center
+                    double sumE = 0, sumN = 0;
+                    foreach (var point in boundary.OuterBoundary.Points)
+                    {
+                        sumE += point.Easting;
+                        sumN += point.Northing;
+                    }
+                    double centerE = sumE / boundary.OuterBoundary.Points.Count;
+                    double centerN = sumN / boundary.OuterBoundary.Points.Count;
+
+                    // Pan camera to boundary center
+                    MapControl.Pan(centerE, centerN);
+                }
+            }
+        }
     }
 
     // Drag functionality for Section Control
@@ -135,72 +215,6 @@ public partial class MainWindow : Window
         }
     }
 
-    // Map input overlay event handlers for camera control
-    private void MapInputOverlay_PointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        var point = e.GetCurrentPoint(this);
-
-        if (point.Properties.IsLeftButtonPressed)
-        {
-            _isPanningCamera = true;
-            _lastCameraMousePosition = point.Position;
-            e.Pointer.Capture(MapInputOverlay);
-        }
-        else if (point.Properties.IsRightButtonPressed)
-        {
-            _isRotatingCamera = true;
-            _lastCameraMousePosition = point.Position;
-            e.Pointer.Capture(MapInputOverlay);
-        }
-    }
-
-    private void MapInputOverlay_PointerMoved(object? sender, PointerEventArgs e)
-    {
-        var point = e.GetCurrentPoint(this);
-        var currentPos = point.Position;
-
-        if (_isPanningCamera && MapControl != null)
-        {
-            double deltaX = currentPos.X - _lastCameraMousePosition.X;
-            double deltaY = currentPos.Y - _lastCameraMousePosition.Y;
-
-            // Convert screen space delta to world space
-            double aspect = Bounds.Width / Bounds.Height;
-            double worldDeltaX = -deltaX * (200.0 * aspect / MapControl.GetZoom()) / Bounds.Width;
-            double worldDeltaY = -deltaY * (200.0 / MapControl.GetZoom()) / Bounds.Height;
-
-            MapControl.Pan(worldDeltaX, worldDeltaY);
-            _lastCameraMousePosition = currentPos;
-        }
-        else if (_isRotatingCamera && MapControl != null)
-        {
-            double deltaX = currentPos.X - _lastCameraMousePosition.X;
-            double rotationDelta = deltaX * 0.01;
-
-            MapControl.Rotate(rotationDelta);
-            _lastCameraMousePosition = currentPos;
-        }
-    }
-
-    private void MapInputOverlay_PointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        if (_isPanningCamera || _isRotatingCamera)
-        {
-            _isPanningCamera = false;
-            _isRotatingCamera = false;
-            e.Pointer.Capture(null);
-        }
-    }
-
-    private void MapInputOverlay_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
-    {
-        if (MapControl != null)
-        {
-            double zoomFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
-            MapControl.Zoom(zoomFactor);
-        }
-    }
-
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(MainViewModel.Easting) ||
@@ -213,6 +227,56 @@ public partial class MainWindow : Window
                 double headingRadians = ViewModel.Heading * Math.PI / 180.0;
                 MapControl.SetVehiclePosition(ViewModel.Easting, ViewModel.Northing, headingRadians);
             }
+        }
+    }
+
+    // Map overlay event handlers that forward to MapControl
+    private void MapOverlay_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (MapControl != null)
+        {
+            // Forward event to MapControl's internal handler
+            var point = e.GetCurrentPoint(this);
+
+            if (point.Properties.IsLeftButtonPressed)
+            {
+                MapControl.StartPan(point.Position);
+                e.Handled = true;
+            }
+            else if (point.Properties.IsRightButtonPressed)
+            {
+                MapControl.StartRotate(point.Position);
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void MapOverlay_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (MapControl != null)
+        {
+            var point = e.GetCurrentPoint(this);
+            MapControl.UpdateMouse(point.Position);
+            e.Handled = true;
+        }
+    }
+
+    private void MapOverlay_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (MapControl != null)
+        {
+            MapControl.EndPanRotate();
+            e.Handled = true;
+        }
+    }
+
+    private void MapOverlay_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        if (MapControl != null)
+        {
+            double zoomFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
+            MapControl.Zoom(zoomFactor);
+            e.Handled = true;
         }
     }
 }

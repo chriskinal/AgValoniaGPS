@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -8,6 +10,7 @@ using Avalonia.OpenGL.Controls;
 using Avalonia.Threading;
 using Silk.NET.OpenGL;
 using StbImageSharp;
+using AgValoniaGPS.Models;
 
 namespace AgValoniaGPS.Desktop.Controls;
 
@@ -18,16 +21,23 @@ public class OpenGLMapControl : OpenGlControlBase
     private uint _gridVbo;
     private uint _vehicleVao;
     private uint _vehicleVbo;
+    private uint _boundaryVao;
+    private uint _boundaryVbo;
     private uint _shaderProgram;
     private uint _textureShaderProgram;
     private uint _vehicleTexture;
     private int _gridVertexCount;
+    private List<(int offset, int count)> _boundarySegments = new(); // Track separate boundary loops
+    private Boundary? _pendingBoundary;
 
     // Camera/viewport properties
     private double _cameraX = 0.0;
     private double _cameraY = 0.0;
     private double _zoom = 1.0;
-    private double _rotation = 0.0; // Radians
+    private double _rotation = 0.0; // Radians (yaw)
+    private double _cameraPitch = 0.0; // Radians (0 = top-down, positive = tilted up)
+    private double _cameraDistance = 100.0; // Distance from target in 3D mode
+    private bool _is3DMode = false;
 
     // GPS/Vehicle position
     private double _vehicleX = 0.0;      // Meters (world coordinates)
@@ -415,33 +425,70 @@ void main()
     {
         if (_gl == null) return;
 
+        // Process pending boundary on render thread
+        if (_pendingBoundary != null)
+        {
+            InitializeBoundary(_pendingBoundary);
+            _pendingBoundary = null;
+        }
+
         // Set viewport
         _gl.Viewport(0, 0, (uint)Bounds.Width, (uint)Bounds.Height);
 
-        // Clear the screen
-        _gl.Clear(ClearBufferMask.ColorBufferBit);
+        // Clear the screen and depth buffer
+        _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+        // Enable depth testing for 3D mode
+        if (_is3DMode)
+        {
+            _gl.Enable(EnableCap.DepthTest);
+        }
+        else
+        {
+            _gl.Disable(EnableCap.DepthTest);
+        }
 
         // Use shader program
         _gl.UseProgram(_shaderProgram);
 
-        // Create simple orthographic projection matrix (2D)
         float aspect = (float)Bounds.Width / (float)Bounds.Height;
-        float viewWidth = 200.0f * aspect / (float)_zoom;
-        float viewHeight = 200.0f / (float)_zoom;
+        float[] view;
+        float[] projection;
+        float[] mvp;
 
-        // Create view matrix (translation + rotation)
-        float[] view = CreateViewMatrix((float)_cameraX, (float)_cameraY, (float)_rotation);
+        if (_is3DMode)
+        {
+            // 3D perspective mode
+            // Camera follows vehicle from behind and above
+            float targetX = (float)_vehicleX;
+            float targetY = (float)_vehicleY;
+            float targetZ = 0.0f;
 
-        // Create orthographic projection
-        float[] projection = CreateOrthographicMatrix(
-            -viewWidth / 2,
-            viewWidth / 2,
-            -viewHeight / 2,
-            viewHeight / 2
-        );
+            // Calculate camera position based on distance, pitch, and vehicle heading
+            float camX = targetX - (float)(_cameraDistance * Math.Cos(_cameraPitch) * Math.Sin(_vehicleHeading));
+            float camY = targetY - (float)(_cameraDistance * Math.Cos(_cameraPitch) * Math.Cos(_vehicleHeading));
+            float camZ = (float)(_cameraDistance * Math.Sin(_cameraPitch));
+
+            view = CreateLookAtMatrix(camX, camY, camZ, targetX, targetY, targetZ);
+            projection = CreatePerspectiveMatrix(45.0f * (float)Math.PI / 180.0f, aspect, 1.0f, 10000.0f);
+        }
+        else
+        {
+            // 2D orthographic mode
+            float viewWidth = 200.0f * aspect / (float)_zoom;
+            float viewHeight = 200.0f / (float)_zoom;
+
+            view = CreateViewMatrix((float)_cameraX, (float)_cameraY, (float)_rotation);
+            projection = CreateOrthographicMatrix(
+                -viewWidth / 2,
+                viewWidth / 2,
+                -viewHeight / 2,
+                viewHeight / 2
+            );
+        }
 
         // Combine projection * view
-        float[] mvp = MultiplyMatrices(projection, view);
+        mvp = MultiplyMatrices(projection, view);
 
         // Set MVP uniform
         int mvpLocation = _gl.GetUniformLocation(_shaderProgram, "uMVP");
@@ -458,9 +505,34 @@ void main()
         _gl.DrawArrays(PrimitiveType.Lines, 0, (uint)_gridVertexCount);
         _gl.BindVertexArray(0);
 
+        // Draw boundary (if loaded)
+        if (_boundaryVao != 0 && _boundarySegments.Count > 0)
+        {
+            _gl.BindVertexArray(_boundaryVao);
+            _gl.LineWidth(5.0f); // Thicker lines for better visibility
+
+            // Draw each boundary segment separately (outer and inner boundaries)
+            foreach (var (offset, count) in _boundarySegments)
+            {
+                _gl.DrawArrays(GLEnum.LineLoop, offset, (uint)count);
+            }
+
+            _gl.BindVertexArray(0);
+            _gl.LineWidth(1.0f);
+        }
+
         // Draw vehicle with position and heading
-        // Create model matrix for vehicle (translation + rotation)
-        float[] vehicleModel = CreateModelMatrix((float)_vehicleX, (float)_vehicleY, (float)_vehicleHeading);
+        float[] vehicleModel;
+        if (_is3DMode)
+        {
+            // In 3D mode, create a billboard that faces the camera
+            vehicleModel = CreateBillboardMatrix((float)_vehicleX, (float)_vehicleY, 2.0f, view);
+        }
+        else
+        {
+            // In 2D mode, rotate vehicle based on heading
+            vehicleModel = CreateModelMatrix((float)_vehicleX, (float)_vehicleY, (float)_vehicleHeading);
+        }
         float[] vehicleMvp = MultiplyMatrices(mvp, vehicleModel);
 
         unsafe
@@ -547,6 +619,97 @@ void main()
         return matrix;
     }
 
+    private float[] CreateBillboardMatrix(float x, float y, float z, float[] viewMatrix)
+    {
+        // Create a billboard matrix (sprite that always faces camera)
+        // Extract right, up vectors from inverse view matrix
+        float[] matrix = new float[16];
+
+        // Copy the inverse rotation from view matrix (transpose of rotation part)
+        matrix[0] = viewMatrix[0];
+        matrix[1] = viewMatrix[4];
+        matrix[2] = viewMatrix[8];
+        matrix[3] = 0;
+
+        matrix[4] = viewMatrix[1];
+        matrix[5] = viewMatrix[5];
+        matrix[6] = viewMatrix[9];
+        matrix[7] = 0;
+
+        matrix[8] = viewMatrix[2];
+        matrix[9] = viewMatrix[6];
+        matrix[10] = viewMatrix[10];
+        matrix[11] = 0;
+
+        // Position
+        matrix[12] = x;
+        matrix[13] = y;
+        matrix[14] = z;
+        matrix[15] = 1.0f;
+
+        return matrix;
+    }
+
+    private float[] CreatePerspectiveMatrix(float fovY, float aspect, float near, float far)
+    {
+        // Perspective projection matrix
+        float f = 1.0f / (float)Math.Tan(fovY / 2.0f);
+        float[] matrix = new float[16];
+
+        matrix[0] = f / aspect;
+        matrix[5] = f;
+        matrix[10] = (far + near) / (near - far);
+        matrix[11] = -1.0f;
+        matrix[14] = (2.0f * far * near) / (near - far);
+
+        return matrix;
+    }
+
+    private float[] CreateLookAtMatrix(float eyeX, float eyeY, float eyeZ, float targetX, float targetY, float targetZ)
+    {
+        // Look-at matrix (view matrix)
+        float upX = 0.0f, upY = 0.0f, upZ = 1.0f;
+
+        // Forward vector (from eye to target)
+        float fX = targetX - eyeX;
+        float fY = targetY - eyeY;
+        float fZ = targetZ - eyeZ;
+        float fLen = (float)Math.Sqrt(fX * fX + fY * fY + fZ * fZ);
+        fX /= fLen; fY /= fLen; fZ /= fLen;
+
+        // Right vector (cross product of forward and up)
+        float rX = fY * upZ - fZ * upY;
+        float rY = fZ * upX - fX * upZ;
+        float rZ = fX * upY - fY * upX;
+        float rLen = (float)Math.Sqrt(rX * rX + rY * rY + rZ * rZ);
+        rX /= rLen; rY /= rLen; rZ /= rLen;
+
+        // Up vector (cross product of right and forward)
+        float uX = rY * fZ - rZ * fY;
+        float uY = rZ * fX - rX * fZ;
+        float uZ = rX * fY - rY * fX;
+
+        float[] matrix = new float[16];
+        matrix[0] = rX;
+        matrix[4] = rY;
+        matrix[8] = rZ;
+        matrix[12] = -(rX * eyeX + rY * eyeY + rZ * eyeZ);
+
+        matrix[1] = uX;
+        matrix[5] = uY;
+        matrix[9] = uZ;
+        matrix[13] = -(uX * eyeX + uY * eyeY + uZ * eyeZ);
+
+        matrix[2] = -fX;
+        matrix[6] = -fY;
+        matrix[10] = -fZ;
+        matrix[14] = (fX * eyeX + fY * eyeY + fZ * eyeZ);
+
+        matrix[15] = 1.0f;
+
+        return matrix;
+    }
+
     private float[] MultiplyMatrices(float[] a, float[] b)
     {
         // Multiply two 4x4 matrices (column-major order)
@@ -608,8 +771,18 @@ void main()
 
     public void Zoom(double delta)
     {
-        _zoom *= delta;
-        _zoom = Math.Clamp(_zoom, 0.1, 100.0);
+        if (_is3DMode)
+        {
+            // In 3D mode, adjust camera distance
+            _cameraDistance *= (1.0 / delta); // Inverse - larger zoom factor = closer camera
+            _cameraDistance = Math.Clamp(_cameraDistance, 10.0, 500.0);
+        }
+        else
+        {
+            // In 2D mode, adjust zoom level
+            _zoom *= delta;
+            _zoom = Math.Clamp(_zoom, 0.1, 100.0);
+        }
         RequestNextFrameRendering();
     }
 
@@ -620,6 +793,86 @@ void main()
     }
 
     public double GetZoom() => _zoom;
+
+    // Public methods for external mouse control
+    public void StartPan(Point position)
+    {
+        _isPanning = true;
+        _lastMousePosition = position;
+    }
+
+    public void StartRotate(Point position)
+    {
+        _isRotating = true;
+        _lastMousePosition = position;
+    }
+
+    public void UpdateMouse(Point position)
+    {
+        if (_isPanning)
+        {
+            if (_is3DMode)
+            {
+                // In 3D mode, left-click drag adjusts pitch (camera tilt)
+                double deltaY = position.Y - _lastMousePosition.Y;
+                double pitchDelta = -deltaY * 0.005; // 0.005 radians per pixel
+                SetPitch(pitchDelta);
+            }
+            else
+            {
+                // In 2D mode, left-click drag pans the camera
+                double deltaX = position.X - _lastMousePosition.X;
+                double deltaY = position.Y - _lastMousePosition.Y;
+
+                // Convert screen space delta to world space (accounting for zoom and aspect ratio)
+                float aspect = (float)Bounds.Width / (float)Bounds.Height;
+                double worldDeltaX = -deltaX * (200.0 * aspect / _zoom) / Bounds.Width;
+                double worldDeltaY = -deltaY * (200.0 / _zoom) / Bounds.Height;
+
+                Pan(worldDeltaX, worldDeltaY);
+            }
+            _lastMousePosition = position;
+        }
+        else if (_isRotating)
+        {
+            // Calculate rotation based on horizontal mouse movement
+            double deltaX = position.X - _lastMousePosition.X;
+            double rotationDelta = deltaX * 0.01; // 0.01 radians per pixel
+
+            Rotate(rotationDelta);
+            _lastMousePosition = position;
+        }
+    }
+
+    public void EndPanRotate()
+    {
+        _isPanning = false;
+        _isRotating = false;
+    }
+
+    public void Toggle3DMode()
+    {
+        _is3DMode = !_is3DMode;
+        if (_is3DMode)
+        {
+            // Set initial 3D camera parameters
+            _cameraPitch = Math.PI / 6.0; // 30 degrees
+            _cameraDistance = 150.0;
+        }
+        else
+        {
+            // Reset to 2D
+            _cameraPitch = 0.0;
+        }
+        RequestNextFrameRendering();
+    }
+
+    public void SetPitch(double deltaRadians)
+    {
+        _cameraPitch += deltaRadians;
+        _cameraPitch = Math.Clamp(_cameraPitch, 0.0, Math.PI / 2.5); // Limit pitch
+        RequestNextFrameRendering();
+    }
 
     public void SetVehiclePosition(double x, double y, double heading)
     {
@@ -632,10 +885,12 @@ void main()
     // Mouse event handlers for camera control
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        Console.WriteLine("OnPointerPressed called!");
         var point = e.GetCurrentPoint(this);
 
         if (point.Properties.IsLeftButtonPressed)
         {
+            Console.WriteLine("Left button pressed - starting pan");
             _isPanning = true;
             _lastMousePosition = point.Position;
             e.Pointer.Capture(this);
@@ -643,6 +898,7 @@ void main()
         }
         else if (point.Properties.IsRightButtonPressed)
         {
+            Console.WriteLine("Right button pressed - starting rotation");
             _isRotating = true;
             _lastMousePosition = point.Position;
             e.Pointer.Capture(this);
@@ -657,16 +913,26 @@ void main()
 
         if (_isPanning)
         {
-            // Calculate delta in screen space
-            double deltaX = currentPos.X - _lastMousePosition.X;
-            double deltaY = currentPos.Y - _lastMousePosition.Y;
+            if (_is3DMode)
+            {
+                // In 3D mode, left-click drag adjusts pitch (camera tilt)
+                double deltaY = currentPos.Y - _lastMousePosition.Y;
+                double pitchDelta = -deltaY * 0.005; // 0.005 radians per pixel
+                SetPitch(pitchDelta);
+            }
+            else
+            {
+                // In 2D mode, left-click drag pans the camera
+                double deltaX = currentPos.X - _lastMousePosition.X;
+                double deltaY = currentPos.Y - _lastMousePosition.Y;
 
-            // Convert screen space delta to world space (accounting for zoom and aspect ratio)
-            float aspect = (float)Bounds.Width / (float)Bounds.Height;
-            double worldDeltaX = -deltaX * (200.0 * aspect / _zoom) / Bounds.Width;
-            double worldDeltaY = deltaY * (200.0 / _zoom) / Bounds.Height;
+                // Convert screen space delta to world space (accounting for zoom and aspect ratio)
+                float aspect = (float)Bounds.Width / (float)Bounds.Height;
+                double worldDeltaX = -deltaX * (200.0 * aspect / _zoom) / Bounds.Width;
+                double worldDeltaY = deltaY * (200.0 / _zoom) / Bounds.Height;
 
-            Pan(worldDeltaX, worldDeltaY);
+                Pan(worldDeltaX, worldDeltaY);
+            }
             _lastMousePosition = currentPos;
             e.Handled = true;
         }
@@ -695,9 +961,121 @@ void main()
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        // Zoom in/out based on mouse wheel delta
-        double zoomFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
-        Zoom(zoomFactor);
+        if (_is3DMode)
+        {
+            // In 3D mode, adjust camera distance (zoom in/out from vehicle)
+            double distanceFactor = e.Delta.Y > 0 ? 0.9 : 1.1; // Inverse - scroll up = closer
+            _cameraDistance *= distanceFactor;
+            _cameraDistance = Math.Clamp(_cameraDistance, 10.0, 500.0); // Limit distance
+            RequestNextFrameRendering();
+        }
+        else
+        {
+            // In 2D mode, zoom in/out
+            double zoomFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
+            Zoom(zoomFactor);
+        }
         e.Handled = true;
+    }
+
+    /// <summary>
+    /// Set the field boundary to render (deferred to render thread)
+    /// </summary>
+    public void SetBoundary(Boundary? boundary)
+    {
+        _pendingBoundary = boundary;
+    }
+
+    private void InitializeBoundary(Boundary boundary)
+    {
+        if (_gl == null) return;
+
+        // Clear existing boundary data
+        if (_boundaryVao != 0)
+        {
+            _gl.DeleteVertexArray(_boundaryVao);
+            _gl.DeleteBuffer(_boundaryVbo);
+            _boundaryVao = 0;
+            _boundaryVbo = 0;
+        }
+        _boundarySegments.Clear();
+
+        // Build vertex data for boundary (position + color: x, y, r, g, b, a)
+        List<float> vertices = new List<float>();
+        int currentOffset = 0;
+
+        // Add outer boundary as LINE_LOOP (yellow color)
+        if (boundary.OuterBoundary != null && boundary.OuterBoundary.IsValid)
+        {
+            int pointCount = boundary.OuterBoundary.Points.Count;
+            foreach (var point in boundary.OuterBoundary.Points)
+            {
+                vertices.Add((float)point.Easting);   // x
+                vertices.Add((float)point.Northing);  // y
+                vertices.Add(1.0f);                    // r (yellow)
+                vertices.Add(1.0f);                    // g
+                vertices.Add(0.0f);                    // b
+                vertices.Add(1.0f);                    // a
+            }
+            _boundarySegments.Add((currentOffset, pointCount));
+            currentOffset += pointCount;
+        }
+
+        // Add inner boundaries as LINE_LOOPs (red color for holes)
+        foreach (var innerBoundary in boundary.InnerBoundaries)
+        {
+            if (innerBoundary.IsValid)
+            {
+                int pointCount = innerBoundary.Points.Count;
+                foreach (var point in innerBoundary.Points)
+                {
+                    vertices.Add((float)point.Easting);   // x
+                    vertices.Add((float)point.Northing);  // y
+                    vertices.Add(1.0f);                    // r (red)
+                    vertices.Add(0.0f);                    // g
+                    vertices.Add(0.0f);                    // b
+                    vertices.Add(1.0f);                    // a
+                }
+                _boundarySegments.Add((currentOffset, pointCount));
+                currentOffset += pointCount;
+            }
+        }
+
+        if (vertices.Count == 0)
+            return;
+
+        // Create VAO and VBO for boundary
+        _boundaryVao = _gl.GenVertexArray();
+        _gl.BindVertexArray(_boundaryVao);
+
+        _boundaryVbo = _gl.GenBuffer();
+        _gl.BindBuffer(BufferTargetARB.ArrayBuffer, _boundaryVbo);
+
+        unsafe
+        {
+            fixed (float* v = vertices.ToArray())
+            {
+                _gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vertices.Count * sizeof(float)), v, BufferUsageARB.StaticDraw);
+            }
+        }
+
+        // Position attribute (location 0): x, y
+        // Color attribute (location 1): r, g, b, a
+        // Stride: 6 floats (2 position + 4 color)
+        int stride = 6 * sizeof(float);
+
+        unsafe
+        {
+            // Position attribute (location 0)
+            _gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, (uint)stride, (void*)0);
+            _gl.EnableVertexAttribArray(0);
+
+            // Color attribute (location 1)
+            _gl.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, (uint)stride, (void*)(2 * sizeof(float)));
+            _gl.EnableVertexAttribArray(1);
+        }
+
+        _gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+        _gl.BindVertexArray(0);
     }
 }
