@@ -36,6 +36,9 @@ public class MainViewModel : ReactiveObject
     private bool _isImuDataOk;
     private bool _isGpsDataOk;
     private string _debugLog = "";
+    private double _easting;
+    private double _northing;
+    private double _heading;
 
     public MainViewModel(
         IUdpCommunicationService udpService,
@@ -299,7 +302,40 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _debugLog, value);
     }
 
+    public double Easting
+    {
+        get => _easting;
+        set => this.RaiseAndSetIfChanged(ref _easting, value);
+    }
+
+    public double Northing
+    {
+        get => _northing;
+        set => this.RaiseAndSetIfChanged(ref _northing, value);
+    }
+
+    public double Heading
+    {
+        get => _heading;
+        set => this.RaiseAndSetIfChanged(ref _heading, value);
+    }
+
     private void OnGpsDataUpdated(object? sender, GpsData data)
+    {
+        // Marshal to UI thread (use Invoke for synchronous execution to avoid modal dialog issues)
+        if (Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+        {
+            // Already on UI thread, execute directly
+            UpdateGpsProperties(data);
+        }
+        else
+        {
+            // Not on UI thread, invoke synchronously
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdateGpsProperties(data));
+        }
+    }
+
+    private void UpdateGpsProperties(GpsData data)
     {
         Latitude = data.CurrentPosition.Latitude;
         Longitude = data.CurrentPosition.Longitude;
@@ -307,6 +343,11 @@ public class MainViewModel : ReactiveObject
         SatelliteCount = data.SatellitesInUse;
         FixQuality = GetFixQualityString(data.FixQuality);
         StatusMessage = data.IsValid ? "GPS Active" : "Waiting for GPS";
+
+        // Update UTM coordinates and heading for map rendering
+        Easting = data.CurrentPosition.Easting;
+        Northing = data.CurrentPosition.Northing;
+        Heading = data.CurrentPosition.Heading;
     }
 
     private void OnUdpDataReceived(object? sender, UdpDataReceivedEventArgs e)
@@ -356,22 +397,40 @@ public class MainViewModel : ReactiveObject
 
     private void OnNtripConnectionChanged(object? sender, NtripConnectionEventArgs e)
     {
-        // Marshal to UI thread
-        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        // Marshal to UI thread (use Invoke for synchronous execution to avoid modal dialog issues)
+        if (Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
         {
-            IsNtripConnected = e.IsConnected;
-            NtripStatus = e.Message ?? (e.IsConnected ? "Connected" : "Not Connected");
-        });
+            UpdateNtripConnectionProperties(e);
+        }
+        else
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdateNtripConnectionProperties(e));
+        }
+    }
+
+    private void UpdateNtripConnectionProperties(NtripConnectionEventArgs e)
+    {
+        IsNtripConnected = e.IsConnected;
+        NtripStatus = e.Message ?? (e.IsConnected ? "Connected" : "Not Connected");
     }
 
     private void OnRtcmDataReceived(object? sender, RtcmDataReceivedEventArgs e)
     {
-        // Marshal to UI thread
-        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        // Marshal to UI thread (use Invoke for synchronous execution to avoid modal dialog issues)
+        if (Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
         {
-            _ntripBytesReceived = _ntripService.TotalBytesReceived;
-            this.RaisePropertyChanged(nameof(NtripBytesReceived));
-        });
+            UpdateNtripDataProperties();
+        }
+        else
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdateNtripDataProperties());
+        }
+    }
+
+    private void UpdateNtripDataProperties()
+    {
+        _ntripBytesReceived = _ntripService.TotalBytesReceived;
+        this.RaisePropertyChanged(nameof(NtripBytesReceived));
     }
 
     private void UpdateStatusMessage()

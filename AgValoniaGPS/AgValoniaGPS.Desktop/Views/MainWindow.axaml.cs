@@ -1,4 +1,5 @@
 using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -13,6 +14,11 @@ public partial class MainWindow : Window
     private bool _isDraggingSection = false;
     private Avalonia.Point _dragStartPoint;
 
+    // Camera control state
+    private bool _isPanningCamera = false;
+    private bool _isRotatingCamera = false;
+    private Point _lastCameraMousePosition;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -25,6 +31,12 @@ public partial class MainWindow : Window
 
         // Handle window resize to keep section control in bounds
         this.PropertyChanged += MainWindow_PropertyChanged;
+
+        // Subscribe to GPS position changes
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
     }
 
     private void MainWindow_PropertyChanged(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs e)
@@ -119,6 +131,87 @@ public partial class MainWindow : Window
             if (sender is Border border)
             {
                 e.Pointer.Capture(null);
+            }
+        }
+    }
+
+    // Map input overlay event handlers for camera control
+    private void MapInputOverlay_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        var point = e.GetCurrentPoint(this);
+
+        if (point.Properties.IsLeftButtonPressed)
+        {
+            _isPanningCamera = true;
+            _lastCameraMousePosition = point.Position;
+            e.Pointer.Capture(MapInputOverlay);
+        }
+        else if (point.Properties.IsRightButtonPressed)
+        {
+            _isRotatingCamera = true;
+            _lastCameraMousePosition = point.Position;
+            e.Pointer.Capture(MapInputOverlay);
+        }
+    }
+
+    private void MapInputOverlay_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        var point = e.GetCurrentPoint(this);
+        var currentPos = point.Position;
+
+        if (_isPanningCamera && MapControl != null)
+        {
+            double deltaX = currentPos.X - _lastCameraMousePosition.X;
+            double deltaY = currentPos.Y - _lastCameraMousePosition.Y;
+
+            // Convert screen space delta to world space
+            double aspect = Bounds.Width / Bounds.Height;
+            double worldDeltaX = -deltaX * (200.0 * aspect / MapControl.GetZoom()) / Bounds.Width;
+            double worldDeltaY = -deltaY * (200.0 / MapControl.GetZoom()) / Bounds.Height;
+
+            MapControl.Pan(worldDeltaX, worldDeltaY);
+            _lastCameraMousePosition = currentPos;
+        }
+        else if (_isRotatingCamera && MapControl != null)
+        {
+            double deltaX = currentPos.X - _lastCameraMousePosition.X;
+            double rotationDelta = deltaX * 0.01;
+
+            MapControl.Rotate(rotationDelta);
+            _lastCameraMousePosition = currentPos;
+        }
+    }
+
+    private void MapInputOverlay_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (_isPanningCamera || _isRotatingCamera)
+        {
+            _isPanningCamera = false;
+            _isRotatingCamera = false;
+            e.Pointer.Capture(null);
+        }
+    }
+
+    private void MapInputOverlay_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        if (MapControl != null)
+        {
+            double zoomFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
+            MapControl.Zoom(zoomFactor);
+        }
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.Easting) ||
+            e.PropertyName == nameof(MainViewModel.Northing) ||
+            e.PropertyName == nameof(MainViewModel.Heading))
+        {
+            if (ViewModel != null && MapControl != null)
+            {
+                // Convert heading from degrees to radians
+                double headingRadians = ViewModel.Heading * Math.PI / 180.0;
+                MapControl.SetVehiclePosition(ViewModel.Easting, ViewModel.Northing, headingRadians);
             }
         }
     }

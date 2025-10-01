@@ -62,17 +62,25 @@
         </Style>
     </Window.Styles>
 
-    <!-- Main Canvas for absolute positioning -->
-    <Canvas>
-        <Grid Canvas.Left="0" Canvas.Top="0" Width="{Binding $parent[Window].Bounds.Width}" Height="{Binding $parent[Window].Bounds.Height}">
-            <!-- OpenGL Map Render Area -->
-            <controls:OpenGLMapControl x:Name="MapControl" />
+    <!-- Main Grid with OpenGL as background -->
+    <Grid>
+        <!-- OpenGL Map Render Area (fills entire window) -->
+        <controls:OpenGLMapControl x:Name="MapControl" />
+
+        <!-- Transparent overlay to capture mouse events for the map -->
+        <Border x:Name="MapInputOverlay"
+                Background="Transparent"
+                PointerPressed="MapInputOverlay_PointerPressed"
+                PointerMoved="MapInputOverlay_PointerMoved"
+                PointerReleased="MapInputOverlay_PointerReleased"
+                PointerWheelChanged="MapInputOverlay_PointerWheelChanged" />
 
         <!-- TOP STATUS BAR: RTK Status -->
         <Border Classes="FloatingPanel"
                 Margin="20"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Top">
+                VerticalAlignment="Top"
+                IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <TextBlock Text="RTK Status" Foreground="#3498DB" FontSize="14" FontWeight="Bold"/>
                 <Ellipse Width="12" Height="12"
@@ -85,7 +93,8 @@
         <Border Classes="FloatingPanel"
                 Margin="20"
                 HorizontalAlignment="Right"
-                VerticalAlignment="Top">
+                VerticalAlignment="Top"
+                IsHitTestVisible="True">
             <StackPanel Spacing="8">
                 <!-- GPS Status Button (shows fix quality color) -->
                 <Button Width="48" Height="48"
@@ -111,7 +120,8 @@
         <Border Classes="FloatingPanel"
                 Margin="20"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                IsHitTestVisible="True">
             <StackPanel Spacing="8">
                 <Button Classes="IconButton" Content="🗺️" ToolTip.Tip="Display"/>
                 <Button Classes="IconButton" Content="🔧" ToolTip.Tip="Config"/>
@@ -124,16 +134,17 @@
         <Border Classes="FloatingPanel"
                 Margin="20"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom">
+                VerticalAlignment="Bottom"
+                IsHitTestVisible="True">
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <Button Classes="ModernButton" Content="🎯 Auto" Width="80"/>
                 <Button Classes="ModernButton" Content="📍 Mark" Width="80"/>
                 <Button Classes="ModernButton" Content="🔄 Reset" Width="80"/>
             </StackPanel>
         </Border>
-        </Grid>
 
-        <!-- Draggable Section Control on Canvas (initial position) -->
+        <!-- Draggable Section Control (using Canvas for absolute positioning) -->
+        <Canvas>
         <Border x:Name="SectionControlPanel"
                 Canvas.Left="900" Canvas.Top="600"
                 Classes="FloatingPanel"
@@ -176,6 +187,6 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-    </Canvas>
-
+        </Canvas>
+    </Grid>
 </Window>
