@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -6,6 +7,7 @@ using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
 using Avalonia.Threading;
 using Silk.NET.OpenGL;
+using StbImageSharp;
 
 namespace AgValoniaGPS.Desktop.Controls;
 
@@ -17,6 +19,8 @@ public class OpenGLMapControl : OpenGlControlBase
     private uint _vehicleVao;
     private uint _vehicleVbo;
     private uint _shaderProgram;
+    private uint _textureShaderProgram;
+    private uint _vehicleTexture;
     private int _gridVertexCount;
 
     // Camera/viewport properties
@@ -81,6 +85,8 @@ public class OpenGLMapControl : OpenGlControlBase
             InitializeShaders();
             InitializeGrid();
             InitializeVehicle();
+            InitializeTextureShaders();
+            LoadVehicleTexture();
         }
         catch (Exception ex)
         {
@@ -160,6 +166,116 @@ void main()
         // Clean up shaders (no longer needed after linking)
         _gl.DeleteShader(vertexShader);
         _gl.DeleteShader(fragmentShader);
+    }
+
+    private void InitializeTextureShaders()
+    {
+        if (_gl == null) return;
+
+        const string textureVertexShaderSource = @"#version 300 es
+precision highp float;
+
+layout (location = 0) in vec2 aPosition;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+
+uniform mat4 uTransform;
+
+void main()
+{
+    gl_Position = uTransform * vec4(aPosition, 0.0, 1.0);
+    TexCoord = aTexCoord;
+}";
+
+        const string textureFragmentShaderSource = @"#version 300 es
+precision highp float;
+
+in vec2 TexCoord;
+out vec4 FragColor;
+
+uniform sampler2D uTexture;
+
+void main()
+{
+    FragColor = texture(uTexture, TexCoord);
+}";
+
+        uint vertexShader = _gl.CreateShader(ShaderType.VertexShader);
+        _gl.ShaderSource(vertexShader, textureVertexShaderSource);
+        _gl.CompileShader(vertexShader);
+
+        _gl.GetShader(vertexShader, ShaderParameterName.CompileStatus, out int vStatus);
+        if (vStatus != (int)GLEnum.True)
+        {
+            string log = _gl.GetShaderInfoLog(vertexShader);
+            throw new Exception($"Texture vertex shader compilation failed: {log}");
+        }
+
+        uint fragmentShader = _gl.CreateShader(ShaderType.FragmentShader);
+        _gl.ShaderSource(fragmentShader, textureFragmentShaderSource);
+        _gl.CompileShader(fragmentShader);
+
+        _gl.GetShader(fragmentShader, ShaderParameterName.CompileStatus, out int fStatus);
+        if (fStatus != (int)GLEnum.True)
+        {
+            string log = _gl.GetShaderInfoLog(fragmentShader);
+            throw new Exception($"Texture fragment shader compilation failed: {log}");
+        }
+
+        _textureShaderProgram = _gl.CreateProgram();
+        _gl.AttachShader(_textureShaderProgram, vertexShader);
+        _gl.AttachShader(_textureShaderProgram, fragmentShader);
+        _gl.LinkProgram(_textureShaderProgram);
+
+        _gl.GetProgram(_textureShaderProgram, ProgramPropertyARB.LinkStatus, out int pStatus);
+        if (pStatus != (int)GLEnum.True)
+        {
+            string log = _gl.GetProgramInfoLog(_textureShaderProgram);
+            throw new Exception($"Texture shader program linking failed: {log}");
+        }
+
+        _gl.DeleteShader(vertexShader);
+        _gl.DeleteShader(fragmentShader);
+    }
+
+    private void LoadVehicleTexture()
+    {
+        if (_gl == null) return;
+
+        string texturePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Images", "TractorAoG.png");
+
+        if (!File.Exists(texturePath))
+        {
+            throw new FileNotFoundException($"Texture file not found: {texturePath}");
+        }
+
+        // Load image using StbImageSharp
+        StbImage.stbi_set_flip_vertically_on_load(1);
+        using var stream = File.OpenRead(texturePath);
+        ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+
+        // Create OpenGL texture
+        _vehicleTexture = _gl.GenTexture();
+        _gl.BindTexture(TextureTarget.Texture2D, _vehicleTexture);
+
+        unsafe
+        {
+            fixed (byte* ptr = image.Data)
+            {
+                _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba,
+                    (uint)image.Width, (uint)image.Height, 0,
+                    PixelFormat.Rgba, PixelType.UnsignedByte, ptr);
+            }
+        }
+
+        // Set texture parameters
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)GLEnum.ClampToEdge);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)GLEnum.ClampToEdge);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Linear);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
+
+        _gl.BindTexture(TextureTarget.Texture2D, 0);
     }
 
     private void InitializeGrid()
@@ -249,20 +365,21 @@ void main()
     {
         if (_gl == null) return;
 
-        // Create a simple triangle to represent the vehicle (pointing up/forward)
+        // Create a textured quad to represent the vehicle
         // Scale: about 5 meters (typical tractor size)
         float size = 5.0f;
 
         float[] vehicleVertices = new float[]
         {
-            // Triangle pointing up (forward direction)
-            // Position (x, y), Color (orange)
-             0.0f,  size,       1.0f, 0.5f, 0.0f, 1.0f,  // Front point
-            -size * 0.7f, -size * 0.5f,  1.0f, 0.5f, 0.0f, 1.0f,  // Rear left
-             size * 0.7f, -size * 0.5f,  1.0f, 0.5f, 0.0f, 1.0f   // Rear right
+            // Position (x, y), TexCoord (u, v)
+            // Quad for tractor image
+            -size * 0.5f, -size * 0.5f,  0.0f, 0.0f,  // Bottom-left
+             size * 0.5f, -size * 0.5f,  1.0f, 0.0f,  // Bottom-right
+             size * 0.5f,  size * 0.5f,  1.0f, 1.0f,  // Top-right
+            -size * 0.5f,  size * 0.5f,  0.0f, 1.0f   // Top-left
         };
 
-        // Create vehicle VAO/VBO
+        // Create VAO and VBO
         _vehicleVao = _gl.GenVertexArray();
         _gl.BindVertexArray(_vehicleVao);
 
@@ -280,14 +397,14 @@ void main()
         // Position attribute
         unsafe
         {
-            _gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 6 * sizeof(float), (void*)0);
+            _gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (void*)0);
         }
         _gl.EnableVertexAttribArray(0);
 
-        // Color attribute
+        // Texture coordinate attribute
         unsafe
         {
-            _gl.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, 6 * sizeof(float), (void*)(2 * sizeof(float)));
+            _gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (void*)(2 * sizeof(float)));
         }
         _gl.EnableVertexAttribArray(1);
 
@@ -354,8 +471,21 @@ void main()
             }
         }
 
+        // Draw vehicle (textured quad)
+        _gl.UseProgram(_textureShaderProgram);
+        _gl.BindTexture(TextureTarget.Texture2D, _vehicleTexture);
         _gl.BindVertexArray(_vehicleVao);
-        _gl.DrawArrays(PrimitiveType.Triangles, 0, 3);
+
+        int textureTransformLoc = _gl.GetUniformLocation(_textureShaderProgram, "uTransform");
+        unsafe
+        {
+            fixed (float* m = vehicleMvp)
+            {
+                _gl.UniformMatrix4(textureTransformLoc, 1, false, m);
+            }
+        }
+
+        _gl.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
         _gl.BindVertexArray(0);
     }
 
@@ -441,6 +571,14 @@ void main()
     {
         if (_gl != null)
         {
+            if (_vehicleTexture != 0)
+            {
+                _gl.DeleteTexture(_vehicleTexture);
+            }
+            if (_textureShaderProgram != 0)
+            {
+                _gl.DeleteProgram(_textureShaderProgram);
+            }
             _gl.DeleteBuffer(_gridVbo);
             _gl.DeleteVertexArray(_gridVao);
             _gl.DeleteBuffer(_vehicleVbo);
