@@ -15,6 +15,8 @@ public class MainViewModel : ReactiveObject
     private readonly IFieldService _fieldService;
     private readonly IGuidanceService _guidanceService;
     private readonly INtripClientService _ntripService;
+    private readonly FieldStatisticsService _fieldStatistics;
+    private readonly VehicleConfiguration _vehicleConfig;
     private readonly NmeaParserService _nmeaParser;
 
     private string _statusMessage = "Starting...";
@@ -40,18 +42,26 @@ public class MainViewModel : ReactiveObject
     private double _northing;
     private double _heading;
 
+    // Field properties
+    private Field? _activeField;
+    private string _fieldsRootDirectory = string.Empty;
+
     public MainViewModel(
         IUdpCommunicationService udpService,
         IGpsService gpsService,
         IFieldService fieldService,
         IGuidanceService guidanceService,
-        INtripClientService ntripService)
+        INtripClientService ntripService,
+        FieldStatisticsService fieldStatistics,
+        VehicleConfiguration vehicleConfig)
     {
         _udpService = udpService;
         _gpsService = gpsService;
         _fieldService = fieldService;
         _guidanceService = guidanceService;
         _ntripService = ntripService;
+        _fieldStatistics = fieldStatistics;
+        _vehicleConfig = vehicleConfig;
         _nmeaParser = new NmeaParserService(gpsService);
 
         // Subscribe to events
@@ -60,6 +70,7 @@ public class MainViewModel : ReactiveObject
         _udpService.ModuleConnectionChanged += OnModuleConnectionChanged;
         _ntripService.ConnectionStatusChanged += OnNtripConnectionChanged;
         _ntripService.RtcmDataReceived += OnRtcmDataReceived;
+        _fieldService.ActiveFieldChanged += OnActiveFieldChanged;
 
         // Start UDP communication
         InitializeAsync();
@@ -454,4 +465,58 @@ public class MainViewModel : ReactiveObject
         5 => "RTK Float",
         _ => "Unknown"
     };
+
+    // Field management properties
+    public Field? ActiveField
+    {
+        get => _activeField;
+        set => this.RaiseAndSetIfChanged(ref _activeField, value);
+    }
+
+    public string FieldsRootDirectory
+    {
+        get => _fieldsRootDirectory;
+        set => this.RaiseAndSetIfChanged(ref _fieldsRootDirectory, value);
+    }
+
+    public string? ActiveFieldName => ActiveField?.Name;
+    public double? ActiveFieldArea => ActiveField?.TotalArea;
+
+    // AOG_Dev services - expose for UI/control access
+    public VehicleConfiguration VehicleConfig => _vehicleConfig;
+    public FieldStatisticsService FieldStatistics => _fieldStatistics;
+
+    // Field statistics properties for UI binding
+    public string WorkedAreaDisplay => _fieldStatistics.FormatArea(_fieldStatistics.WorkedAreaSquareMeters);
+    public string BoundaryAreaDisplay => _fieldStatistics.FormatArea(_fieldStatistics.BoundaryAreaSquareMeters);
+    public double RemainingPercent => _fieldStatistics.GetRemainingPercent();
+
+    private void OnActiveFieldChanged(object? sender, Field? field)
+    {
+        // Marshal to UI thread
+        if (Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+        {
+            UpdateActiveField(field);
+        }
+        else
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdateActiveField(field));
+        }
+    }
+
+    private void UpdateActiveField(Field? field)
+    {
+        ActiveField = field;
+        this.RaisePropertyChanged(nameof(ActiveFieldName));
+        this.RaisePropertyChanged(nameof(ActiveFieldArea));
+
+        // Update field statistics service with new boundary
+        if (field?.Boundary != null)
+        {
+            _fieldStatistics.UpdateBoundaryArea(field.Boundary);
+            this.RaisePropertyChanged(nameof(BoundaryAreaDisplay));
+            this.RaisePropertyChanged(nameof(WorkedAreaDisplay));
+            this.RaisePropertyChanged(nameof(RemainingPercent));
+        }
+    }
 }
