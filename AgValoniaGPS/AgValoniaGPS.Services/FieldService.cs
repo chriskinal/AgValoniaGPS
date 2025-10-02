@@ -1,38 +1,138 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.IO;
+using System.Linq;
 using AgValoniaGPS.Models;
-using AgValoniaGPS.Services.Interfaces;
 
 namespace AgValoniaGPS.Services;
 
 /// <summary>
 /// Implementation of field management service
+/// Coordinates file I/O services to provide complete field management
 /// </summary>
 public class FieldService : IFieldService
 {
-    public event EventHandler<Field?>? ActiveFieldChanged;
+    private readonly FieldPlaneFileService _fieldPlaneService;
+    private readonly BoundaryFileService _boundaryService;
+    private readonly BackgroundImageFileService _backgroundImageService;
 
+    public event EventHandler<Field?>? ActiveFieldChanged;
     public Field? ActiveField { get; private set; }
 
-    public Task<Field?> LoadFieldAsync(string filePath)
+    public FieldService()
     {
-        // TODO: Implement field loading from file
-        return Task.FromResult<Field?>(null);
+        _fieldPlaneService = new FieldPlaneFileService();
+        _boundaryService = new BoundaryFileService();
+        _backgroundImageService = new BackgroundImageFileService();
     }
 
-    public Task SaveFieldAsync(Field field, string filePath)
+    /// <summary>
+    /// Get list of available field names in the Fields directory
+    /// </summary>
+    public List<string> GetAvailableFields(string fieldsRootDirectory)
     {
-        // TODO: Implement field saving to file
-        return Task.CompletedTask;
+        if (!Directory.Exists(fieldsRootDirectory))
+        {
+            return new List<string>();
+        }
+
+        return Directory.GetDirectories(fieldsRootDirectory)
+            .Select(Path.GetFileName)
+            .Where(name => !string.IsNullOrEmpty(name))
+            .Cast<string>()
+            .OrderBy(name => name)
+            .ToList();
     }
 
-    public Task<List<string>> GetFieldListAsync()
+    /// <summary>
+    /// Load a complete field (Field.txt, Boundary.txt, BackPic.Txt)
+    /// </summary>
+    public Field LoadField(string fieldDirectory)
     {
-        // TODO: Implement field list retrieval
-        return Task.FromResult(new List<string>());
+        var field = _fieldPlaneService.LoadField(fieldDirectory);
+        field.Boundary = _boundaryService.LoadBoundary(fieldDirectory);
+        field.BackgroundImage = _backgroundImageService.LoadBackgroundImage(fieldDirectory);
+        return field;
     }
 
+    /// <summary>
+    /// Save a complete field (Field.txt, Boundary.txt, BackPic.Txt)
+    /// </summary>
+    public void SaveField(Field field)
+    {
+        if (string.IsNullOrWhiteSpace(field.DirectoryPath))
+        {
+            throw new ArgumentException("Field.DirectoryPath must be set", nameof(field));
+        }
+
+        _fieldPlaneService.SaveField(field, field.DirectoryPath);
+
+        if (field.Boundary != null)
+        {
+            _boundaryService.SaveBoundary(field.Boundary, field.DirectoryPath);
+        }
+
+        if (field.BackgroundImage != null)
+        {
+            _backgroundImageService.SaveBackgroundImage(field.BackgroundImage, field.DirectoryPath);
+        }
+    }
+
+    /// <summary>
+    /// Create a new empty field
+    /// </summary>
+    public Field CreateField(string fieldsRootDirectory, string fieldName, Position originPosition)
+    {
+        var fieldDirectory = Path.Combine(fieldsRootDirectory, fieldName);
+
+        if (Directory.Exists(fieldDirectory))
+        {
+            throw new InvalidOperationException($"Field '{fieldName}' already exists");
+        }
+
+        Directory.CreateDirectory(fieldDirectory);
+
+        var field = new Field
+        {
+            Name = fieldName,
+            DirectoryPath = fieldDirectory,
+            Origin = originPosition,
+            CreatedDate = DateTime.Now,
+            LastModifiedDate = DateTime.Now
+        };
+
+        // Create empty boundary file
+        _boundaryService.CreateEmptyBoundary(fieldDirectory);
+
+        // Save field metadata
+        _fieldPlaneService.SaveField(field, fieldDirectory);
+
+        return field;
+    }
+
+    /// <summary>
+    /// Delete a field (removes entire directory)
+    /// </summary>
+    public void DeleteField(string fieldDirectory)
+    {
+        if (Directory.Exists(fieldDirectory))
+        {
+            Directory.Delete(fieldDirectory, true);
+        }
+    }
+
+    /// <summary>
+    /// Check if a field exists
+    /// </summary>
+    public bool FieldExists(string fieldDirectory)
+    {
+        return Directory.Exists(fieldDirectory) &&
+               File.Exists(Path.Combine(fieldDirectory, "Field.txt"));
+    }
+
+    /// <summary>
+    /// Set the active field
+    /// </summary>
     public void SetActiveField(Field? field)
     {
         if (ActiveField != field)
@@ -40,17 +140,5 @@ public class FieldService : IFieldService
             ActiveField = field;
             ActiveFieldChanged?.Invoke(this, field);
         }
-    }
-
-    public double CalculateArea(List<Position> points)
-    {
-        // TODO: Implement area calculation using shoelace formula
-        return 0.0;
-    }
-
-    public bool IsPositionInsideBoundary(Position position, Boundary boundary)
-    {
-        // TODO: Implement point-in-polygon algorithm
-        return false;
     }
 }
