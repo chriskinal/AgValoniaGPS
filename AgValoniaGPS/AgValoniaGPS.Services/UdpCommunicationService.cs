@@ -279,18 +279,55 @@ public class UdpCommunicationService : IUdpCommunicationService, IDisposable
     {
         try
         {
+            // First try NetworkInterface method (better for Linux)
+            var networkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+                .Where(ni => ni.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up &&
+                             ni.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
+                .ToList();
+
+            foreach (var ni in networkInterfaces)
+            {
+                var properties = ni.GetIPProperties();
+                var addresses = properties.UnicastAddresses
+                    .Where(addr => addr.Address.AddressFamily == AddressFamily.InterNetwork)
+                    .ToList();
+
+                foreach (var addr in addresses)
+                {
+                    var ip = addr.Address.ToString();
+                    // Skip loopback (127.x) and link-local (169.254.x) addresses
+                    if (!ip.StartsWith("127.") && !ip.StartsWith("169.254."))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Selected network IP: {ip} from interface {ni.Name}");
+                        return ip;
+                    }
+                }
+            }
+
+            // Fallback to DNS method if no suitable interface found
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    return ip.ToString();
+                    var ipStr = ip.ToString();
+                    // Skip loopback addresses (including Debian's 127.0.1.1)
+                    if (!ipStr.StartsWith("127."))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Selected DNS IP: {ipStr}");
+                        return ipStr;
+                    }
                 }
             }
-        }
-        catch { }
 
-        return null;
+            System.Diagnostics.Debug.WriteLine("No suitable IP found, using first non-loopback");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error getting IP: {ex.Message}");
+        }
+
+        return "0.0.0.0"; // Return valid IP instead of null for display
     }
 
     public void Dispose()
