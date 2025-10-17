@@ -4,6 +4,7 @@ using ReactiveUI;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
+using AgValoniaGPS.Services.Position;
 using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
@@ -18,6 +19,10 @@ public class MainViewModel : ReactiveObject
     private readonly FieldStatisticsService _fieldStatistics;
     private readonly VehicleConfiguration _vehicleConfig;
     private readonly NmeaParserService _nmeaParser;
+
+    // Wave 1 Services
+    private readonly IPositionUpdateService _positionService;
+    private readonly IHeadingCalculatorService _headingService;
 
     private string _statusMessage = "Starting...";
     private double _latitude;
@@ -41,6 +46,8 @@ public class MainViewModel : ReactiveObject
     private double _easting;
     private double _northing;
     private double _heading;
+    private string _headingSource = "None";
+    private bool _isReversing = false;
 
     // Field properties
     private Field? _activeField;
@@ -53,7 +60,9 @@ public class MainViewModel : ReactiveObject
         IGuidanceService guidanceService,
         INtripClientService ntripService,
         FieldStatisticsService fieldStatistics,
-        VehicleConfiguration vehicleConfig)
+        VehicleConfiguration vehicleConfig,
+        IPositionUpdateService positionService,
+        IHeadingCalculatorService headingService)
     {
         _udpService = udpService;
         _gpsService = gpsService;
@@ -62,15 +71,21 @@ public class MainViewModel : ReactiveObject
         _ntripService = ntripService;
         _fieldStatistics = fieldStatistics;
         _vehicleConfig = vehicleConfig;
+        _positionService = positionService;
+        _headingService = headingService;
         _nmeaParser = new NmeaParserService(gpsService);
 
-        // Subscribe to events
+        // Subscribe to GPS and UDP events
         _gpsService.GpsDataUpdated += OnGpsDataUpdated;
         _udpService.DataReceived += OnUdpDataReceived;
         _udpService.ModuleConnectionChanged += OnModuleConnectionChanged;
         _ntripService.ConnectionStatusChanged += OnNtripConnectionChanged;
         _ntripService.RtcmDataReceived += OnRtcmDataReceived;
         _fieldService.ActiveFieldChanged += OnActiveFieldChanged;
+
+        // Subscribe to Wave 1 service events
+        _positionService.PositionUpdated += OnPositionUpdated;
+        _headingService.HeadingChanged += OnHeadingChanged;
 
         // Start UDP communication
         InitializeAsync();
@@ -331,6 +346,21 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _heading, value);
     }
 
+    public string HeadingSource
+    {
+        get => _headingSource;
+        set => this.RaiseAndSetIfChanged(ref _headingSource, value);
+    }
+
+    public bool IsReversing
+    {
+        get => _isReversing;
+        set => this.RaiseAndSetIfChanged(ref _isReversing, value);
+    }
+
+    /// <summary>
+    /// Handles GPS data updates from GpsService and feeds them into Wave 1 position pipeline
+    /// </summary>
     private void OnGpsDataUpdated(object? sender, GpsData data)
     {
         // Marshal to UI thread (use Invoke for synchronous execution to avoid modal dialog issues)
@@ -338,27 +368,102 @@ public class MainViewModel : ReactiveObject
         {
             // Already on UI thread, execute directly
             UpdateGpsProperties(data);
+
+            // Feed GPS data into Wave 1 position processing pipeline
+            ProcessGpsDataThroughPipeline(data);
         }
         else
         {
             // Not on UI thread, invoke synchronously
-            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdateGpsProperties(data));
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
+            {
+                UpdateGpsProperties(data);
+                ProcessGpsDataThroughPipeline(data);
+            });
         }
+    }
+
+    /// <summary>
+    /// Process GPS data through Wave 1 services pipeline
+    /// GPS Data → Position Service → Position Updated Event → Heading Service → Heading Changed Event
+    /// </summary>
+    private void ProcessGpsDataThroughPipeline(GpsData data)
+    {
+        try
+        {
+            // Pass GPS data to position update service
+            // The service will calculate speed, detect reverse, maintain history, and fire PositionUpdated event
+            _positionService.ProcessGpsPosition(data, null); // TODO: Add IMU data when available
+        }
+        catch (Exception ex)
+        {
+            // Log error but don't crash the application
+            DebugLog = $"Position processing error: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// Handles position updates from IPositionUpdateService
+    /// This is fired after GPS position has been processed
+    /// </summary>
+    private void OnPositionUpdated(object? sender, PositionUpdateEventArgs e)
+    {
+        // Marshal to UI thread
+        if (Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+        {
+            UpdatePositionProperties(e);
+        }
+        else
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdatePositionProperties(e));
+        }
+    }
+
+    private void UpdatePositionProperties(PositionUpdateEventArgs e)
+    {
+        // Update UI properties from processed position data
+        Easting = e.Position.Easting;
+        Northing = e.Position.Northing;
+        Speed = e.Speed; // Use calculated speed from position service (more accurate than GPS speed)
+        IsReversing = e.IsReversing;
+
+        // Note: Heading will be updated separately by OnHeadingChanged event
+    }
+
+    /// <summary>
+    /// Handles heading updates from IHeadingCalculatorService
+    /// </summary>
+    private void OnHeadingChanged(object? sender, HeadingUpdate e)
+    {
+        // Marshal to UI thread
+        if (Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+        {
+            UpdateHeadingProperties(e);
+        }
+        else
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => UpdateHeadingProperties(e));
+        }
+    }
+
+    private void UpdateHeadingProperties(HeadingUpdate e)
+    {
+        // Update UI properties from calculated heading
+        Heading = e.Heading; // Heading in radians (0 to 2π)
+        HeadingSource = e.Source.ToString(); // Display which source is being used
     }
 
     private void UpdateGpsProperties(GpsData data)
     {
         Latitude = data.CurrentPosition.Latitude;
         Longitude = data.CurrentPosition.Longitude;
-        Speed = data.CurrentPosition.Speed;
+        // Note: Speed is now updated from Position Service for better accuracy
         SatelliteCount = data.SatellitesInUse;
         FixQuality = GetFixQualityString(data.FixQuality);
         StatusMessage = data.IsValid ? "GPS Active" : "Waiting for GPS";
 
-        // Update UTM coordinates and heading for map rendering
-        Easting = data.CurrentPosition.Easting;
-        Northing = data.CurrentPosition.Northing;
-        Heading = data.CurrentPosition.Heading;
+        // Note: Easting, Northing, and Heading are now updated from Wave 1 services
+        // for more accurate processing through the position pipeline
     }
 
     private void OnUdpDataReceived(object? sender, UdpDataReceivedEventArgs e)
@@ -394,6 +499,7 @@ public class MainViewModel : ReactiveObject
 
                 case PgnNumbers.HELLO_FROM_IMU:
                     // IMU module is alive
+                    // TODO: Extract IMU data and pass to position service
                     break;
 
                 // TODO: Add more PGN handlers as needed

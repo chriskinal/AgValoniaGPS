@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
+using AgValoniaGPS.Services.Position;
+using AgValoniaGPS.Services.Vehicle;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.Models;
 
@@ -23,6 +25,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IGuidanceService, GuidanceService>();
         services.AddSingleton<INtripClientService, NtripClientService>();
         services.AddSingleton<FieldStatisticsService>();
+
+        // Wave 1: Position & Kinematics Services
+        services.AddSingleton<IPositionUpdateService, PositionUpdateService>();
+        services.AddSingleton<IHeadingCalculatorService, HeadingCalculatorService>();
+        services.AddSingleton<IVehicleKinematicsService, VehicleKinematicsService>();
 
         return services;
     }
