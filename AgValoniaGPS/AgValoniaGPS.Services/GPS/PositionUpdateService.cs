@@ -1,9 +1,10 @@
 using System;
 using System.Diagnostics;
-using AgOpenGPS.Core.Models;
+using AgValoniaGPS.Models;
+using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
 
-namespace AgValoniaGPS.Services.Position
+namespace AgValoniaGPS.Services.GPS
 {
     /// <summary>
     /// Implements GPS position processing with smoothing, speed calculation, and history management.
@@ -42,6 +43,17 @@ namespace AgValoniaGPS.Services.Position
 
         public event EventHandler<PositionUpdateEventArgs>? PositionUpdated;
 
+        /// <summary>
+        /// Creates a new PositionUpdateService with default HeadingCalculatorService
+        /// </summary>
+        public PositionUpdateService() : this(new HeadingCalculatorService())
+        {
+        }
+
+        /// <summary>
+        /// Creates a new PositionUpdateService with specified HeadingCalculatorService
+        /// </summary>
+        /// <param name="headingService">The heading calculator service to use</param>
         public PositionUpdateService(IHeadingCalculatorService headingService)
         {
             _headingService = headingService ?? throw new ArgumentNullException(nameof(headingService));
@@ -80,7 +92,8 @@ namespace AgValoniaGPS.Services.Position
                 _distanceCurrentStep = CalculateDistance(_stepFixHistory[0], newPosition);
 
                 // Only process if we've moved minimum distance (reduces noise at standstill)
-                if (_distanceCurrentStep < MinimumStepDistance)
+                // Exception: always process the first position regardless of distance
+                if (_distanceCurrentStep < MinimumStepDistance && _historyCount > 0)
                 {
                     // Update current position but don't update history or heading
                     _currentPosition = newPosition;
@@ -92,6 +105,9 @@ namespace AgValoniaGPS.Services.Position
 
                 if (headingStepIndex >= 0 && _historyCount > headingStepIndex)
                 {
+                    // Save current heading before calculating new one (needed for reverse detection)
+                    double previousHeading = _currentHeading;
+
                     // Calculate new heading from position delta using heading service
                     var headingData = new FixToFixHeadingData
                     {
@@ -104,8 +120,8 @@ namespace AgValoniaGPS.Services.Position
 
                     double newHeading = _headingService.CalculateFixToFixHeading(headingData);
 
-                    // Detect reverse direction
-                    _isReversing = DetectReverse(newHeading, _currentHeading);
+                    // Detect reverse direction (compare against heading BEFORE the event updated it)
+                    _isReversing = DetectReverse(newHeading, previousHeading);
 
                     // If reversing, adjust heading by 180 degrees
                     if (_isReversing)

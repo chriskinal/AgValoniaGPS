@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AgValoniaGPS.Models;
+using PositionModel = AgValoniaGPS.Models.Position;
 
 namespace AgValoniaGPS.Services;
 
@@ -37,7 +38,7 @@ public interface IFieldService
     /// <summary>
     /// Create a new empty field
     /// </summary>
-    Field CreateField(string fieldsRootDirectory, string fieldName, Position originPosition);
+    Field CreateField(string fieldsRootDirectory, string fieldName, PositionModel originPosition);
 
     /// <summary>
     /// Delete a field

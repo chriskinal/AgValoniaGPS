@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Guidance;
+using AgValoniaGPS.Services.Guidance;
+using PositionModel = AgValoniaGPS.Models.Position;
 
 namespace AgValoniaGPS.Services;
 
 /// <summary>
-/// Implementation of field management service
+/// Implementation of field management service.
 /// Coordinates file I/O services to provide complete field management
+/// including guidance line persistence (AB lines, curve lines, contours).
 /// </summary>
 public class FieldService : IFieldService
 {
     private readonly FieldPlaneFileService _fieldPlaneService;
     private readonly BoundaryFileService _boundaryService;
     private readonly BackgroundImageFileService _backgroundImageService;
+    private readonly ABLineFileService _abLineService;
+    private readonly CurveLineFileService _curveLineService;
+    private readonly ContourLineFileService _contourService;
 
     public event EventHandler<Field?>? ActiveFieldChanged;
     public Field? ActiveField { get; private set; }
@@ -24,6 +31,9 @@ public class FieldService : IFieldService
         _fieldPlaneService = new FieldPlaneFileService();
         _boundaryService = new BoundaryFileService();
         _backgroundImageService = new BackgroundImageFileService();
+        _abLineService = new ABLineFileService();
+        _curveLineService = new CurveLineFileService();
+        _contourService = new ContourLineFileService();
     }
 
     /// <summary>
@@ -81,7 +91,7 @@ public class FieldService : IFieldService
     /// <summary>
     /// Create a new empty field
     /// </summary>
-    public Field CreateField(string fieldsRootDirectory, string fieldName, Position originPosition)
+    public Field CreateField(string fieldsRootDirectory, string fieldName, PositionModel originPosition)
     {
         var fieldDirectory = Path.Combine(fieldsRootDirectory, fieldName);
 
@@ -140,5 +150,67 @@ public class FieldService : IFieldService
             ActiveField = field;
             ActiveFieldChanged?.Invoke(this, field);
         }
+    }
+
+    /// <summary>
+    /// Save AB line to field directory. Persists to ABLine.txt in JSON format.
+    /// </summary>
+    public void SaveABLine(ABLine abLine, string fieldDirectory)
+    {
+        _abLineService.SaveABLine(abLine, fieldDirectory);
+    }
+
+    /// <summary>
+    /// Load AB line from field directory. Supports both JSON and legacy AgOpenGPS text format.
+    /// </summary>
+    public ABLine? LoadABLine(string fieldDirectory)
+    {
+        return _abLineService.LoadABLine(fieldDirectory);
+    }
+
+    /// <summary>
+    /// Save curve line to field directory. Persists to CurveLine.txt in JSON format.
+    /// </summary>
+    public void SaveCurveLine(CurveLine curveLine, string fieldDirectory)
+    {
+        _curveLineService.SaveCurveLine(curveLine, fieldDirectory);
+    }
+
+    /// <summary>
+    /// Load curve line from field directory. Supports both JSON and legacy AgOpenGPS text format.
+    /// </summary>
+    public CurveLine? LoadCurveLine(string fieldDirectory)
+    {
+        return _curveLineService.LoadCurveLine(fieldDirectory);
+    }
+
+    /// <summary>
+    /// Save contour line to field directory. Persists to Contour.txt in JSON format.
+    /// </summary>
+    public void SaveContour(ContourLine contour, string fieldDirectory)
+    {
+        _contourService.SaveContour(contour, fieldDirectory);
+    }
+
+    /// <summary>
+    /// Load contour line from field directory. Supports both JSON and legacy AgOpenGPS text format.
+    /// </summary>
+    public ContourLine? LoadContour(string fieldDirectory)
+    {
+        return _contourService.LoadContour(fieldDirectory);
+    }
+
+    /// <summary>
+    /// Delete a guidance line file from field directory.
+    /// </summary>
+    public bool DeleteGuidanceLine(string fieldDirectory, GuidanceLineType lineType)
+    {
+        return lineType switch
+        {
+            GuidanceLineType.ABLine => _abLineService.DeleteABLine(fieldDirectory),
+            GuidanceLineType.CurveLine => _curveLineService.DeleteCurveLine(fieldDirectory),
+            GuidanceLineType.Contour => _contourService.DeleteContour(fieldDirectory),
+            _ => throw new ArgumentException($"Unknown guidance line type: {lineType}", nameof(lineType))
+        };
     }
 }

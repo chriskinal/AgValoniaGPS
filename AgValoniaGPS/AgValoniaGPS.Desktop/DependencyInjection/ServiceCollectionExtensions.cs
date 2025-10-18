@@ -1,15 +1,24 @@
 using Microsoft.Extensions.DependencyInjection;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
-using AgValoniaGPS.Services.Position;
+using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Vehicle;
+using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.Models;
 
 namespace AgValoniaGPS.Desktop.DependencyInjection;
 
+/// <summary>
+/// Extension methods for registering AgValoniaGPS services with the dependency injection container.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics) and Wave 2 (Guidance Line Core) services.
+    /// </summary>
+    /// <param name="services">The service collection to add services to</param>
+    /// <returns>The service collection for method chaining</returns>
     public static IServiceCollection AddAgValoniaServices(this IServiceCollection services)
     {
         // Register ViewModels
@@ -31,7 +40,36 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IHeadingCalculatorService, HeadingCalculatorService>();
         services.AddSingleton<IVehicleKinematicsService, VehicleKinematicsService>();
 
+        // Wave 2: Guidance Line Core Services
+        AddWave2GuidanceServices(services);
+
         return services;
+    }
+
+    /// <summary>
+    /// Registers Wave 2 guidance line services (AB Line, Curve Line, and Contour) with Scoped lifetime.
+    /// These services are registered as Scoped to allow per-request/per-operation isolation while maintaining
+    /// state during a single field operation session.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 2 services to</param>
+    /// <remarks>
+    /// Wave 2 services provide core guidance line functionality:
+    /// - IABLineService: Straight AB line guidance with parallel line generation
+    /// - ICurveLineService: Curved path guidance with advanced smoothing algorithms
+    /// - IContourService: Real-time contour recording and following
+    ///
+    /// All services are optimized for 20-25 Hz operation and support metric/imperial units.
+    /// </remarks>
+    private static void AddWave2GuidanceServices(IServiceCollection services)
+    {
+        // AB Line Service - Provides straight line guidance, parallel line generation, and cross-track error calculation
+        services.AddScoped<IABLineService, ABLineService>();
+
+        // Curve Line Service - Provides curved path guidance with cubic spline smoothing using MathNet.Numerics
+        services.AddScoped<ICurveLineService, CurveLineService>();
+
+        // Contour Service - Provides real-time contour recording, locking, and guidance following
+        services.AddScoped<IContourService, ContourService>();
     }
 
     private static VehicleConfiguration CreateDefaultVehicleConfiguration()

@@ -2,7 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Repository Structure
+
+This repository contains TWO separate projects:
+
+1. **SourceCode/AgOpenGPS** - Legacy .NET Framework 4.8 Windows Forms application
+2. **AgValoniaGPS** - Modern .NET 8 Avalonia cross-platform rewrite
+
+**IMPORTANT**: When working on AgValoniaGPS project:
+- **ALWAYS** check `NAMING_CONVENTIONS.md` before creating new directories or services
+- **NEVER** name directories after class names in `AgValoniaGPS.Models`
+- This prevents namespace collisions when running parallel task delegation
+
+## Legacy Project: AgOpenGPS (.NET Framework 4.8)
+
 AgOpenGPS is a precision agriculture guidance software written in C# (.NET Framework 4.8) that provides GPS guidance, field mapping, and section control for agricultural equipment. The project consists of two main applications: AgIO (communication hub) and AgOpenGPS (main application).
 
 ## Build Commands
@@ -84,3 +97,114 @@ dotnet publish ./SourceCode/AgOpenGPS.sln
 - Uses Weblate for internationalization
 - Resource files (.resx) contain UI strings
 - Located in each project's Properties folder
+
+---
+
+## Modern Project: AgValoniaGPS (.NET 8 + Avalonia)
+
+AgValoniaGPS is a complete rewrite using modern .NET 8 and Avalonia UI for cross-platform support.
+
+### Build Commands (AgValoniaGPS)
+
+```bash
+# Build solution
+dotnet build AgValoniaGPS/AgValoniaGPS.sln
+
+# Run tests
+dotnet test AgValoniaGPS/AgValoniaGPS.Services.Tests/
+
+# Run application
+dotnet run --project AgValoniaGPS/AgValoniaGPS.Desktop/
+```
+
+### Architecture (AgValoniaGPS)
+
+**Project Structure:**
+```
+AgValoniaGPS/
+├── AgValoniaGPS.Models/          # Domain models, events, enums
+├── AgValoniaGPS.Services/        # Business logic services
+│   ├── GPS/                      # Position and GPS services
+│   ├── Guidance/                 # Guidance line services
+│   └── Vehicle/                  # Vehicle kinematics
+├── AgValoniaGPS.ViewModels/      # MVVM view models
+├── AgValoniaGPS.Desktop/         # Avalonia desktop application
+├── AgValoniaGPS.Services.Tests/  # Unit tests (xUnit + NUnit)
+└── AgValoniaGPS.Core/            # Core application logic
+```
+
+**Design Patterns:**
+- **MVVM**: Model-View-ViewModel pattern with Avalonia
+- **Dependency Injection**: Microsoft.Extensions.DependencyInjection
+- **Service Layer**: Services registered in `ServiceCollectionExtensions.cs`
+- **Event-Driven**: EventArgs pattern for service state changes
+
+### Critical Development Rules (AgValoniaGPS)
+
+⚠️ **BEFORE creating any new services or directories:**
+
+1. **Read `NAMING_CONVENTIONS.md`** - Contains reserved names and patterns
+2. **Check for namespace collisions** - Directory names must not match class names in Models
+3. **Use functional area names** - Organize by purpose (GPS, Guidance), not by domain objects
+4. **Follow service patterns** - All services end with "Service" suffix
+
+**Common Issues to Avoid:**
+- ❌ Creating `Position/` directory (conflicts with `Position` class)
+- ❌ Using generic names like `PositionService` (use `PositionUpdateService`)
+- ❌ Organizing by domain objects instead of functional areas
+
+### Service Organization (AgValoniaGPS)
+
+Services are organized by **functional area**:
+
+- **GPS/** - Position updates, GPS filtering
+- **Guidance/** - AB lines, curves, contours, file I/O
+- **Vehicle/** - Kinematics, configuration, steering
+
+**Adding New Services:**
+1. Choose functional area (or create new one per conventions)
+2. Implement service class with interface
+3. Register in `ServiceCollectionExtensions.cs`
+4. Add unit tests in corresponding test directory
+
+### Testing (AgValoniaGPS)
+
+- **Frameworks**: xUnit and NUnit (mixed - being standardized)
+- **Pattern**: AAA (Arrange, Act, Assert)
+- **Coverage**: All services must have comprehensive tests
+- **Performance**: Guidance calculations must meet <5ms requirements
+
+### Dependency Injection (AgValoniaGPS)
+
+Services are registered in `AgValoniaGPS.Desktop/DependencyInjection/ServiceCollectionExtensions.cs`:
+
+```csharp
+public static IServiceCollection AddAgValoniaGpsServices(this IServiceCollection services)
+{
+    // Position Services
+    services.AddSingleton<IPositionUpdateService, PositionUpdateService>();
+
+    // Guidance Services
+    services.AddSingleton<IABLineService, ABLineService>();
+    services.AddSingleton<ICurveLineService, CurveLineService>();
+
+    // Vehicle Services
+    services.AddSingleton<IVehicleKinematicsService, VehicleKinematicsService>();
+
+    return services;
+}
+```
+
+### Spec-Driven Development
+
+AgValoniaGPS follows a spec-driven development process:
+
+1. Specs are created in `agent-os/specs/` directory
+2. Each spec includes detailed requirements, test scenarios, and acceptance criteria
+3. Implementation is delegated to specialized agents in parallel
+4. Verification ensures 100% test pass rate before completion
+
+**Wave Progress:**
+- ✅ Wave 1: Position & Kinematics Services
+- ✅ Wave 2: Guidance Line Core (ABLine, Curve, Contour)
+- 🔄 Wave 3+: See `agent-os/specs/` for upcoming features

@@ -1,0 +1,30 @@
+task_assignments:
+  - task_group: "Task Group 1: Core Data Models"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 2: Event Infrastructure"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 3: AB Line Service Core"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: AB Line Advanced Operations"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 5: Curve Line Service Core"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 6: Curve Smoothing & Advanced Operations"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 7: Contour Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 8: Field Service Integration"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 9: Dependency Injection Registration"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 10: Test Review & Gap Analysis"
+    assigned_subagent: "testing-engineer"

@@ -400,9 +400,9 @@ public class NtripClientService : INtripClientService, IDisposable
                 if (gpsData != null && gpsData.IsValid)
                 {
                     ggaSentence = GenerateGgaSentence(
-                        gpsData.CurrentPosition.Latitude,
-                        gpsData.CurrentPosition.Longitude,
-                        gpsData.CurrentPosition.Altitude,
+                        gpsData.Latitude,
+                        gpsData.Longitude,
+                        gpsData.Altitude,
                         gpsData.FixQuality,
                         gpsData.SatellitesInUse);
                 }

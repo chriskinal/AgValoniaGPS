@@ -1,7 +1,7 @@
 using System;
-using AgOpenGPS.Core.Models;
+using AgValoniaGPS.Models;
 
-namespace AgValoniaGPS.Services.Position
+namespace AgValoniaGPS.Services.GPS
 {
     /// <summary>
     /// Processes GPS position updates and maintains position history at 10Hz update rate.

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AgValoniaGPS.Models.Guidance;
 
 namespace AgValoniaGPS.Models;
 

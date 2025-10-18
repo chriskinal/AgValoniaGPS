@@ -4,7 +4,7 @@ using ReactiveUI;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
-using AgValoniaGPS.Services.Position;
+using AgValoniaGPS.Services.GPS;
 using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
@@ -455,8 +455,8 @@ public class MainViewModel : ReactiveObject
 
     private void UpdateGpsProperties(GpsData data)
     {
-        Latitude = data.CurrentPosition.Latitude;
-        Longitude = data.CurrentPosition.Longitude;
+        Latitude = data.Latitude;
+        Longitude = data.Longitude;
         // Note: Speed is now updated from Position Service for better accuracy
         SatelliteCount = data.SatellitesInUse;
         FixQuality = GetFixQualityString(data.FixQuality);

@@ -78,14 +78,14 @@ public class NmeaParserService
             if (!string.IsNullOrEmpty(words[2]) && !string.IsNullOrEmpty(words[3]))
             {
                 double latitude = ParseLatitude(words[2], words[3]);
-                gpsData.CurrentPosition = gpsData.CurrentPosition with { Latitude = latitude };
+                gpsData.Latitude = latitude;
             }
 
             // Parse longitude
             if (!string.IsNullOrEmpty(words[4]) && !string.IsNullOrEmpty(words[5]))
             {
                 double longitude = ParseLongitude(words[4], words[5]);
-                gpsData.CurrentPosition = gpsData.CurrentPosition with { Longitude = longitude };
+                gpsData.Longitude = longitude;
             }
 
             // Fix quality
@@ -109,7 +109,7 @@ public class NmeaParserService
             // Altitude
             if (float.TryParse(words[9], NumberStyles.Float, CultureInfo.InvariantCulture, out float altitude))
             {
-                gpsData.CurrentPosition = gpsData.CurrentPosition with { Altitude = altitude };
+                gpsData.Altitude = altitude;
             }
 
             // Age of differential
@@ -122,13 +122,13 @@ public class NmeaParserService
             if (float.TryParse(words[11], NumberStyles.Float, CultureInfo.InvariantCulture, out float speedKnots))
             {
                 double speedMs = speedKnots * 0.514444; // knots to m/s
-                gpsData.CurrentPosition = gpsData.CurrentPosition with { Speed = speedMs };
+                gpsData.Speed = speedMs;
             }
 
             // Heading
             if (float.TryParse(words[12], NumberStyles.Float, CultureInfo.InvariantCulture, out float heading))
             {
-                gpsData.CurrentPosition = gpsData.CurrentPosition with { Heading = heading };
+                gpsData.Heading = heading;
             }
 
             gpsData.Timestamp = DateTime.Now;

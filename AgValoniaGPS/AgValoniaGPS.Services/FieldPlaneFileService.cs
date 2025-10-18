@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using AgValoniaGPS.Models;
+using PositionModel = AgValoniaGPS.Models.Position;
 
 namespace AgValoniaGPS.Services;
 
@@ -90,7 +91,7 @@ public class FieldPlaneFileService
                         if (double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double lat) &&
                             double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double lon))
                         {
-                            field.Origin = new Position
+                            field.Origin = new PositionModel
                             {
                                 Latitude = lat,
                                 Longitude = lon,
@@ -148,7 +149,7 @@ public class FieldPlaneFileService
     /// <summary>
     /// Create an empty Field.txt for a new field
     /// </summary>
-    public void CreateField(string fieldDirectory, Position originPosition)
+    public void CreateField(string fieldDirectory, PositionModel originPosition)
     {
         var field = new Field
         {

@@ -1,0 +1,80 @@
+# Updated section for tasks.md - Task Group 5
+
+#### Task Group 5: Curve Line Service Core
+**Assigned Implementer:** api-engineer
+**Dependencies:** Task Groups 1, 2
+**Estimated Effort:** 20 hours
+
+- [x] 5.0 Implement Curve Line Service
+  - [x] 5.1 Write 2-8 focused tests for Curve Line core functionality
+    - Test: StartRecording initializes recording state
+    - Test: AddPoint with minimum distance adds point
+    - Test: AddPoint within minimum distance skips point
+    - Test: FinishRecording creates CurveLine
+    - Test: CalculateGuidance on curve returns correct XTE
+    - Test: GetClosestPoint finds nearest curve point
+    - Limit to 6 critical tests maximum
+  - [x] 5.2 Create ICurveLineService interface
+    - Method: StartRecording(Position startPosition)
+    - Method: AddPoint(Position point, double minDistanceMeters)
+    - Method: FinishRecording(string name)
+    - Method: CalculateGuidance(Position currentPosition, double currentHeading, CurveLine curve, bool findGlobal = false)
+    - Method: GetClosestPoint(Position currentPosition, CurveLine curve, int searchStartIndex = -1)
+    - Method: GetHeadingAtPoint(Position point, CurveLine curve)
+    - Event: CurveChanged
+    - XML documentation with usage examples
+  - [x] 5.3 Implement CurveLineService class - Recording
+    - Implement StartRecording logic
+      - Initialize empty point list
+      - Store starting position
+      - Set recording state to true
+      - Emit CurveChanged event (Recorded)
+    - Implement AddPoint logic
+      - Calculate distance from last point
+      - If distance >= minDistanceMeters, add point
+      - If distance < minDistanceMeters, skip point
+      - Emit CurveChanged event on point added
+      - Handle first point special case
+    - Implement FinishRecording logic
+      - Validate sufficient points (>=3)
+      - Create CurveLine from recorded points
+      - Set recording state to false
+      - Return CurveLine
+      - Emit CurveChanged event (Recorded)
+  - [x] 5.4 Implement CurveLineService class - Guidance Calculations
+    - Implement GetClosestPoint logic (local search)
+      - Start from searchStartIndex (or 0 if -1)
+      - Search forward and backward from start index
+      - Use local optimization for performance
+      - Return closest position and index
+      - Optimize for sequential calls (vehicle moving along curve)
+    - Implement GetClosestPoint logic (global search)
+      - Search entire curve when findGlobal=true
+      - Use spatial indexing if point count > 1000
+      - Return globally closest position and index
+      - More expensive but accurate for initial approach
+    - Implement CalculateGuidance logic
+      - Find closest point (local or global based on flag)
+      - Calculate perpendicular distance to curve segment
+      - Calculate tangent heading at closest point
+      - Calculate heading error
+      - Return GuidanceLineResult
+      - Optimize for <5ms execution time
+    - Implement GetHeadingAtPoint logic
+      - Find two nearest curve points
+      - Calculate tangent vector between them
+      - Return heading in radians
+      - Handle curve endpoints (use direction to/from endpoint)
+  - [x] 5.5 Implement curve validation logic
+    - ValidateCurve(CurveLine curve) method
+    - Check: Minimum points (>=3)
+    - Check: Point spacing not too close (<0.1m)
+    - Check: Point spacing not too far (>100m)
+    - Check: No duplicate consecutive points
+    - Check: Curve smoothness (max heading change per segment)
+    - Return ValidationResult
+  - [x] 5.6 Ensure Curve Line core tests pass
+    - Run ONLY the 2-8 tests written in 5.1
+    - Verify closest point finding works
+    - Verify XTE calculation accuracy
+    - Do NOT run entire test suite at this stage

@@ -1,5 +1,8 @@
 using System;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Guidance;
+using PositionModel = AgValoniaGPS.Models.Position;
+using VehicleModel = AgValoniaGPS.Models.Vehicle;
 
 namespace AgValoniaGPS.Services.Interfaces;
 
@@ -31,7 +34,7 @@ public interface IGuidanceService
     /// <summary>
     /// Calculate guidance based on current position and active AB line
     /// </summary>
-    void CalculateGuidance(Position currentPosition, ABLine abLine, Vehicle vehicle);
+    void CalculateGuidance(PositionModel currentPosition, ABLine abLine, VehicleModel vehicle);
 
     /// <summary>
     /// Start guidance

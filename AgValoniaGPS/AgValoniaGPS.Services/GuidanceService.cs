@@ -1,6 +1,9 @@
 using System;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Guidance;
 using AgValoniaGPS.Services.Interfaces;
+using PositionModel = AgValoniaGPS.Models.Position;
+using VehicleModel = AgValoniaGPS.Models.Vehicle;
 
 namespace AgValoniaGPS.Services;
 
@@ -29,7 +32,7 @@ public class GuidanceService : IGuidanceService
         _vehicleConfig = vehicleConfig;
     }
 
-    public void CalculateGuidance(Position currentPosition, ABLine abLine, Vehicle vehicle)
+    public void CalculateGuidance(PositionModel currentPosition, ABLine abLine, VehicleModel vehicle)
     {
         if (!IsActive)
             return;

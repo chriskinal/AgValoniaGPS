@@ -1,10 +1,11 @@
 using System;
 using System.Threading;
-using AgOpenGPS.Core.Models;
-using AgValoniaGPS.Services.Position;
+using AgValoniaGPS.Models;
+using AgValoniaGPS.Services.GPS;
+using AgValoniaGPS.Services.Interfaces;
 using Xunit;
 
-namespace AgValoniaGPS.Services.Tests.Position
+namespace AgValoniaGPS.Services.Tests.GPS
 {
     /// <summary>
     /// Unit tests for PositionUpdateService covering core functionality:

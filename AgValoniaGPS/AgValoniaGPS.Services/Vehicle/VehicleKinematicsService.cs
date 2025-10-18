@@ -92,28 +92,29 @@ public class VehicleKinematicsService : IVehicleKinematicsService
         // If vehicle has moved, update tool heading based on hitch-to-tool vector
         if (distanceMoved > 0.0001) // Minimum movement threshold
         {
-            // Calculate new heading from reference to previous tool position
-            double toolHeading = Math.Atan2(
-                referencePosition.Easting - previousToolPosition.Easting,
-                referencePosition.Northing - previousToolPosition.Northing);
+            // Calculate heading direction from reference to previous tool position
+            double headingToTool = Math.Atan2(
+                previousToolPosition.Easting - referencePosition.Easting,
+                previousToolPosition.Northing - referencePosition.Northing);
 
-            if (toolHeading < 0) toolHeading += TwoPi;
+            if (headingToTool < 0) headingToTool += TwoPi;
 
-            // Check for jackknife condition
-            bool isJackknifed = IsJackknifed(toolHeading, referenceHeading, 1.9);
+            // Check for jackknife using PREVIOUS tool heading vs reference heading
+            bool isJackknifed = IsJackknifed(previousToolPosition.Heading, referenceHeading, 1.9);
 
             if (!isJackknifed)
             {
-                // Normal case: update tool position along calculated heading
-                double newEasting = referencePosition.Easting + (Math.Sin(toolHeading) * trailingHitchLength);
-                double newNorthing = referencePosition.Northing + (Math.Cos(toolHeading) * trailingHitchLength);
-                newToolPosition = new Position3D(newEasting, newNorthing, toolHeading);
+                // Normal case: update tool position along the line from reference to previous position
+                // Tool trails behind reference at the calculated heading
+                double newEasting = referencePosition.Easting + (Math.Sin(headingToTool) * trailingHitchLength);
+                double newNorthing = referencePosition.Northing + (Math.Cos(headingToTool) * trailingHitchLength);
+                newToolPosition = new Position3D(newEasting, newNorthing, headingToTool);
             }
             else
             {
-                // Jackknifed: force tool to align behind vehicle/tank
-                double newEasting = referencePosition.Easting + (Math.Sin(referenceHeading) * trailingHitchLength);
-                double newNorthing = referencePosition.Northing + (Math.Cos(referenceHeading) * trailingHitchLength);
+                // Jackknifed: force tool to align behind vehicle/tank at reference heading
+                double newEasting = referencePosition.Easting - (Math.Sin(referenceHeading) * trailingHitchLength);
+                double newNorthing = referencePosition.Northing - (Math.Cos(referenceHeading) * trailingHitchLength);
                 newToolPosition = new Position3D(newEasting, newNorthing, referenceHeading);
             }
         }
@@ -139,28 +140,29 @@ public class VehicleKinematicsService : IVehicleKinematicsService
 
         if (distanceMoved > 0.0001) // Minimum movement threshold
         {
-            // Calculate new heading from hitch to previous tank position
-            double tankHeading = Math.Atan2(
-                currentHitchPosition.Easting - previousTankPosition.Easting,
-                currentHitchPosition.Northing - previousTankPosition.Northing);
+            // Calculate heading direction from hitch to previous tank position
+            double headingToTank = Math.Atan2(
+                previousTankPosition.Easting - currentHitchPosition.Easting,
+                previousTankPosition.Northing - currentHitchPosition.Northing);
 
-            if (tankHeading < 0) tankHeading += TwoPi;
+            if (headingToTank < 0) headingToTank += TwoPi;
 
-            // Check for jackknife condition (tank uses 2.0 radians threshold)
-            bool isJackknifed = IsJackknifed(tankHeading, vehicleHeading, 2.0);
+            // Check for jackknife using PREVIOUS tank heading vs vehicle heading
+            bool isJackknifed = IsJackknifed(previousTankPosition.Heading, vehicleHeading, 2.0);
 
             if (!isJackknifed)
             {
-                // Normal case: update tank position
-                double newEasting = currentHitchPosition.Easting + (Math.Sin(tankHeading) * tankTrailingHitchLength);
-                double newNorthing = currentHitchPosition.Northing + (Math.Cos(tankHeading) * tankTrailingHitchLength);
-                newTankPosition = new Position3D(newEasting, newNorthing, tankHeading);
+                // Normal case: update tank position along the line from hitch to previous position
+                // Tank trails behind hitch at the calculated heading
+                double newEasting = currentHitchPosition.Easting + (Math.Sin(headingToTank) * tankTrailingHitchLength);
+                double newNorthing = currentHitchPosition.Northing + (Math.Cos(headingToTank) * tankTrailingHitchLength);
+                newTankPosition = new Position3D(newEasting, newNorthing, headingToTank);
             }
             else
             {
-                // Jackknifed: force tank to align behind vehicle
-                double newEasting = currentHitchPosition.Easting + (Math.Sin(vehicleHeading) * tankTrailingHitchLength);
-                double newNorthing = currentHitchPosition.Northing + (Math.Cos(vehicleHeading) * tankTrailingHitchLength);
+                // Jackknifed: force tank to align behind vehicle at vehicle heading
+                double newEasting = currentHitchPosition.Easting - (Math.Sin(vehicleHeading) * tankTrailingHitchLength);
+                double newNorthing = currentHitchPosition.Northing - (Math.Cos(vehicleHeading) * tankTrailingHitchLength);
                 newTankPosition = new Position3D(newEasting, newNorthing, vehicleHeading);
             }
         }
@@ -191,12 +193,14 @@ public class VehicleKinematicsService : IVehicleKinematicsService
             tankHeading,
             null); // No tank reference for tool-from-tank calculation
 
-        // Then calculate working position from tool pivot
-        // Tool working position is offset from pivot point
+        // Then calculate working position from tank toward tool pivot
+        // Working position is between tank and pivot (offset is less than full trail length)
+        // Calculate in the direction of the tool pivot
+        double offsetDistance = trailingHitchLength - toolToPivotLength;
         double workingEasting = currentTankPosition.Easting +
-            (Math.Sin(toolPivot.Heading) * (trailingHitchLength - toolToPivotLength));
+            (Math.Sin(toolPivot.Heading) * offsetDistance);
         double workingNorthing = currentTankPosition.Northing +
-            (Math.Cos(toolPivot.Heading) * (trailingHitchLength - toolToPivotLength));
+            (Math.Cos(toolPivot.Heading) * offsetDistance);
 
         Position3D toolWorkingPosition = new Position3D(workingEasting, workingNorthing, toolPivot.Heading);
 
@@ -210,7 +214,12 @@ public class VehicleKinematicsService : IVehicleKinematicsService
         // This handles the 0/2π wraparound correctly
         double angleDifference = Math.Abs(Pi - Math.Abs(Math.Abs(implementHeading - referenceHeading) - Pi));
 
-        return angleDifference > jackknifThreshold;
+        // Safety check: perpendicular (near 90°) is always jackknifed regardless of threshold
+        // This prevents dangerous sideways implement configurations
+        const double perpendicularTolerance = 0.17; // ~10 degrees tolerance around 90° (80-100°)
+        bool isPerpendicular = Math.Abs(angleDifference - (Pi / 2.0)) < perpendicularTolerance;
+
+        return angleDifference > jackknifThreshold || isPerpendicular;
     }
 
     /// <inheritdoc/>
