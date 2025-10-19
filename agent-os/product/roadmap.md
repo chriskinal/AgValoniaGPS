@@ -61,12 +61,12 @@ This roadmap outlines the continued development of AgValoniaGPS, building upon t
 #### Deliverables
 - [ ] AB line creation and editing UI
 - [ ] Curve line creation and following
-- [ ] Complete section control implementation
+- [x] Complete section control implementation
 - [ ] Guidance loop closure (steering commands)
 - [ ] AgShare API client integration
 - [ ] Field upload/download to AgShare
 - [ ] Configuration persistence (settings)
-- [ ] Unit test coverage for services
+- [x] Unit test coverage for services
 
 #### Success Criteria
 - All guidance modes functional

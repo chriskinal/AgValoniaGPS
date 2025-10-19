@@ -1,0 +1,27 @@
+1 - Both modes.
+2 - Allow the user to configure auto or manual mode.
+3 - I think a single reusable service to enhance code maintainability.
+4 - No, those sound right.
+5 - Support both file formats.
+6 - Single structure.
+7 - Make this a user selectable setting.
+8 - Allow nudging of entry points.
+9 - Track completed sections.
+10 - Add T and Y turns.
+11 - Allow user override of automatically calculated value.
+12 - Calculated with a user configuable override.
+13 - Automatically pause.
+14 - integrate with SteeringCoordinatorService.
+15 - Yes.
+16 - Real-time update.
+17 - Spatial indexing.
+18 - Allow the user to configure using 1 or both methods.
+19 - Generate as needed.
+20 - All listed edge cases are important to a functional Ag guidance system.
+21 - Yes, add performance benchmarks.
+22 - Nothing is out of scope.
+23 - A - I don’t have an example.
+	B - Existing AgValonia POC has file I/O operations example.
+	C - I would think they are in the AgValonia code folder.
+	D  - Yes, integrate with positionupdateservice.
+24 - Yes.

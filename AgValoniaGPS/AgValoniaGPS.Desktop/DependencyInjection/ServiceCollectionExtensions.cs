@@ -4,6 +4,7 @@ using AgValoniaGPS.Services.Interfaces;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Vehicle;
 using AgValoniaGPS.Services.Guidance;
+using AgValoniaGPS.Services.Section;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.Models;
 
@@ -15,7 +16,7 @@ namespace AgValoniaGPS.Desktop.DependencyInjection;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics) and Wave 2 (Guidance Line Core) services.
+    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics), Wave 2 (Guidance Line Core), Wave 3 (Steering Algorithms), and Wave 4 (Section Control) services.
     /// </summary>
     /// <param name="services">The service collection to add services to</param>
     /// <returns>The service collection for method chaining</returns>
@@ -42,6 +43,12 @@ public static class ServiceCollectionExtensions
 
         // Wave 2: Guidance Line Core Services
         AddWave2GuidanceServices(services);
+
+        // Wave 3: Steering Algorithms
+        AddWave3SteeringServices(services);
+
+        // Wave 4: Section Control Services
+        AddWave4SectionControlServices(services);
 
         return services;
     }
@@ -70,6 +77,68 @@ public static class ServiceCollectionExtensions
 
         // Contour Service - Provides real-time contour recording, locking, and guidance following
         services.AddScoped<IContourService, ContourService>();
+    }
+
+    /// <summary>
+    /// Registers Wave 3 steering algorithm services (Look-Ahead Distance, Stanley, Pure Pursuit, and Steering Coordinator) with Singleton lifetime.
+    /// These services are registered as Singleton for optimal performance in the 100Hz guidance loop.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 3 services to</param>
+    /// <remarks>
+    /// Wave 3 services provide steering control algorithms:
+    /// - ILookAheadDistanceService: Adaptive look-ahead distance calculation based on speed, cross-track error, and curvature
+    /// - IStanleySteeringService: Stanley steering algorithm (cross-track error + heading error based)
+    /// - IPurePursuitService: Pure Pursuit steering algorithm (look-ahead point based)
+    /// - ISteeringCoordinatorService: Coordinates between algorithms, manages PGN output, and handles real-time algorithm switching
+    ///
+    /// All services are thread-safe, optimized for 100Hz operation, and include integral control for steady-state error elimination.
+    /// </remarks>
+    private static void AddWave3SteeringServices(IServiceCollection services)
+    {
+        // Look-Ahead Distance Service - Provides adaptive look-ahead distance calculation
+        services.AddSingleton<ILookAheadDistanceService, LookAheadDistanceService>();
+
+        // Stanley Steering Service - Stanley algorithm implementation with integral control
+        services.AddSingleton<IStanleySteeringService, StanleySteeringService>();
+
+        // Pure Pursuit Service - Pure Pursuit algorithm implementation with goal point calculation
+        services.AddSingleton<IPurePursuitService, PurePursuitService>();
+
+        // Steering Coordinator Service - Algorithm coordinator with PGN output and real-time algorithm switching
+        services.AddSingleton<ISteeringCoordinatorService, SteeringCoordinatorService>();
+    }
+
+    /// <summary>
+    /// Registers Wave 4 section control services with Singleton lifetime.
+    /// These services are registered as Singleton for optimal performance and state management.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 4 services to</param>
+    /// <remarks>
+    /// Wave 4 services provide section control functionality:
+    /// - IAnalogSwitchStateService: Manages work/steer/lock switch states
+    /// - ISectionConfigurationService: Validates and manages section configuration
+    /// - ICoverageMapService: Triangle strip tracking with overlap detection
+    /// - ISectionSpeedService: Calculates individual section speeds during turns
+    /// - ISectionControlService: State machine for section on/off control
+    /// - ISectionControlFileService: Read/write SectionConfig.txt
+    /// - ICoverageMapFileService: Read/write Coverage.txt
+    ///
+    /// All services are thread-safe and optimized for <10ms total loop time.
+    /// </remarks>
+    private static void AddWave4SectionControlServices(IServiceCollection services)
+    {
+        // Leaf Services (no service dependencies)
+        services.AddSingleton<IAnalogSwitchStateService, AnalogSwitchStateService>();
+        services.AddSingleton<ISectionConfigurationService, SectionConfigurationService>();
+        services.AddSingleton<ICoverageMapService, CoverageMapService>();
+
+        // Dependent Services (require leaf services)
+        services.AddSingleton<ISectionSpeedService, SectionSpeedService>();
+        services.AddSingleton<ISectionControlService, SectionControlService>();
+
+        // File I/O Services
+        services.AddSingleton<ISectionControlFileService, SectionControlFileService>();
+        services.AddSingleton<ICoverageMapFileService, CoverageMapFileService>();
     }
 
     private static VehicleConfiguration CreateDefaultVehicleConfiguration()

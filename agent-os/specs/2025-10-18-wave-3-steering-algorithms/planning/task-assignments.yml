@@ -1,0 +1,15 @@
+task_assignments:
+  - task_group: "Task Group 1: Look-Ahead Distance Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 2: Stanley Steering Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 3: Pure Pursuit Steering Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: Steering Coordinator & PGN Output"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 5: Integration Testing & Performance Validation"
+    assigned_subagent: "testing-engineer"

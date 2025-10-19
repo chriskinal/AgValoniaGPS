@@ -1,0 +1,15 @@
+task_assignments:
+  - task_group: "Task Group 1: Foundation Models and Enums"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 2: Core Services (Leaf Services - No Dependencies)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 3: Dependent Services (Section Speed & Control)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: File I/O Services"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 5: Comprehensive Testing & Integration"
+    assigned_subagent: "testing-engineer"
