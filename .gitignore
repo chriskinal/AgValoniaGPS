@@ -489,3 +489,6 @@ $RECYCLE.BIN/
 
 # Backup files
 *.bak
+
+# Android project (deferred until Waves 1-8 complete on desktop platforms)
+AgValoniaGPS/AgValoniaGPS.Android/
