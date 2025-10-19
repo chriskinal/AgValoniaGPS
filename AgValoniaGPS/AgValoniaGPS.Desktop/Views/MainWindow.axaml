@@ -148,9 +148,8 @@
         </Border>
 
         <!-- Draggable Section Control (using Canvas for absolute positioning) -->
-        <Canvas>
+        <Canvas ZIndex="10">
         <Border x:Name="SectionControlPanel"
-                ZIndex="10"
                 Canvas.Left="900" Canvas.Top="600"
                 Classes="FloatingPanel"
                 Cursor="Hand"

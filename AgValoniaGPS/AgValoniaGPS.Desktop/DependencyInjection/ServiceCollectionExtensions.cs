@@ -5,6 +5,7 @@ using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Vehicle;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.Services.Section;
+using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.Models;
 
@@ -16,7 +17,7 @@ namespace AgValoniaGPS.Desktop.DependencyInjection;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics), Wave 2 (Guidance Line Core), Wave 3 (Steering Algorithms), and Wave 4 (Section Control) services.
+    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics), Wave 2 (Guidance Line Core), Wave 3 (Steering Algorithms), Wave 4 (Section Control), and Wave 5 (Field Operations) services.
     /// </summary>
     /// <param name="services">The service collection to add services to</param>
     /// <returns>The service collection for method chaining</returns>
@@ -49,6 +50,9 @@ public static class ServiceCollectionExtensions
 
         // Wave 4: Section Control Services
         AddWave4SectionControlServices(services);
+
+        // Wave 5: Field Operations Services
+        AddWave5FieldOperationsServices(services);
 
         return services;
     }
@@ -139,6 +143,51 @@ public static class ServiceCollectionExtensions
         // File I/O Services
         services.AddSingleton<ISectionControlFileService, SectionControlFileService>();
         services.AddSingleton<ICoverageMapFileService, CoverageMapFileService>();
+    }
+
+    /// <summary>
+    /// Registers Wave 5 field operations services with Singleton lifetime.
+    /// These services are registered as Singleton for optimal performance and thread-safe access.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 5 services to</param>
+    /// <remarks>
+    /// Wave 5 services provide field operations functionality:
+    /// - IPointInPolygonService: Ray-casting algorithm for point containment checks with R-tree spatial indexing
+    /// - IBoundaryManagementService: Boundary loading, validation, simplification, and violation detection
+    /// - IBoundaryFileService: Multi-format boundary file I/O (AgOpenGPS .txt, GeoJSON, KML)
+    /// - IHeadlandService: Headland generation, tracking, and real-time entry/exit detection
+    /// - IHeadlandFileService: Multi-format headland file I/O (AgOpenGPS .txt, GeoJSON, KML)
+    /// - IUTurnService: U-turn path generation and execution with automatic section pause/resume
+    /// - ITramLineService: Tram line generation, proximity detection, and pattern management
+    /// - ITramLineFileService: Multi-format tram line file I/O (AgOpenGPS .txt, GeoJSON, KML)
+    ///
+    /// All services are thread-safe and optimized for real-time field operations.
+    /// </remarks>
+    private static void AddWave5FieldOperationsServices(IServiceCollection services)
+    {
+        // Point-in-Polygon Service - Foundation service for geometric containment checks
+        services.AddSingleton<IPointInPolygonService, PointInPolygonService>();
+
+        // Boundary Management Service - Boundary loading, validation, simplification, and violation detection
+        services.AddSingleton<IBoundaryManagementService, BoundaryManagementService>();
+
+        // Boundary File Service - Multi-format boundary file I/O
+        services.AddSingleton<IBoundaryFileService, BoundaryFileService>();
+
+        // Headland Service - Headland generation and real-time tracking
+        services.AddSingleton<IHeadlandService, HeadlandService>();
+
+        // Headland File Service - Multi-format headland file I/O
+        services.AddSingleton<IHeadlandFileService, HeadlandFileService>();
+
+        // U-Turn Service - Turn path generation and execution
+        services.AddSingleton<IUTurnService, UTurnService>();
+
+        // Tram Line Service - Tram line generation and proximity detection
+        services.AddSingleton<ITramLineService, TramLineService>();
+
+        // Tram Line File Service - Multi-format tram line file I/O
+        services.AddSingleton<ITramLineFileService, TramLineFileService>();
     }
 
     private static VehicleConfiguration CreateDefaultVehicleConfiguration()

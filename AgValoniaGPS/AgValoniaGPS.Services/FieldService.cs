@@ -5,6 +5,7 @@ using System.Linq;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Guidance;
 using AgValoniaGPS.Services.Guidance;
+using AgValoniaGPS.Services.FieldOperations;
 using PositionModel = AgValoniaGPS.Models.Position;
 
 namespace AgValoniaGPS.Services;
@@ -17,7 +18,7 @@ namespace AgValoniaGPS.Services;
 public class FieldService : IFieldService
 {
     private readonly FieldPlaneFileService _fieldPlaneService;
-    private readonly BoundaryFileService _boundaryService;
+    private readonly IBoundaryFileService _boundaryService;
     private readonly BackgroundImageFileService _backgroundImageService;
     private readonly ABLineFileService _abLineService;
     private readonly CurveLineFileService _curveLineService;
@@ -60,7 +61,25 @@ public class FieldService : IFieldService
     public Field LoadField(string fieldDirectory)
     {
         var field = _fieldPlaneService.LoadField(fieldDirectory);
-        field.Boundary = _boundaryService.LoadBoundary(fieldDirectory);
+
+        // Load boundary from AgOpenGPS format
+        var boundaryPath = Path.Combine(fieldDirectory, "Boundary.txt");
+        var boundaryPositions = _boundaryService.LoadFromAgOpenGPS(boundaryPath);
+        if (boundaryPositions.Length > 0)
+        {
+            // Convert Position[] to BoundaryPolygon
+            var outerBoundary = new BoundaryPolygon
+            {
+                Points = boundaryPositions.Select(p => new BoundaryPoint(p.Easting, p.Northing, p.Heading)).ToList()
+            };
+
+            field.Boundary = new Boundary
+            {
+                OuterBoundary = outerBoundary,
+                IsActive = true
+            };
+        }
+
         field.BackgroundImage = _backgroundImageService.LoadBackgroundImage(fieldDirectory);
         return field;
     }
@@ -77,9 +96,18 @@ public class FieldService : IFieldService
 
         _fieldPlaneService.SaveField(field, field.DirectoryPath);
 
-        if (field.Boundary != null)
+        if (field.Boundary != null && field.Boundary.OuterBoundary != null && field.Boundary.OuterBoundary.Points.Count > 0)
         {
-            _boundaryService.SaveBoundary(field.Boundary, field.DirectoryPath);
+            // Convert BoundaryPolygon to Position[]
+            var positions = field.Boundary.OuterBoundary.Points.Select(p => new Position
+            {
+                Easting = p.Easting,
+                Northing = p.Northing,
+                Heading = p.Heading
+            }).ToArray();
+
+            var boundaryPath = Path.Combine(field.DirectoryPath, "Boundary.txt");
+            _boundaryService.SaveToAgOpenGPS(positions, boundaryPath);
         }
 
         if (field.BackgroundImage != null)
@@ -112,7 +140,8 @@ public class FieldService : IFieldService
         };
 
         // Create empty boundary file
-        _boundaryService.CreateEmptyBoundary(fieldDirectory);
+        var boundaryPath = Path.Combine(fieldDirectory, "Boundary.txt");
+        _boundaryService.SaveToAgOpenGPS(Array.Empty<Position>(), boundaryPath);
 
         // Save field metadata
         _fieldPlaneService.SaveField(field, fieldDirectory);

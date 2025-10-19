@@ -1,0 +1,79 @@
+# Wave 5: Field Operations - Task Assignments
+# Generated: 2025-10-19
+# Strategy: Sequential foundation (Group 1) → Parallel core services (Groups 2-5) → Final integration (Group 6)
+
+task_assignments:
+  # SEQUENTIAL: Foundation must complete first
+  - task_group: "Task Group 1: Point-in-Polygon Service (Foundation)"
+    assigned_subagent: "api-engineer"
+    verified_by: "backend-verifier"
+    duration_estimate: "3-4 hours"
+    dependencies: []
+    notes: "Foundation service required by all subsequent groups. Must complete before parallel execution."
+
+  # PARALLEL BATCH 1: Boundary and Headland (can run concurrently after Group 1)
+  - task_group: "Task Group 2: Boundary Management Service"
+    assigned_subagent: "api-engineer"
+    verified_by: "backend-verifier"
+    duration_estimate: "5-6 hours"
+    dependencies: ["Task Group 1"]
+    parallel_group: "batch_1"
+    notes: "Depends on PointInPolygonService. Can run parallel with Group 3."
+
+  - task_group: "Task Group 3: Headland Service"
+    assigned_subagent: "api-engineer"
+    verified_by: "backend-verifier"
+    duration_estimate: "4-5 hours"
+    dependencies: ["Task Group 1", "Task Group 2"]
+    parallel_group: "batch_1"
+    notes: "Depends on PointInPolygonService and BoundaryManagementService. Can run parallel with Group 2."
+
+  # PARALLEL BATCH 2: U-Turn and TramLine (can run concurrently after Batch 1)
+  - task_group: "Task Group 4: U-Turn Service"
+    assigned_subagent: "api-engineer"
+    verified_by: "backend-verifier"
+    duration_estimate: "5-6 hours"
+    dependencies: ["Task Group 2", "Task Group 3"]
+    parallel_group: "batch_2"
+    notes: "Depends on BoundaryManagementService and HeadlandService. Can run parallel with Group 5."
+
+  - task_group: "Task Group 5: Tram Line Service"
+    assigned_subagent: "api-engineer"
+    verified_by: "backend-verifier"
+    duration_estimate: "3-4 hours"
+    dependencies: ["Task Group 2"]
+    parallel_group: "batch_2"
+    notes: "Depends on BoundaryManagementService for boundary awareness. Can run parallel with Group 4."
+
+  # SEQUENTIAL: Integration must complete last
+  - task_group: "Task Group 6: Integration Testing & Performance Validation"
+    assigned_subagent: "testing-engineer"
+    verified_by: "backend-verifier"
+    duration_estimate: "4-5 hours"
+    dependencies: ["Task Group 1", "Task Group 2", "Task Group 3", "Task Group 4", "Task Group 5"]
+    notes: "Final integration tests. Requires all services complete. Includes performance benchmarking."
+
+execution_strategy:
+  phase_1:
+    name: "Foundation"
+    groups: [1]
+    execution: "sequential"
+
+  phase_2:
+    name: "Core Services - Batch 1"
+    groups: [2, 3]
+    execution: "parallel"
+
+  phase_3:
+    name: "Core Services - Batch 2"
+    groups: [4, 5]
+    execution: "parallel"
+
+  phase_4:
+    name: "Integration & Validation"
+    groups: [6]
+    execution: "sequential"
+
+total_estimated_duration: "24-30 hours"
+total_task_groups: 6
+parallelization_potential: "High (4 of 6 groups can run in parallel batches)"
