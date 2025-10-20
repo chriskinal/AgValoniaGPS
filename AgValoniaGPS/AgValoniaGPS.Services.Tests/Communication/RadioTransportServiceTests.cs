@@ -101,7 +101,8 @@ namespace AgValoniaGPS.Services.Tests.Communication
             // Arrange
             var transport = new RadioTransportService(ModuleType.AutoSteer);
             transport.RadioType = RadioType.LoRa;
-            // Don't configure frequency - should cause validation error
+            // Set invalid frequency to trigger validation error
+            transport.Frequency = 0;
 
             // Act & Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () => await transport.StartAsync(),

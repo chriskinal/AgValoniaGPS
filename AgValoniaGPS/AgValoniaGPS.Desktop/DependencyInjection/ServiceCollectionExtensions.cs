@@ -8,6 +8,13 @@ using AgValoniaGPS.Services.Section;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.Display;
+using AgValoniaGPS.Services.Configuration;
+using AgValoniaGPS.Services.Validation;
+using AgValoniaGPS.Services.Session;
+using AgValoniaGPS.Services.Profile;
+using AgValoniaGPS.Services.StateManagement;
+using AgValoniaGPS.Services.UndoRedo;
+using AgValoniaGPS.Services.Setup;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.Models;
 
@@ -21,7 +28,7 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics), Wave 2 (Guidance Line Core),
     /// Wave 3 (Steering Algorithms), Wave 4 (Section Control), Wave 5 (Field Operations), Wave 6 (Hardware I/O Communication),
-    /// and Wave 7 (Display & Visualization) services.
+    /// Wave 7 (Display & Visualization), and Wave 8 (State Management) services.
     /// </summary>
     /// <param name="services">The service collection to add services to</param>
     /// <returns>The service collection for method chaining</returns>
@@ -62,6 +69,9 @@ public static class ServiceCollectionExtensions
 
         // Wave 7: Display & Visualization Services
         AddWave7DisplayServices(services);
+
+        // Wave 8: State Management Services
+        AddWave8StateManagementServices(services);
 
         return services;
     }
@@ -264,6 +274,72 @@ public static class ServiceCollectionExtensions
         // Provides area calculations, work rate, efficiency metrics, and rotating display data
         // Integrates with DisplayFormatterService for consistent formatting
         services.AddSingleton<IFieldStatisticsService, FieldStatisticsService>();
+    }
+
+    /// <summary>
+    /// Registers Wave 8 state management services with Singleton lifetime.
+    /// These services are registered as Singleton for application-wide state coordination.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 8 services to</param>
+    /// <remarks>
+    /// Wave 8 services provide state management functionality:
+    /// - IConfigurationService: Centralized configuration management with dual-format persistence (JSON/XML)
+    /// - IValidationService: Comprehensive validation for all settings categories with range and cross-setting checks
+    /// - ISessionManagementService: Session state tracking with crash recovery capabilities
+    /// - IProfileManagementService: Multi-vehicle and multi-user profile management with runtime switching
+    /// - IStateMediatorService: Mediator pattern for coordinating state changes across services
+    /// - IUndoRedoService: Command pattern for undo/redo of user actions (boundaries, guidance lines)
+    /// - ISetupWizardService: First-time setup wizard with default configuration generation
+    ///
+    /// All services are thread-safe and optimized for application lifecycle management.
+    /// Integrates with all Wave 1-7 services for configuration and state coordination.
+    /// </remarks>
+    private static void AddWave8StateManagementServices(IServiceCollection services)
+    {
+        // Configuration Service - Single source of truth for all application settings
+        // Dual-format persistence (JSON primary, XML legacy) with atomic dual-write
+        // Performance: <100ms load, <1ms get, thread-safe concurrent access
+        services.AddSingleton<IConfigurationService, ConfigurationService>();
+
+        // Validation Service - Comprehensive settings validation
+        // Range validation, cross-setting dependencies, constraint checking
+        // Performance: <10ms full validation, <5ms single category
+        services.AddSingleton<IValidationService, ValidationService>();
+
+        // Crash Recovery Service - Periodic snapshots for crash recovery
+        // Saves session state every 30 seconds for recovery after unexpected shutdown
+        // Performance: <500ms save, <200ms restore
+        services.AddSingleton<ICrashRecoveryService, CrashRecoveryService>();
+
+        // Session Management Service - Session state with crash recovery
+        // Periodic snapshots (30 seconds), crash recovery restore, session lifecycle
+        // Performance: <500ms snapshot save, <200ms restore
+        services.AddSingleton<ISessionManagementService, SessionManagementService>();
+
+        // Profile Providers - File-based profile storage
+        // Separate providers for vehicle and user profiles
+        services.AddSingleton<IProfileProvider<AgValoniaGPS.Models.Profile.VehicleProfile>, VehicleProfileProvider>();
+        services.AddSingleton<IProfileProvider<AgValoniaGPS.Models.Profile.UserProfile>, UserProfileProvider>();
+
+        // Profile Management Service - Multi-profile support
+        // Vehicle and user profiles, runtime switching, CRUD operations
+        // Performance: <200ms profile switch, <100ms profile load
+        services.AddSingleton<IProfileManagementService, ProfileManagementService>();
+
+        // State Mediator Service - Cross-service coordination
+        // Broadcasts state changes to registered services, mediator pattern
+        // Performance: <10ms notification cycle, weak references for memory safety
+        services.AddSingleton<IStateMediatorService, StateMediatorService>();
+
+        // Undo/Redo Service - Command pattern for user actions
+        // Stack-based undo/redo, command execution and reversal
+        // Performance: <50ms per operation, separate undo/redo stacks
+        services.AddSingleton<IUndoRedoService, UndoRedoService>();
+
+        // Setup Wizard Service - First-time setup
+        // Guided wizard or quick defaults, profile creation, default settings
+        // Checks for existing profiles to determine first-time setup
+        services.AddSingleton<ISetupWizardService, SetupWizardService>();
     }
 
     private static VehicleConfiguration CreateDefaultVehicleConfiguration()

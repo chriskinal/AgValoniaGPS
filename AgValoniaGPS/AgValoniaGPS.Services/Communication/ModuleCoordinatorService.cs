@@ -252,9 +252,23 @@ public class ModuleCoordinatorService : IModuleCoordinatorService, IDisposable
     /// </summary>
     private void OnTransportStateChanged(object? sender, TransportStateChangedEventArgs e)
     {
-        // Transport layer disconnection - reset module state
-        if (!e.IsConnected)
+        if (e.IsConnected)
         {
+            // Transport layer connection - transition to Connecting state
+            lock (_stateLock)
+            {
+                if (_moduleStates.TryGetValue(e.Module, out var moduleState))
+                {
+                    if (moduleState.State == ModuleState.Disconnected)
+                    {
+                        moduleState.State = ModuleState.Connecting;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Transport layer disconnection - reset module state
             ResetModule(e.Module);
         }
     }

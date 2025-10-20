@@ -16,7 +16,7 @@ public class MainViewModel : ReactiveObject
     private readonly IFieldService _fieldService;
     private readonly IGuidanceService _guidanceService;
     private readonly INtripClientService _ntripService;
-    private readonly FieldStatisticsService _fieldStatistics;
+    private readonly IFieldStatisticsService _fieldStatistics;
     private readonly VehicleConfiguration _vehicleConfig;
     private readonly NmeaParserService _nmeaParser;
 
@@ -59,7 +59,7 @@ public class MainViewModel : ReactiveObject
         IFieldService fieldService,
         IGuidanceService guidanceService,
         INtripClientService ntripService,
-        FieldStatisticsService fieldStatistics,
+        IFieldStatisticsService fieldStatistics,
         VehicleConfiguration vehicleConfig,
         IPositionUpdateService positionService,
         IHeadingCalculatorService headingService)
@@ -590,7 +590,7 @@ public class MainViewModel : ReactiveObject
 
     // AOG_Dev services - expose for UI/control access
     public VehicleConfiguration VehicleConfig => _vehicleConfig;
-    public FieldStatisticsService FieldStatistics => _fieldStatistics;
+    public IFieldStatisticsService FieldStatistics => _fieldStatistics;
 
     // Field statistics properties for UI binding
     public string WorkedAreaDisplay => _fieldStatistics.FormatArea(_fieldStatistics.WorkedAreaSquareMeters);
