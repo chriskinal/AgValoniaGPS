@@ -1,0 +1,51 @@
+ Multi-Transport Architecture
+
+  1. Bluetooth Transport Architecture
+  - Should Bluetooth use the same PGN message format as UDP (just over different transport)? Yes.
+  - What Bluetooth profile: Classic Bluetooth SPP (Serial Port Profile) or BLE (Bluetooth Low Energy)? Both - user selectable.
+  - Is Bluetooth for module communication (AutoSteer, Machine, IMU) or connecting to mobile devices/tablets? Mobile device.
+  - Should there be automatic fallback between transports (e.g., UDP fails → try Bluetooth)? No.
+
+  2. CAN Bus Integration
+  - Is CAN bus for reading tractor data (speed, RPM, implement position) or sending commands, or both? Both.
+  - Should we support standard protocols like ISOBUS/ISO 11783, or custom CAN message formats? Yes.
+  - Will CAN run alongside UDP (hybrid mode) or replace UDP in CAN-equipped tractors? Hybrid mode.
+  - Do you have specific CAN hardware in mind (e.g., CAN-to-USB adapters, Teensy with CAN transceiver)? USB can adapters like PCAN.
+
+  3. Radio Module Communication
+  - Are you referring to LoRa modules for long-range field communication? Yes.
+  - Or traditional radio modems (like 900MHz spread spectrum)? Yes.
+  - Or WiFi modules as a radio alternative to Ethernet? Yes.
+  - What's the expected range and data rate? 1 mile, 200kbps.
+  - Should radio be for base station ↔ vehicle, or vehicle ↔ vehicle? Both.
+
+  ---
+  Extensible Protocol Design
+
+  4. Protocol Version & Backward Compatibility
+  - Should new PGN numbers be reserved for "v2" features, keeping existing PGNs unchanged? Yes.
+  - Do you want capability negotiation (module announces supported features during handshake)? Yes.
+  - Should there be a version field in hello packets to detect module firmware versions? Yes.
+  - How should we handle mixed environments (old AutoSteer module + new Machine module)? They are on the same board in most cases.
+
+  5. Module Initialization & Handshake
+  - Should modules send configuration data during initialization (firmware version, capabilities, supported PGNs)? No. PGN only is fine.
+  - Do you want a formal "ready" state before sending commands? Yes.
+  - Should there be a configurable initialization sequence (AutoSteer first → Machine → IMU)? Lazy initialization is fine.
+
+  ---
+  Implementation Details
+
+  6. Hardware Simulator Requirements
+  You mentioned having a live hardware board. For the simulator:
+  - Should it support all 3 modules (AutoSteer, Machine, IMU) in one process? Yes.
+  - Do you want a GUI to manually adjust values (steer angle, roll, work switch)? Yes but GUI is part of later UI work.
+  - Or should it be scriptable for automated integration tests? Yes.
+  - Should it simulate realistic behaviors (gradual steer changes, IMU drift, GPS jitter)? Yes those should be selectable.
+
+  7. Transport Selection & Configuration
+  With multiple transports available:
+  - Should transport selection be per-module (AutoSteer via Bluetooth, Machine via UDP, IMU via CAN)? Yes.
+  - Or system-wide (all modules use the same transport)? No.
+  - Should this be auto-detected or user-configured in settings? Auto-detect to extent possible with user-configured overrides.
+  - Do you want transport priority/preference ordering? UDP is the priority.

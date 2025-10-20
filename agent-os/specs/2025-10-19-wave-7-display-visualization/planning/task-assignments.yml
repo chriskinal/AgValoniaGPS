@@ -1,0 +1,18 @@
+task_assignments:
+  - task_group: "Task Group 1: Display Domain Models"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 2: DisplayFormatterService Foundation & Basic Formatters"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 3: DisplayFormatterService Advanced & GPS Formatters"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: FieldStatisticsService Expansion"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 5: Service Registration & Integration"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 6: Test Review & Gap Analysis"
+    assigned_subagent: "testing-engineer"

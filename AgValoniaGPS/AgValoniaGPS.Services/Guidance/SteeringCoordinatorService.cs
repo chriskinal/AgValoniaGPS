@@ -1,14 +1,17 @@
 using System;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Guidance;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace AgValoniaGPS.Services.Guidance;
 
 /// <summary>
-/// Coordinates steering calculations and PGN output.
+/// Coordinates steering calculations and AutoSteer hardware communication.
 /// Routes calculations to active steering algorithm (Stanley or Pure Pursuit)
-/// and transmits steering commands via PGN 254 messages over UDP.
+/// and transmits steering commands via AutoSteerCommunicationService.
+/// Implements closed-loop control with feedback error tracking.
 /// Performance target: <5ms for Update() execution.
 /// </summary>
 public class SteeringCoordinatorService : ISteeringCoordinatorService
@@ -16,8 +19,9 @@ public class SteeringCoordinatorService : ISteeringCoordinatorService
     private readonly IStanleySteeringService _stanleyService;
     private readonly IPurePursuitService _purePursuitService;
     private readonly ILookAheadDistanceService _lookAheadService;
-    private readonly IUdpCommunicationService _udpService;
+    private readonly IAutoSteerCommunicationService _autoSteerComm;
     private readonly VehicleConfiguration _vehicleConfig;
+    private readonly ILogger<SteeringCoordinatorService>? _logger;
 
     private SteeringAlgorithm _activeAlgorithm = SteeringAlgorithm.Stanley;
     private readonly object _algorithmLock = new object();
@@ -26,20 +30,36 @@ public class SteeringCoordinatorService : ISteeringCoordinatorService
     private double _currentCrossTrackError;
     private double _currentLookAheadDistance;
 
+    private const double SteeringErrorWarningThreshold = 2.0; // degrees
+
     public event EventHandler<SteeringUpdateEventArgs>? SteeringUpdated;
 
+    /// <summary>
+    /// Creates a new SteeringCoordinatorService with Wave 6 AutoSteer integration.
+    /// </summary>
+    /// <param name="stanleyService">Stanley steering algorithm service</param>
+    /// <param name="purePursuitService">Pure Pursuit steering algorithm service</param>
+    /// <param name="lookAheadService">Look-ahead distance calculation service</param>
+    /// <param name="autoSteerComm">AutoSteer hardware communication service (Wave 6)</param>
+    /// <param name="vehicleConfig">Vehicle configuration</param>
+    /// <param name="logger">Optional logger for diagnostics</param>
     public SteeringCoordinatorService(
         IStanleySteeringService stanleyService,
         IPurePursuitService purePursuitService,
         ILookAheadDistanceService lookAheadService,
-        IUdpCommunicationService udpService,
-        VehicleConfiguration vehicleConfig)
+        IAutoSteerCommunicationService autoSteerComm,
+        VehicleConfiguration vehicleConfig,
+        ILogger<SteeringCoordinatorService>? logger = null)
     {
         _stanleyService = stanleyService ?? throw new ArgumentNullException(nameof(stanleyService));
         _purePursuitService = purePursuitService ?? throw new ArgumentNullException(nameof(purePursuitService));
         _lookAheadService = lookAheadService ?? throw new ArgumentNullException(nameof(lookAheadService));
-        _udpService = udpService ?? throw new ArgumentNullException(nameof(udpService));
+        _autoSteerComm = autoSteerComm ?? throw new ArgumentNullException(nameof(autoSteerComm));
         _vehicleConfig = vehicleConfig ?? throw new ArgumentNullException(nameof(vehicleConfig));
+        _logger = logger;
+
+        // Subscribe to AutoSteer feedback for closed-loop control
+        _autoSteerComm.FeedbackReceived += OnAutoSteerFeedbackReceived;
     }
 
     public SteeringAlgorithm ActiveAlgorithm
@@ -134,10 +154,17 @@ public class SteeringCoordinatorService : ISteeringCoordinatorService
         // Store calculated steering angle
         _currentSteeringAngle = steeringAngle;
 
-        // Send PGN 254 message if AutoSteer is active
+        // Send steering command via AutoSteerCommunicationService if AutoSteer is active
         if (isAutoSteerActive)
         {
-            SendPGN254Message(speed, steeringAngle, guidanceResult.CrossTrackError);
+            // Convert speed to MPH (AutoSteer expects MPH)
+            double speedMph = speed * 2.23694; // m/s to mph
+
+            // Convert cross-track error to millimeters
+            int xteErrorMm = (int)(guidanceResult.CrossTrackError * 1000.0); // meters to mm
+
+            // Send command via Wave 6 AutoSteer communication service
+            _autoSteerComm.SendSteeringCommand(speedMph, steeringAngle, xteErrorMm, isAutoSteerActive);
         }
 
         // Raise steering updated event
@@ -150,6 +177,39 @@ public class SteeringCoordinatorService : ISteeringCoordinatorService
             Timestamp = DateTime.UtcNow,
             IsAutoSteerActive = isAutoSteerActive
         });
+    }
+
+    /// <summary>
+    /// Handles AutoSteer feedback received from hardware module.
+    /// Implements closed-loop control: compares desired vs actual wheel angle and logs errors.
+    /// </summary>
+    private void OnAutoSteerFeedbackReceived(object? sender, Models.Events.AutoSteerFeedbackEventArgs e)
+    {
+        double desiredAngle = _currentSteeringAngle;
+        double actualAngle = e.Feedback.ActualWheelAngle;
+        double steeringError = Math.Abs(desiredAngle - actualAngle);
+
+        // Log warning if steering error exceeds threshold (possible mechanical issue)
+        if (steeringError > SteeringErrorWarningThreshold)
+        {
+            _logger?.LogWarning(
+                "Steering error exceeds threshold: Desired={Desired:F2}°, Actual={Actual:F2}°, Error={Error:F2}° (Threshold={Threshold:F2}°)",
+                desiredAngle,
+                actualAngle,
+                steeringError,
+                SteeringErrorWarningThreshold);
+        }
+        else
+        {
+            _logger?.LogDebug(
+                "Steering feedback: Desired={Desired:F2}°, Actual={Actual:F2}°, Error={Error:F2}°",
+                desiredAngle,
+                actualAngle,
+                steeringError);
+        }
+
+        // TODO: Could adjust integral control based on persistent errors
+        // TODO: Could publish diagnostic event for UI display
     }
 
     /// <summary>
@@ -173,62 +233,5 @@ public class SteeringCoordinatorService : ISteeringCoordinatorService
         double goalNorthing = closestPoint.Northing + lookAheadDistance * Math.Cos(lineHeadingRadians);
 
         return new Position3D(goalEasting, goalNorthing, lineHeadingRadians);
-    }
-
-    /// <summary>
-    /// Construct and send PGN 254 (AutoSteer Data) message.
-    /// Format:
-    /// Byte 0-1: Header (0x80, 0x81)
-    /// Byte 2: Source (0x7F)
-    /// Byte 3: PGN (254 / 0xFE)
-    /// Byte 4: Length (10 bytes)
-    /// Byte 5-6: speedHi/Lo - speed * 10 (uint16, big-endian)
-    /// Byte 7: status - 0=off, 1=on
-    /// Byte 8-9: steerAngleHi/Lo - steer angle * 100 (int16, big-endian)
-    /// Byte 10-11: distanceHi/Lo - cross-track error in mm (int16, big-endian)
-    /// Byte 12-13: Reserved (0x00)
-    /// Byte 14: CRC
-    /// </summary>
-    private void SendPGN254Message(double speed, double steeringAngle, double crossTrackError)
-    {
-        // Create PGN message with 10 data bytes
-        var pgn = new PgnMessage
-        {
-            Source = 0x7F,
-            PGN = PgnNumbers.AUTOSTEER_DATA2, // 254
-            Length = 10,
-            Data = new byte[10]
-        };
-
-        // Byte 0-1: Speed * 10 (uint16, big-endian)
-        ushort speedValue = (ushort)Math.Clamp(speed * 10.0, 0, 65535);
-        pgn.Data[0] = (byte)(speedValue >> 8);   // High byte
-        pgn.Data[1] = (byte)(speedValue & 0xFF); // Low byte
-
-        // Byte 2: Status (1 = AutoSteer on)
-        pgn.Data[2] = 1;
-
-        // Byte 3-4: Steering angle * 100 (int16, big-endian)
-        short steerValue = (short)Math.Clamp(steeringAngle * 100.0, -32768, 32767);
-        pgn.Data[3] = (byte)(steerValue >> 8);   // High byte
-        pgn.Data[4] = (byte)(steerValue & 0xFF); // Low byte
-
-        // Byte 5-6: Cross-track error in mm (int16, big-endian)
-        short xteValue = (short)Math.Clamp(crossTrackError * 1000.0, -32768, 32767);
-        pgn.Data[5] = (byte)(xteValue >> 8);     // High byte
-        pgn.Data[6] = (byte)(xteValue & 0xFF);   // Low byte
-
-        // Byte 7-8: Reserved
-        pgn.Data[7] = 0x00;
-        pgn.Data[8] = 0x00;
-
-        // Byte 9: Reserved
-        pgn.Data[9] = 0x00;
-
-        // Convert to bytes (includes CRC calculation)
-        byte[] message = pgn.ToBytes();
-
-        // Send via UDP to modules
-        _udpService.SendToModules(message);
     }
 }

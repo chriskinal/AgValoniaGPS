@@ -1,0 +1,73 @@
+ Clarifying Questions for Wave 7: Display & Visualization
+
+  Based on analysis of the legacy AgOpenGPS code and existing AgValoniaGPS implementation, I have the following questions:
+
+  1. Unit System Support
+
+  I assume we'll support both Metric (km/h, m, ha) and Imperial (mph, ft, ac) unit systems, similar to the legacy code. Should we also support mixed
+  units (e.g., mph with metric area) or just pure metric/imperial modes? Yes metric and imperial. No mixed use.
+
+  2. Speed Precision
+
+  The legacy code uses dynamic precision - 1 decimal place for speeds >2 km/h, 2 decimal places for ≤2 km/h. Should we keep this pattern to reduce
+  "noise" at low speeds, or use consistent precision? Continue with current precision method.
+
+  3. GPS Quality Color Coding
+
+  I found these quality-to-color mappings in legacy code:
+  - RTK Fixed (4) → PaleGreen
+  - RTK Float (5) → Orange
+  - DGPS (2) → Yellow
+  - All others → Red
+
+  Should we use these same color mappings, or would you prefer different visual indicators for quality levels? The current mappings are fine.
+
+  4. Heading Display Formats
+
+  Legacy code shows heading in degrees with the ° symbol (e.g., "45.2°"). Should we also support cardinal directions (N, NE, E, etc.) or stick with
+  degrees only? Degrees only.
+
+  5. Time Formatting
+
+  For "time remaining" estimates, should we format as:
+  - Hours and minutes (e.g., "2h 15m")? No
+  - Decimal hours (e.g., "2.25 hr")? Yes
+  - Or both depending on duration? No
+
+  6. Localization & Culture
+
+  The legacy code uses CultureInfo.InvariantCulture for most number formatting. Should we support locale-specific number formatting (e.g., comma vs
+  period for decimals), or keep it culture-invariant for consistency? Keep invariantCulture.
+
+  7. Formatter Service Organization
+
+  I see FieldStatisticsService already has basic formatters. Should we:
+  - Expand FieldStatisticsService with all display formatters? No
+  - Create separate formatter services (e.g., SpeedFormatterService, GpsQualityFormatterService)? No
+  - Create one unified DisplayFormatterService? Yes
+
+  8. Performance Requirement
+
+  The spec mentions <1ms for all formatting operations. This should be easily achievable for string formatting. Should formatters cache unit conversion
+   factors, or is straightforward calculation acceptable? Straight forward calculation.
+
+  9. Explicit Exclusions
+
+  What should we explicitly exclude from Wave 7? For example: UI-specific rendering logic, OpenGL display code, actual color objects (we'd return color
+   identifiers, not UI framework color objects), etc. Wiring the backend to the frontend will be a separate body of work.
+
+  ---
+  📸 Visual Assets Request
+
+  Do you have any design mockups, wireframes, or screenshots that could help guide the development?
+
+  If yes, please place them in:
+  /mnt/c/Users/chris/Documents/code/AgValoniaGPS/agent-os/specs/2025-10-19-wave-7-display-visualization/planning/visuals/
+
+  Use descriptive file names like:
+  - speed-display-mockup.png
+  - gps-quality-indicators.jpg
+  - field-stats-1.png *** Note field stats is a rotating display of field-stats-1, field-stats-2 & field-stats-3
+  - field-stats-2.png *** Note field stats is a rotating display of field-stats-1, field-stats-2 & field-stats-3
+  - field-stats-3.png *** Note field stats is a rotating display of field-stats-1, field-stats-2 & field-stats-3
+  - legacy-display-screenshot.png

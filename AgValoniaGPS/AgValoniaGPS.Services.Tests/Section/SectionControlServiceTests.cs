@@ -1,8 +1,10 @@
 using System;
 using System.Threading;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Communication;
 using AgValoniaGPS.Models.Events;
 using AgValoniaGPS.Models.Section;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.Section;
 using AgValoniaGPS.Services.GPS;
 using NUnit.Framework;
@@ -14,6 +16,7 @@ public class SectionControlServiceTests
 {
     private SectionControlService _service;
     private StubSectionSpeedService _speedService;
+    private StubMachineCommunicationService _machineComm;
     private StubAnalogSwitchStateService _switchService;
     private StubSectionConfigurationService _configService;
     private StubPositionUpdateService _positionService;
@@ -31,12 +34,14 @@ public class SectionControlServiceTests
         };
 
         _speedService = new StubSectionSpeedService(3);
+        _machineComm = new StubMachineCommunicationService();
         _switchService = new StubAnalogSwitchStateService();
         _configService = new StubSectionConfigurationService(_testConfig);
         _positionService = new StubPositionUpdateService();
 
         _service = new SectionControlService(
             _speedService,
+            _machineComm,
             _switchService,
             _configService,
             _positionService);
@@ -289,6 +294,31 @@ public class SectionControlServiceTests
         }
     }
 
+    private class StubMachineCommunicationService : IMachineCommunicationService
+    {
+        public MachineFeedback? CurrentFeedback => null;
+        public bool WorkSwitchActive => true;
+        public byte[] SectionSensors => Array.Empty<byte>();
+
+        public event EventHandler<MachineFeedbackEventArgs>? FeedbackReceived;
+        public event EventHandler<WorkSwitchChangedEventArgs>? WorkSwitchChanged;
+
+        public void SendSectionStates(byte[] sectionStates)
+        {
+            // Stub - do nothing
+        }
+
+        public void SendRelayStates(byte[] relayLo, byte[] relayHi)
+        {
+            // Stub - do nothing
+        }
+
+        public void SendConfiguration(ushort sections, ushort zones, ushort totalWidth)
+        {
+            // Stub - do nothing
+        }
+    }
+
     private class StubAnalogSwitchStateService : IAnalogSwitchStateService
     {
         private SwitchState _workSwitch = SwitchState.Active;
@@ -379,7 +409,7 @@ public class SectionControlServiceTests
 
         public void SetReversing(bool reversing) => _isReversing = reversing;
 
-        public void ProcessGpsPosition(GpsData gpsData, ImuData? imuData) { }
+        public void ProcessGpsPosition(GpsData gpsData, AgValoniaGPS.Models.ImuData? imuData) { }
         public GeoCoord GetCurrentPosition() => new GeoCoord();
         public double GetCurrentHeading() => 0.0;
         public double GetCurrentSpeed() => 0.0;

@@ -1,0 +1,33 @@
+task_assignments:
+  - task_group: "Task Group 1: Domain Models & Events"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 2: PGN Message Builder Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 3: PGN Message Parser Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: Transport Abstraction Layer"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 5: UDP Transport Implementation"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 6: Module Coordinator Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 7: Module Communication Services (AutoSteer, Machine, IMU)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 8: Alternative Transport Implementations (Bluetooth, CAN, Radio)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 9: Hardware Simulator Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 10: Wave 3/4 Integration (Closed-Loop Control)"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 11: Integration Testing & Validation"
+    assigned_subagent: "testing-engineer"

@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Communication;
 using AgValoniaGPS.Models.Events;
 using AgValoniaGPS.Models.Section;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Section;
 using NUnit.Framework;
@@ -46,9 +48,11 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(3);
         var positionService = new StubPositionUpdateService();
+        var machineComm = new StubMachineCommunicationService();
 
         var controlService = new SectionControlService(
             speedService,
+            machineComm,
             switchService,
             configService,
             positionService);
@@ -98,9 +102,11 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(3);
         var positionService = new StubPositionUpdateService();
+        var machineComm = new StubMachineCommunicationService();
 
         var controlService = new SectionControlService(
             speedService,
+            machineComm,
             switchService,
             configService,
             positionService);
@@ -176,9 +182,11 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(5);
         var positionService = new StubPositionUpdateService();
+        var machineComm = new StubMachineCommunicationService();
 
         var controlService = new SectionControlService(
             speedService,
+            machineComm,
             switchService,
             configService,
             positionService);
@@ -240,9 +248,11 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(3);
         var positionService = new StubPositionUpdateService();
+        var machineComm = new StubMachineCommunicationService();
 
         var controlService = new SectionControlService(
             speedService,
+            machineComm,
             switchService,
             configService,
             positionService);
@@ -301,9 +311,11 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(31);
         var positionService = new StubPositionUpdateService();
+        var machineComm = new StubMachineCommunicationService();
 
         var controlService = new SectionControlService(
             speedService,
+            machineComm,
             switchService,
             configService,
             positionService);
@@ -383,7 +395,8 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(15);
         var positionService = new StubPositionUpdateService();
-        var controlService = new SectionControlService(speedService, switchService, configService, positionService);
+        var machineComm = new StubMachineCommunicationService();
+        var controlService = new SectionControlService(speedService, machineComm, switchService, configService, positionService);
         var coverageService = new CoverageMapService();
 
         // Warm-up
@@ -449,7 +462,8 @@ public class SectionControlIntegrationTests
 
         var speedService = new StubSectionSpeedService(5);
         var positionService = new StubPositionUpdateService();
-        var controlService = new SectionControlService(speedService, switchService, configService, positionService);
+        var machineComm = new StubMachineCommunicationService();
+        var controlService = new SectionControlService(speedService, machineComm, switchService, configService, positionService);
         var coverageService = new CoverageMapService();
 
         var exceptions = new List<Exception>();
@@ -614,7 +628,7 @@ public class SectionControlIntegrationTests
 
         public void SetReversing(bool reversing) => _isReversing = reversing;
 
-        public void ProcessGpsPosition(GpsData gpsData, ImuData? imuData) { }
+        public void ProcessGpsPosition(GpsData gpsData, Models.ImuData? imuData) { }
         public GeoCoord GetCurrentPosition() => new GeoCoord();
         public double GetCurrentHeading() => 0.0;
         public double GetCurrentSpeed() => 0.0;
@@ -622,6 +636,20 @@ public class SectionControlIntegrationTests
         public GeoCoord[] GetPositionHistory(int count) => Array.Empty<GeoCoord>();
         public double GetGpsFrequency() => 10.0;
         public void Reset() { }
+    }
+
+    private class StubMachineCommunicationService : IMachineCommunicationService
+    {
+        public MachineFeedback? CurrentFeedback => null;
+        public bool WorkSwitchActive => true;
+        public byte[] SectionSensors => Array.Empty<byte>();
+
+        public event EventHandler<MachineFeedbackEventArgs>? FeedbackReceived;
+        public event EventHandler<WorkSwitchChangedEventArgs>? WorkSwitchChanged;
+
+        public void SendSectionStates(byte[] sectionStates) { }
+        public void SendRelayStates(byte[] relayLo, byte[] relayHi) { }
+        public void SendConfiguration(ushort sections, ushort zones, ushort totalWidth) { }
     }
 
     #endregion

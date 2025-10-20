@@ -1,0 +1,37 @@
+ Follow-up Questions
+
+  1. Settings Organization & Hierarchy
+  The visual shows a flat XML structure with 50+ settings covering Vehicle, Guidance, GPS, Section Control, and Hardware areas. For the new system with
+   both XML and JSON, should we:
+  - Keep a flat structure like the legacy system for XML compatibility? No.
+  - Create a hierarchical/grouped structure in JSON (e.g., VehicleSettings.Wheelbase, GuidanceSettings.LookAhead)? Yes.
+  - Or maintain the exact flat structure in both formats for consistency? Convert from Hierarchical JSON to flat XML on save.
+
+  2. Service Directory Naming
+  According to NAMING_CONVENTIONS.md, we should organize by functional area. For State Management, should we create:
+  - AgValoniaGPS.Services/Configuration/ (for settings services)? Yes
+  - AgValoniaGPS.Services/Session/ (for session management)? Yes
+  - AgValoniaGPS.Services/StateManagement/ (combining all state concerns)? Yes
+  - Or use an existing directory like AgValoniaGPS.Services/Application/? No
+
+  3. Validation Constraints
+  Looking at the settings (e.g., "Max Steer Deg" affects steering limits, "Number Sections" affects section control), what are the critical validation
+  rules we need to enforce? For example:
+  - Wheelbase must be positive and realistic (50-500 cm)? Yes
+  - PWM values must be in valid ranges (0-255)? Yes
+  - Section count must match physical hardware (1-32)? Yes
+  - Any cross-setting dependencies (e.g., tool width affects guidance calculations)? Yes.
+
+  4. Vehicle/User Profile Switching UX
+  Since users move tablets between tractors and multiple operators exist, how should profile switching work:
+  - At application startup (select vehicle/user from list)? Yes with the first user added to the system as default.
+  - Runtime switching via menu (no restart required)? Yes.
+  - Should user profiles be separate from vehicle profiles, or combined? Separate.
+  - When switching vehicles, should session data (current field, work progress) carry over or reset? Option to allow user choice.
+
+  5. XML-to-JSON Migration Timeline
+  You mentioned "path to phasing out XML." Should we:
+  - Immediately create JSON files alongside XML on every settings change (dual-write)? Yes.
+  - Migrate on first app launch (read XML, write JSON, keep XML for compatibility)? No.
+  - Only migrate when user explicitly requests it? Make this an option.
+  - Is there a future Wave where we'll deprecate XML reading entirely? Not in this current iteration. I would suspect getting off XML to months to years.

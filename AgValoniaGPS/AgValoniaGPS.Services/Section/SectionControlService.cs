@@ -3,13 +3,16 @@ using System.Diagnostics;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Events;
 using AgValoniaGPS.Models.Section;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.GPS;
+using Microsoft.Extensions.Logging;
 
 namespace AgValoniaGPS.Services.Section;
 
 /// <summary>
 /// Implements the section control finite state machine with timer management,
-/// boundary checking, and manual override handling.
+/// boundary checking, manual override handling, and Machine hardware integration.
+/// Integrates with MachineCommunicationService for closed-loop section control.
 /// </summary>
 /// <remarks>
 /// Thread-safe implementation using lock object pattern.
@@ -19,38 +22,52 @@ public class SectionControlService : ISectionControlService
 {
     private readonly object _lockObject = new object();
     private readonly ISectionSpeedService _speedService;
+    private readonly IMachineCommunicationService _machineComm;
     private readonly IAnalogSwitchStateService _switchService;
     private readonly ISectionConfigurationService _configService;
     private readonly IPositionUpdateService _positionService;
+    private readonly ILogger<SectionControlService>? _logger;
 
     private Models.Section.Section[] _sections = Array.Empty<Models.Section.Section>();
     private SectionConfiguration _config = new SectionConfiguration();
 
+    private const double SectionSensorMismatchWarningTimeMs = 500;
+
     public event EventHandler<SectionStateChangedEventArgs>? SectionStateChanged;
 
     /// <summary>
-    /// Creates a new SectionControlService with required dependencies.
+    /// Creates a new SectionControlService with required dependencies and Wave 6 Machine integration.
     /// </summary>
     /// <param name="speedService">Section speed service</param>
+    /// <param name="machineComm">Machine hardware communication service (Wave 6)</param>
     /// <param name="switchService">Analog switch state service</param>
     /// <param name="configService">Section configuration service</param>
     /// <param name="positionService">Position update service</param>
+    /// <param name="logger">Optional logger for diagnostics</param>
     public SectionControlService(
         ISectionSpeedService speedService,
+        IMachineCommunicationService machineComm,
         IAnalogSwitchStateService switchService,
         ISectionConfigurationService configService,
-        IPositionUpdateService positionService)
+        IPositionUpdateService positionService,
+        ILogger<SectionControlService>? logger = null)
     {
         _speedService = speedService ?? throw new ArgumentNullException(nameof(speedService));
+        _machineComm = machineComm ?? throw new ArgumentNullException(nameof(machineComm));
         _switchService = switchService ?? throw new ArgumentNullException(nameof(switchService));
         _configService = configService ?? throw new ArgumentNullException(nameof(configService));
         _positionService = positionService ?? throw new ArgumentNullException(nameof(positionService));
+        _logger = logger;
 
         // Subscribe to configuration changes
         _configService.ConfigurationChanged += OnConfigurationChanged;
 
         // Subscribe to switch state changes
         _switchService.SwitchStateChanged += OnSwitchStateChanged;
+
+        // Subscribe to Machine feedback for closed-loop control
+        _machineComm.FeedbackReceived += OnMachineFeedbackReceived;
+        _machineComm.WorkSwitchChanged += OnWorkSwitchChanged;
 
         // Initialize sections from current configuration
         InitializeSections();
@@ -89,6 +106,9 @@ public class SectionControlService : ISectionControlService
             {
                 UpdateSectionState(i, position, heading, speed);
             }
+
+            // Send section states to Machine module via Wave 6 communication service
+            SendSectionStatesToMachine();
         }
     }
 
@@ -128,6 +148,9 @@ public class SectionControlService : ISectionControlService
 
                 RaiseSectionStateChanged(sectionId, oldState, state, changeType);
             }
+
+            // Send updated states to Machine
+            SendSectionStatesToMachine();
         }
     }
 
@@ -179,6 +202,9 @@ public class SectionControlService : ISectionControlService
                     RaiseSectionStateChanged(i, oldState, SectionState.Auto, SectionStateChangeType.ToAuto);
                 }
             }
+
+            // Send updated states to Machine
+            SendSectionStatesToMachine();
         }
     }
 
@@ -303,6 +329,88 @@ public class SectionControlService : ISectionControlService
                         }
                     }
                 }
+            }
+        }
+
+        // Send updated states to Machine
+        SendSectionStatesToMachine();
+    }
+
+    /// <summary>
+    /// Sends current section states to Machine module via MachineCommunicationService.
+    /// Converts section state enum to byte array format expected by Machine PGN.
+    /// </summary>
+    private void SendSectionStatesToMachine()
+    {
+        byte[] sectionStates = new byte[_sections.Length];
+        for (int i = 0; i < _sections.Length; i++)
+        {
+            sectionStates[i] = _sections[i].State switch
+            {
+                SectionState.Off => 0,
+                SectionState.Auto => 1,
+                SectionState.ManualOn => 1,
+                SectionState.ManualOff => 0,
+                _ => 0
+            };
+        }
+
+        // Send via Wave 6 Machine communication service
+        _machineComm.SendSectionStates(sectionStates);
+    }
+
+    /// <summary>
+    /// Handles Machine feedback for closed-loop section control.
+    /// Compares commanded vs actual section sensor states and logs mismatches.
+    /// </summary>
+    private void OnMachineFeedbackReceived(object? sender, MachineFeedbackEventArgs e)
+    {
+        lock (_lockObject)
+        {
+            // Update actual section sensor states for coverage mapping
+            var sectionSensors = e.Feedback.SectionSensors;
+
+            for (int i = 0; i < Math.Min(_sections.Length, sectionSensors.Length); i++)
+            {
+                bool commandedOn = _sections[i].State == SectionState.Auto || _sections[i].State == SectionState.ManualOn;
+                bool actuallyOn = (sectionSensors[i] & 0x01) != 0;
+
+                // Store actual state for coverage mapping
+                _sections[i].ActualState = actuallyOn;
+
+                // Log warning if commanded != actual for extended period
+                if (commandedOn != actuallyOn)
+                {
+                    // TODO: Track mismatch duration and warn if > 500ms
+                    _logger?.LogDebug(
+                        "Section {SectionId} state mismatch: Commanded={Commanded}, Actual={Actual}",
+                        i,
+                        commandedOn,
+                        actuallyOn);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles work switch state changes from Machine module.
+    /// Automatically disables all sections when work switch is released.
+    /// </summary>
+    private void OnWorkSwitchChanged(object? sender, WorkSwitchChangedEventArgs e)
+    {
+        lock (_lockObject)
+        {
+            if (!e.IsActive)
+            {
+                // Work switch released - turn off all sections immediately
+                _logger?.LogInformation("Work switch released - disabling all sections");
+                TurnOffAllSections(immediate: true);
+            }
+            else
+            {
+                // Work switch pressed - resume auto control
+                _logger?.LogInformation("Work switch activated - resuming auto control");
+                // Sections will be turned on automatically in next UpdateSectionStates() call
             }
         }
     }

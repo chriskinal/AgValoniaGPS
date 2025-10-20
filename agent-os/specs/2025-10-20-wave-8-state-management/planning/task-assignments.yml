@@ -1,0 +1,30 @@
+task_assignments:
+  - task_group: "Task Group 1: Settings Models and Event Args"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 2: Session, Profile, and Validation Models"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 3: Configuration Service with Dual-Format I/O"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 4: Validation Service with Rules Engine"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 5: Profile Management Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 6: Session Management with Crash Recovery"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 7: State Mediator Service"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 8: Undo/Redo Service with Command Pattern"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 9: Service Registration and Integration"
+    assigned_subagent: "api-engineer"
+
+  - task_group: "Task Group 10: Testing & Performance Verification"
+    assigned_subagent: "testing-engineer"

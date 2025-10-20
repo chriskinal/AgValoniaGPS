@@ -6,6 +6,8 @@ using AgValoniaGPS.Services.Vehicle;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.Services.Section;
 using AgValoniaGPS.Services.FieldOperations;
+using AgValoniaGPS.Services.Communication;
+using AgValoniaGPS.Services.Display;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.Models;
 
@@ -17,7 +19,9 @@ namespace AgValoniaGPS.Desktop.DependencyInjection;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics), Wave 2 (Guidance Line Core), Wave 3 (Steering Algorithms), Wave 4 (Section Control), and Wave 5 (Field Operations) services.
+    /// Registers all AgValoniaGPS services, including Wave 1 (Position & Kinematics), Wave 2 (Guidance Line Core),
+    /// Wave 3 (Steering Algorithms), Wave 4 (Section Control), Wave 5 (Field Operations), Wave 6 (Hardware I/O Communication),
+    /// and Wave 7 (Display & Visualization) services.
     /// </summary>
     /// <param name="services">The service collection to add services to</param>
     /// <returns>The service collection for method chaining</returns>
@@ -35,7 +39,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFieldService, FieldService>();
         services.AddSingleton<IGuidanceService, GuidanceService>();
         services.AddSingleton<INtripClientService, NtripClientService>();
-        services.AddSingleton<FieldStatisticsService>();
 
         // Wave 1: Position & Kinematics Services
         services.AddSingleton<IPositionUpdateService, PositionUpdateService>();
@@ -53,6 +56,12 @@ public static class ServiceCollectionExtensions
 
         // Wave 5: Field Operations Services
         AddWave5FieldOperationsServices(services);
+
+        // Wave 6: Hardware I/O & Communication Services
+        AddWave6CommunicationServices(services);
+
+        // Wave 7: Display & Visualization Services
+        AddWave7DisplayServices(services);
 
         return services;
     }
@@ -93,7 +102,7 @@ public static class ServiceCollectionExtensions
     /// - ILookAheadDistanceService: Adaptive look-ahead distance calculation based on speed, cross-track error, and curvature
     /// - IStanleySteeringService: Stanley steering algorithm (cross-track error + heading error based)
     /// - IPurePursuitService: Pure Pursuit steering algorithm (look-ahead point based)
-    /// - ISteeringCoordinatorService: Coordinates between algorithms, manages PGN output, and handles real-time algorithm switching
+    /// - ISteeringCoordinatorService: Coordinates between algorithms, integrates with AutoSteerCommunicationService for closed-loop control
     ///
     /// All services are thread-safe, optimized for 100Hz operation, and include integral control for steady-state error elimination.
     /// </remarks>
@@ -108,7 +117,7 @@ public static class ServiceCollectionExtensions
         // Pure Pursuit Service - Pure Pursuit algorithm implementation with goal point calculation
         services.AddSingleton<IPurePursuitService, PurePursuitService>();
 
-        // Steering Coordinator Service - Algorithm coordinator with PGN output and real-time algorithm switching
+        // Steering Coordinator Service - Algorithm coordinator with Wave 6 AutoSteer integration for closed-loop control
         services.AddSingleton<ISteeringCoordinatorService, SteeringCoordinatorService>();
     }
 
@@ -123,7 +132,7 @@ public static class ServiceCollectionExtensions
     /// - ISectionConfigurationService: Validates and manages section configuration
     /// - ICoverageMapService: Triangle strip tracking with overlap detection
     /// - ISectionSpeedService: Calculates individual section speeds during turns
-    /// - ISectionControlService: State machine for section on/off control
+    /// - ISectionControlService: State machine for section on/off control with Wave 6 Machine integration for closed-loop control
     /// - ISectionControlFileService: Read/write SectionConfig.txt
     /// - ICoverageMapFileService: Read/write Coverage.txt
     ///
@@ -188,6 +197,73 @@ public static class ServiceCollectionExtensions
 
         // Tram Line File Service - Multi-format tram line file I/O
         services.AddSingleton<ITramLineFileService, TramLineFileService>();
+    }
+
+    /// <summary>
+    /// Registers Wave 6 hardware I/O and communication services with Singleton lifetime.
+    /// These services are registered as Singleton for optimal performance and persistent hardware connections.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 6 services to</param>
+    /// <remarks>
+    /// Wave 6 services provide hardware communication functionality:
+    /// - IPgnMessageBuilderService: Type-safe PGN message construction for AutoSteer, Machine, and IMU modules
+    /// - IPgnMessageParserService: Parse inbound PGN messages with CRC validation
+    /// - ITransportAbstractionService: Multi-transport routing (UDP, Bluetooth, CAN, Radio)
+    /// - IModuleCoordinatorService: Module lifecycle, connection monitoring, ready state management
+    /// - IAutoSteerCommunicationService: AutoSteer module protocol (steering commands, feedback)
+    /// - IMachineCommunicationService: Machine module protocol (section commands, work switch feedback)
+    /// - IImuCommunicationService: IMU module protocol (orientation data)
+    /// - IHardwareSimulatorService: Realistic hardware simulation for testing
+    ///
+    /// All services are thread-safe with <10ms message latency and 2-second connection detection.
+    /// Integrates with Wave 3 (SteeringCoordinatorService) and Wave 4 (SectionControlService) for closed-loop control.
+    /// </remarks>
+    private static void AddWave6CommunicationServices(IServiceCollection services)
+    {
+        // Core Message Handling Services
+        services.AddSingleton<IPgnMessageBuilderService, PgnMessageBuilderService>();
+        services.AddSingleton<IPgnMessageParserService, PgnMessageParserService>();
+
+        // Transport Layer Services
+        services.AddSingleton<ITransportAbstractionService, TransportAbstractionService>();
+
+        // Module Coordination Service
+        services.AddSingleton<IModuleCoordinatorService, ModuleCoordinatorService>();
+
+        // Module Communication Services
+        services.AddSingleton<IAutoSteerCommunicationService, AutoSteerCommunicationService>();
+        services.AddSingleton<IMachineCommunicationService, MachineCommunicationService>();
+        services.AddSingleton<IImuCommunicationService, ImuCommunicationService>();
+
+        // Hardware Simulator Service (for testing and development)
+        services.AddSingleton<IHardwareSimulatorService, HardwareSimulatorService>();
+    }
+
+    /// <summary>
+    /// Registers Wave 7 display and visualization services with Singleton lifetime.
+    /// These services are registered as Singleton for optimal performance and thread-safe formatting operations.
+    /// </summary>
+    /// <param name="services">The service collection to add Wave 7 services to</param>
+    /// <remarks>
+    /// Wave 7 services provide display formatting and field statistics functionality:
+    /// - IDisplayFormatterService: Culture-invariant formatting for all display elements (speed, heading, GPS quality, areas, distances, etc.)
+    /// - IFieldStatisticsService: Field operations statistics, rotating display data, and area calculations
+    ///
+    /// All services are UI-agnostic, thread-safe, and optimized for less than 1ms formatting operations.
+    /// Uses InvariantCulture for consistent decimal separators across all numeric formatting.
+    /// Supports both metric and imperial unit systems with dynamic precision based on magnitude.
+    /// </remarks>
+    private static void AddWave7DisplayServices(IServiceCollection services)
+    {
+        // Display Formatter Service - Provides culture-invariant formatting for all display elements
+        // Formats speed, heading, GPS quality, cross-track error, distances, areas, times, rates, and percentages
+        // All methods return safe defaults for invalid inputs (never throws exceptions)
+        services.AddSingleton<IDisplayFormatterService, DisplayFormatterService>();
+
+        // Field Statistics Service - Expanded with rotating display and application statistics
+        // Provides area calculations, work rate, efficiency metrics, and rotating display data
+        // Integrates with DisplayFormatterService for consistent formatting
+        services.AddSingleton<IFieldStatisticsService, FieldStatisticsService>();
     }
 
     private static VehicleConfiguration CreateDefaultVehicleConfiguration()

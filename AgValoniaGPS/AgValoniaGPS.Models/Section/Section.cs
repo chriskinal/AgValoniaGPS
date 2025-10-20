@@ -16,9 +16,15 @@ public class Section
     public double Width { get; set; }
 
     /// <summary>
-    /// Current state of the section
+    /// Current commanded state of the section
     /// </summary>
     public SectionState State { get; set; }
+
+    /// <summary>
+    /// Actual state from section sensor feedback (Wave 6 integration).
+    /// Used for coverage mapping to reflect true section state, not just commanded state.
+    /// </summary>
+    public bool ActualState { get; set; }
 
     /// <summary>
     /// Current speed of the section in meters per second
@@ -55,6 +61,7 @@ public class Section
         Id = id;
         Width = width;
         State = SectionState.Off;
+        ActualState = false;
         Speed = 0.0;
         IsManualOverride = false;
         TurnOnTimerStart = null;

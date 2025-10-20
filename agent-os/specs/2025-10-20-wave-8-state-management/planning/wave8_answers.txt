@@ -1,0 +1,86 @@
+Wave 8: State Management - User Answers Analysis
+=================================================
+
+INITIAL ANSWERS RECEIVED:
+-------------------------
+
+1. Settings Persistence Strategy:
+   - Maintain XML for compatibility
+   - Create JSON equivalents as path to phasing out XML
+   - Two-way sync for this first version
+
+2. Configuration Service Pattern:
+   - Centralized service is ideal
+   - One source of truth for all settings
+   - No settings stored in individual services
+
+3. Session Management Scope:
+   - Crash recovery is excellent
+   - Solves a current system problem
+
+4. State Coordination Between Services:
+   - Mediator pattern preferred
+   - Services shouldn't get bogged down by central service
+
+5. Settings Migration & Defaults:
+   - Two-way for this first version
+
+6. Undo/Redo Scope:
+   - User entered data has undo/redo
+   - Right scope confirmed
+
+7. Application Lifecycle Management:
+   - Both wizard and defaults
+   - Walk users through setup with defaults
+
+8. Settings Validation & Constraints:
+   - A validation service
+
+9. Multi-User or Multi-Vehicle Support:
+   - Multi-vehicle support is a must
+   - Users take tablet from tractor to tractor
+   - User profile support would be good
+
+VISUAL ASSET ANALYSIS:
+----------------------
+
+File: All_Settings.png (239 KB)
+Description: Comprehensive view of legacy AgOpenGPS settings structure from Deere 5055e.xml
+
+Key Observations:
+- Settings organized in a flat structure with many categories:
+  * Culture and language settings
+  * Remote work features
+  * Vehicle dimensions (wheelbase, track, antenna positions)
+  * Steering configuration (PWM values, max steer degrees)
+  * Tool configuration (width, offsets, hitches)
+  * GPS and RTK settings (heading, IMU fusion)
+  * Section control settings
+  * Work switches and manual controls
+
+- Data types include:
+  * Booleans (True/False flags)
+  * Integers (counts, dimensions in cm)
+  * Decimals (precise measurements, angular values)
+  * Strings (culture codes like "en")
+
+- Settings scope across multiple functional areas:
+  * GPS/Navigation (HDOP, Hz, heading)
+  * Vehicle/Physical (dimensions, steering limits)
+  * Guidance (look ahead, acquire factor)
+  * Section Control (number of sections, fast sections flag)
+  * Hardware (PWM ranges, IMU fusion weights)
+
+- File naming pattern: [VehicleName].xml (e.g., "Deere 5055e.xml")
+  * Suggests vehicle-specific settings files
+  * Aligns with multi-vehicle requirement
+
+FOLLOW-UP QUESTIONS NEEDED:
+---------------------------
+
+Yes - Need clarification on:
+1. Settings organization structure (categories/hierarchy)
+2. Validation rules and constraints (especially for interdependent settings)
+3. Service directory naming (per NAMING_CONVENTIONS.md)
+4. Vehicle/User profile switching UX
+5. XML-to-JSON migration timeline and triggers

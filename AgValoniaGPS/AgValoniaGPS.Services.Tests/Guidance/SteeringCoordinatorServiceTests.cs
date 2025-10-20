@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Communication;
+using AgValoniaGPS.Models.Events;
 using AgValoniaGPS.Models.Guidance;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.Services.Interfaces;
 using Xunit;
@@ -99,30 +102,32 @@ public class SteeringCoordinatorServiceTests
     }
 
     /// <summary>
-    /// Mock implementation of IUdpCommunicationService for testing
+    /// Mock implementation of IAutoSteerCommunicationService for testing
     /// </summary>
-    private class MockUdpCommunicationService : IUdpCommunicationService
+    private class MockAutoSteerCommunicationService : IAutoSteerCommunicationService
     {
-        public List<byte[]> SentMessages { get; } = new();
-        public bool IsConnected => true;
-        public string? LocalIPAddress => "192.168.1.100";
+        public List<object[]> SentCommands { get; } = new();
+        public AutoSteerFeedback? CurrentFeedback => null;
+        public double ActualWheelAngle => 0.0;
+        public byte[] SwitchStates => Array.Empty<byte>();
 
-        public event EventHandler<UdpDataReceivedEventArgs>? DataReceived;
-        public event EventHandler<ModuleConnectionEventArgs>? ModuleConnectionChanged;
+        public event EventHandler<AutoSteerFeedbackEventArgs>? FeedbackReceived;
+        public event EventHandler<AutoSteerSwitchStateChangedEventArgs>? SwitchStateChanged;
 
-        public void SendToModules(byte[] data)
+        public void SendSteeringCommand(double speedMph, double steerAngle, int xteErrorMm, bool isActive)
         {
-            SentMessages.Add((byte[])data.Clone());
+            SentCommands.Add(new object[] { speedMph, steerAngle, xteErrorMm, isActive });
         }
 
-        public void SendHelloPacket() { }
+        public void SendSettings(byte pwmDrive, byte minPwm, float proportionalGain, byte highPwm, float lowSpeedPwm)
+        {
+            // Not needed for these tests
+        }
 
-        public bool IsModuleHelloOk(ModuleType moduleType) => true;
-
-        public bool IsModuleDataOk(ModuleType moduleType) => true;
-
-        public System.Threading.Tasks.Task StartAsync() => System.Threading.Tasks.Task.CompletedTask;
-        public System.Threading.Tasks.Task StopAsync() => System.Threading.Tasks.Task.CompletedTask;
+        public void SendConfiguration(byte configFlags)
+        {
+            // Not needed for these tests
+        }
     }
 
     [Fact]
@@ -132,14 +137,14 @@ public class SteeringCoordinatorServiceTests
         var mockStanley = new MockStanleySteeringService();
         var mockPurePursuit = new MockPurePursuitService();
         var mockLookAhead = new MockLookAheadDistanceService();
-        var mockUdp = new MockUdpCommunicationService();
+        var mockAutoSteer = new MockAutoSteerCommunicationService();
         var vehicleConfig = new VehicleConfiguration();
 
         var coordinator = new SteeringCoordinatorService(
             mockStanley,
             mockPurePursuit,
             mockLookAhead,
-            mockUdp,
+            mockAutoSteer,
             vehicleConfig
         );
 
@@ -170,14 +175,14 @@ public class SteeringCoordinatorServiceTests
         var mockStanley = new MockStanleySteeringService();
         var mockPurePursuit = new MockPurePursuitService();
         var mockLookAhead = new MockLookAheadDistanceService();
-        var mockUdp = new MockUdpCommunicationService();
+        var mockAutoSteer = new MockAutoSteerCommunicationService();
         var vehicleConfig = new VehicleConfiguration();
 
         var coordinator = new SteeringCoordinatorService(
             mockStanley,
             mockPurePursuit,
             mockLookAhead,
-            mockUdp,
+            mockAutoSteer,
             vehicleConfig
         );
 
@@ -208,14 +213,14 @@ public class SteeringCoordinatorServiceTests
         var mockStanley = new MockStanleySteeringService();
         var mockPurePursuit = new MockPurePursuitService();
         var mockLookAhead = new MockLookAheadDistanceService();
-        var mockUdp = new MockUdpCommunicationService();
+        var mockAutoSteer = new MockAutoSteerCommunicationService();
         var vehicleConfig = new VehicleConfiguration();
 
         var coordinator = new SteeringCoordinatorService(
             mockStanley,
             mockPurePursuit,
             mockLookAhead,
-            mockUdp,
+            mockAutoSteer,
             vehicleConfig
         );
 
@@ -230,20 +235,20 @@ public class SteeringCoordinatorServiceTests
     }
 
     [Fact]
-    public void Update_SendsPGN254Message_WithCorrectFormat()
+    public void Update_SendsSteeringCommand_WithCorrectParameters()
     {
         // Arrange
         var mockStanley = new MockStanleySteeringService();
         var mockPurePursuit = new MockPurePursuitService();
         var mockLookAhead = new MockLookAheadDistanceService();
-        var mockUdp = new MockUdpCommunicationService();
+        var mockAutoSteer = new MockAutoSteerCommunicationService();
         var vehicleConfig = new VehicleConfiguration();
 
         var coordinator = new SteeringCoordinatorService(
             mockStanley,
             mockPurePursuit,
             mockLookAhead,
-            mockUdp,
+            mockAutoSteer,
             vehicleConfig
         );
 
@@ -261,30 +266,14 @@ public class SteeringCoordinatorServiceTests
         // Act
         coordinator.Update(pivotPos, steerPos, guidanceResult, 5.0, 0.0, true);
 
-        // Assert - Verify PGN 254 message was sent
-        Assert.Single(mockUdp.SentMessages);
-        var message = mockUdp.SentMessages[0];
+        // Assert - Verify steering command was sent
+        Assert.Single(mockAutoSteer.SentCommands);
+        var command = mockAutoSteer.SentCommands[0];
 
-        // Verify message structure
-        Assert.Equal(0x80, message[0]); // Header byte 1
-        Assert.Equal(0x81, message[1]); // Header byte 2
-        Assert.Equal(0x7F, message[2]); // Source
-        Assert.Equal(254, message[3]);  // PGN 254
-        Assert.Equal(10, message[4]);   // Length (10 data bytes)
-
-        // Verify speed field (bytes 5-6): speed * 10
-        int speedValue = (message[5] << 8) | message[6];
-        Assert.Equal(50, speedValue); // 5.0 m/s * 10 = 50
-
-        // Verify status byte (byte 7): 1 = on
-        Assert.Equal(1, message[7]);
-
-        // Verify cross-track error field (bytes 10-11): in mm
-        short xteValue = (short)((message[10] << 8) | message[11]);
-        Assert.Equal(500, xteValue); // 0.5m = 500mm
-
-        // Verify CRC is present at byte 14
-        Assert.True(message.Length >= 15);
+        // Verify parameters
+        Assert.True((double)command[0] > 0); // speedMph should be > 0
+        Assert.True((bool)command[3]); // isActive should be true
+        Assert.Equal(500, (int)command[2]); // XTE: 0.5m = 500mm
     }
 
     [Fact]
@@ -294,14 +283,14 @@ public class SteeringCoordinatorServiceTests
         var mockStanley = new MockStanleySteeringService();
         var mockPurePursuit = new MockPurePursuitService();
         var mockLookAhead = new MockLookAheadDistanceService { FixedDistance = 6.0 };
-        var mockUdp = new MockUdpCommunicationService();
+        var mockAutoSteer = new MockAutoSteerCommunicationService();
         var vehicleConfig = new VehicleConfiguration();
 
         var coordinator = new SteeringCoordinatorService(
             mockStanley,
             mockPurePursuit,
             mockLookAhead,
-            mockUdp,
+            mockAutoSteer,
             vehicleConfig
         );
 
@@ -337,14 +326,14 @@ public class SteeringCoordinatorServiceTests
         var mockStanley = new MockStanleySteeringService();
         var mockPurePursuit = new MockPurePursuitService();
         var mockLookAhead = new MockLookAheadDistanceService();
-        var mockUdp = new MockUdpCommunicationService();
+        var mockAutoSteer = new MockAutoSteerCommunicationService();
         var vehicleConfig = new VehicleConfiguration();
 
         var coordinator = new SteeringCoordinatorService(
             mockStanley,
             mockPurePursuit,
             mockLookAhead,
-            mockUdp,
+            mockAutoSteer,
             vehicleConfig
         );
 

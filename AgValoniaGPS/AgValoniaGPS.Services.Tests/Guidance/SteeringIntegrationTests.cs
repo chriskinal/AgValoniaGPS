@@ -1,7 +1,10 @@
 using System;
 using System.Diagnostics;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Communication;
+using AgValoniaGPS.Models.Events;
 using AgValoniaGPS.Models.Guidance;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.Services.Interfaces;
 using Xunit;
@@ -43,30 +46,41 @@ public class SteeringIntegrationTests
     }
 
     /// <summary>
-    /// Mock UDP service for integration tests
+    /// Mock AutoSteer communication service for integration tests
     /// </summary>
-    private class MockUdpService : IUdpCommunicationService
+    private class MockAutoSteerService : IAutoSteerCommunicationService
     {
-        public byte[]? LastSentMessage { get; private set; }
         public int MessagesSent { get; private set; }
+        public double LastSteerAngle { get; private set; }
+        public double LastSpeedMph { get; private set; }
+        public int LastXteErrorMm { get; private set; }
+        public bool LastIsActive { get; private set; }
 
-        public bool IsConnected => true;
-        public string? LocalIPAddress => "192.168.1.100";
+        public AutoSteerFeedback? CurrentFeedback => null;
+        public double ActualWheelAngle => 0.0;
+        public byte[] SwitchStates => Array.Empty<byte>();
 
-        public event EventHandler<UdpDataReceivedEventArgs>? DataReceived;
-        public event EventHandler<ModuleConnectionEventArgs>? ModuleConnectionChanged;
+        public event EventHandler<AutoSteerFeedbackEventArgs>? FeedbackReceived;
+        public event EventHandler<AutoSteerSwitchStateChangedEventArgs>? SwitchStateChanged;
 
-        public void SendToModules(byte[] data)
+        public void SendSteeringCommand(double speedMph, double steerAngle, int xteErrorMm, bool isActive)
         {
-            LastSentMessage = (byte[])data.Clone();
             MessagesSent++;
+            LastSpeedMph = speedMph;
+            LastSteerAngle = steerAngle;
+            LastXteErrorMm = xteErrorMm;
+            LastIsActive = isActive;
         }
 
-        public void SendHelloPacket() { }
-        public bool IsModuleHelloOk(ModuleType moduleType) => true;
-        public bool IsModuleDataOk(ModuleType moduleType) => true;
-        public System.Threading.Tasks.Task StartAsync() => System.Threading.Tasks.Task.CompletedTask;
-        public System.Threading.Tasks.Task StopAsync() => System.Threading.Tasks.Task.CompletedTask;
+        public void SendSettings(byte pwmDrive, byte minPwm, float proportionalGain, byte highPwm, float lowSpeedPwm)
+        {
+            // Not needed for integration tests
+        }
+
+        public void SendConfiguration(byte configFlags)
+        {
+            // Not needed for integration tests
+        }
     }
 
     [Fact]
@@ -76,13 +90,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -109,15 +123,9 @@ public class SteeringIntegrationTests
         Assert.Equal(0.5, coordinator.CurrentCrossTrackError);
         Assert.True(coordinator.CurrentLookAheadDistance > 0.0, "Look-ahead distance should be positive");
 
-        // Verify PGN message was sent
-        Assert.Equal(1, mockUdp.MessagesSent);
-        Assert.NotNull(mockUdp.LastSentMessage);
-
-        // Verify message format
-        var message = mockUdp.LastSentMessage;
-        Assert.Equal(0x80, message[0]); // Header
-        Assert.Equal(0x81, message[1]);
-        Assert.Equal(254, message[3]);  // PGN 254
+        // Verify steering command was sent
+        Assert.Equal(1, mockAutoSteer.MessagesSent);
+        Assert.True(mockAutoSteer.LastIsActive);
     }
 
     [Fact]
@@ -127,13 +135,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -159,7 +167,7 @@ public class SteeringIntegrationTests
         Assert.True(coordinator.CurrentSteeringAngle != 0.0);
         Assert.Equal(0.5, coordinator.CurrentCrossTrackError);
         Assert.True(coordinator.CurrentLookAheadDistance > 0.0);
-        Assert.Equal(1, mockUdp.MessagesSent);
+        Assert.Equal(1, mockAutoSteer.MessagesSent);
     }
 
     [Fact]
@@ -195,13 +203,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -234,7 +242,7 @@ public class SteeringIntegrationTests
         Assert.True(Math.Abs(coordinator.CurrentSteeringAngle) <= _testConfig.MaxSteerAngle,
             $"Steering angle {coordinator.CurrentSteeringAngle:F2} should be clamped to ±{_testConfig.MaxSteerAngle}");
 
-        Assert.Equal(1, mockUdp.MessagesSent);
+        Assert.Equal(1, mockAutoSteer.MessagesSent);
     }
 
     [Fact]
@@ -244,13 +252,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -288,7 +296,7 @@ public class SteeringIntegrationTests
         Assert.True(stanleyService.IntegralValue >= 0.0 || stanleyService.IntegralValue < 0.0,
             "Integral value should be a valid number");
 
-        Assert.True(mockUdp.MessagesSent >= 6, "All updates should send messages");
+        Assert.True(mockAutoSteer.MessagesSent >= 6, "All updates should send messages");
     }
 
     [Fact]
@@ -298,13 +306,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -335,7 +343,7 @@ public class SteeringIntegrationTests
         Assert.True(coordinator.CurrentLookAheadDistance >= _testConfig.MinLookAheadDistance,
             $"Look-ahead {coordinator.CurrentLookAheadDistance:F2}m should be at least minimum {_testConfig.MinLookAheadDistance}m");
 
-        Assert.Equal(1, mockUdp.MessagesSent);
+        Assert.Equal(1, mockAutoSteer.MessagesSent);
     }
 
     [Fact]
@@ -345,13 +353,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -382,7 +390,7 @@ public class SteeringIntegrationTests
 
         // Assert - Forward mode produces steering angle
         Assert.True(forwardAngle != 0.0, "Forward mode should produce steering angle");
-        Assert.Equal(1, mockUdp.MessagesSent);
+        Assert.Equal(1, mockAutoSteer.MessagesSent);
     }
 
     [Fact]
@@ -425,13 +433,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 
@@ -448,13 +456,13 @@ public class SteeringIntegrationTests
         coordinator.ActiveAlgorithm = SteeringAlgorithm.Stanley;
         coordinator.Update(pivotPosition, steerPosition, guidanceResult, 3.0, 0.0, true);
         double stanleyAngle = coordinator.CurrentSteeringAngle;
-        int messagesAfterStanley = mockUdp.MessagesSent;
+        int messagesAfterStanley = mockAutoSteer.MessagesSent;
 
         // Switch to Pure Pursuit during active guidance
         coordinator.ActiveAlgorithm = SteeringAlgorithm.PurePursuit;
         coordinator.Update(pivotPosition, steerPosition, guidanceResult, 3.0, 0.0, true);
         double purePursuitAngle = coordinator.CurrentSteeringAngle;
-        int messagesAfterSwitch = mockUdp.MessagesSent;
+        int messagesAfterSwitch = mockAutoSteer.MessagesSent;
 
         // Switch back to Stanley
         coordinator.ActiveAlgorithm = SteeringAlgorithm.Stanley;
@@ -467,7 +475,7 @@ public class SteeringIntegrationTests
         Assert.True(stanleyAngleAfterSwitch != 0.0, "Stanley should work after switch back");
 
         // Messages sent for all updates
-        Assert.Equal(3, mockUdp.MessagesSent);
+        Assert.Equal(3, mockAutoSteer.MessagesSent);
 
         // Angles may differ between algorithms (expected)
         // Both integrals should have been reset on switch
@@ -482,13 +490,13 @@ public class SteeringIntegrationTests
         var lookAheadService = new LookAheadDistanceService(_testConfig);
         var stanleyService = new StanleySteeringService(_testConfig);
         var purePursuitService = new PurePursuitService(_testConfig);
-        var mockUdp = new MockUdpService();
+        var mockAutoSteer = new MockAutoSteerService();
 
         var coordinator = new SteeringCoordinatorService(
             stanleyService,
             purePursuitService,
             lookAheadService,
-            mockUdp,
+            mockAutoSteer,
             _testConfig
         );
 

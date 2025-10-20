@@ -48,6 +48,16 @@ This roadmap outlines the continued development of AgValoniaGPS, building upon t
 - Boundary visualization
 - Camera controls (pan, zoom, pitch, follow vehicle)
 
+✅ **Wave 6: Hardware I/O & Communication** (October 2025)
+- Multi-transport communication architecture (UDP, Bluetooth, CAN, Radio)
+- PGN message builder and parser services
+- Module coordinator with connection monitoring
+- AutoSteer, Machine, and IMU communication services
+- Hardware simulator for testing without physical hardware
+- Transport abstraction layer for pluggable transports
+- Integration with Wave 3 (steering) and Wave 4 (section control)
+- 81 comprehensive tests with performance benchmarks
+
 ## Development Phases
 
 ### Phase 1: Complete Core Functionality (Current - Month 1)
@@ -62,7 +72,7 @@ This roadmap outlines the continued development of AgValoniaGPS, building upon t
 - [ ] AB line creation and editing UI
 - [ ] Curve line creation and following
 - [x] Complete section control implementation
-- [ ] Guidance loop closure (steering commands)
+- [x] Guidance loop closure (steering commands) - **Wave 6 complete**
 - [ ] AgShare API client integration
 - [ ] Field upload/download to AgShare
 - [ ] Configuration persistence (settings)
@@ -81,12 +91,12 @@ This roadmap outlines the continued development of AgValoniaGPS, building upon t
 - Add relay switching
 
 #### Deliverables
-- [ ] Machine control PGN outputs
-- [ ] Section control solenoid commands
-- [ ] Relay board communication
-- [ ] AutoSteer motor commands
+- [x] Machine control PGN outputs - **Wave 6 complete**
+- [x] Section control solenoid commands - **Wave 6 complete**
+- [x] Relay board communication - **Wave 6 complete**
+- [x] AutoSteer motor commands - **Wave 6 complete**
 - [ ] Rate control implementation
-- [ ] Work switch integration
+- [x] Work switch integration - **Wave 6 complete**
 - [ ] Hydraulic lift control
 
 #### Success Criteria
