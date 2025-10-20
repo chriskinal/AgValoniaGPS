@@ -6,6 +6,11 @@ namespace AgValoniaGPS.Models.Guidance;
 public enum GuidanceLineType
 {
     /// <summary>
+    /// No guidance line is currently active.
+    /// </summary>
+    None = -1,
+
+    /// <summary>
     /// Straight AB guidance line.
     /// </summary>
     ABLine = 0,

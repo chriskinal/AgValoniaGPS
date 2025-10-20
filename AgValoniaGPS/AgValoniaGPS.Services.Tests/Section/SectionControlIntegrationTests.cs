@@ -628,7 +628,7 @@ public class SectionControlIntegrationTests
 
         public void SetReversing(bool reversing) => _isReversing = reversing;
 
-        public void ProcessGpsPosition(GpsData gpsData, Models.ImuData? imuData) { }
+        public void ProcessGpsPosition(GpsData gpsData, AgValoniaGPS.Models.ImuData? imuData) { }
         public GeoCoord GetCurrentPosition() => new GeoCoord();
         public double GetCurrentHeading() => 0.0;
         public double GetCurrentSpeed() => 0.0;

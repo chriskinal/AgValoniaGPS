@@ -38,8 +38,8 @@ namespace AgValoniaGPS.Services.Tests.Field
             var abLine = new ABLine
             {
                 Name = "Test AB Line",
-                PointA = new Models.Position { Easting = 1000.0, Northing = 2000.0, Altitude = 100.0 },
-                PointB = new Models.Position { Easting = 1100.0, Northing = 2100.0, Altitude = 105.0 },
+                PointA = new Position { Easting = 1000.0, Northing = 2000.0, Altitude = 100.0 },
+                PointB = new Position { Easting = 1100.0, Northing = 2100.0, Altitude = 105.0 },
                 Heading = 0.785398, // 45 degrees in radians
                 NudgeOffset = 2.5,
                 CreatedDate = DateTime.UtcNow
@@ -67,12 +67,12 @@ namespace AgValoniaGPS.Services.Tests.Field
             var curveLine = new CurveLine
             {
                 Name = "Test Curve",
-                Points = new System.Collections.Generic.List<Models.Position>
+                Points = new System.Collections.Generic.List<Position>
                 {
-                    new Models.Position { Easting = 0.0, Northing = 0.0, Altitude = 10.0 },
-                    new Models.Position { Easting = 10.0, Northing = 5.0, Altitude = 11.0 },
-                    new Models.Position { Easting = 20.0, Northing = 15.0, Altitude = 12.0 },
-                    new Models.Position { Easting = 30.0, Northing = 20.0, Altitude = 13.0 }
+                    new Position { Easting = 0.0, Northing = 0.0, Altitude = 10.0 },
+                    new Position { Easting = 10.0, Northing = 5.0, Altitude = 11.0 },
+                    new Position { Easting = 20.0, Northing = 15.0, Altitude = 12.0 },
+                    new Position { Easting = 30.0, Northing = 20.0, Altitude = 13.0 }
                 },
                 CreatedDate = DateTime.UtcNow
             };
@@ -99,19 +99,19 @@ namespace AgValoniaGPS.Services.Tests.Field
             var contour = new ContourLine
             {
                 Name = "Test Contour",
-                Points = new System.Collections.Generic.List<Models.Position>
+                Points = new System.Collections.Generic.List<Position>
                 {
-                    new Models.Position { Easting = 100.0, Northing = 100.0, Altitude = 5.0 },
-                    new Models.Position { Easting = 101.0, Northing = 101.0, Altitude = 5.5 },
-                    new Models.Position { Easting = 102.0, Northing = 102.0, Altitude = 6.0 },
-                    new Models.Position { Easting = 103.0, Northing = 103.0, Altitude = 6.5 },
-                    new Models.Position { Easting = 104.0, Northing = 104.0, Altitude = 7.0 },
-                    new Models.Position { Easting = 105.0, Northing = 105.0, Altitude = 7.5 },
-                    new Models.Position { Easting = 106.0, Northing = 106.0, Altitude = 8.0 },
-                    new Models.Position { Easting = 107.0, Northing = 107.0, Altitude = 8.5 },
-                    new Models.Position { Easting = 108.0, Northing = 108.0, Altitude = 9.0 },
-                    new Models.Position { Easting = 109.0, Northing = 109.0, Altitude = 9.5 },
-                    new Models.Position { Easting = 110.0, Northing = 110.0, Altitude = 10.0 }
+                    new Position { Easting = 100.0, Northing = 100.0, Altitude = 5.0 },
+                    new Position { Easting = 101.0, Northing = 101.0, Altitude = 5.5 },
+                    new Position { Easting = 102.0, Northing = 102.0, Altitude = 6.0 },
+                    new Position { Easting = 103.0, Northing = 103.0, Altitude = 6.5 },
+                    new Position { Easting = 104.0, Northing = 104.0, Altitude = 7.0 },
+                    new Position { Easting = 105.0, Northing = 105.0, Altitude = 7.5 },
+                    new Position { Easting = 106.0, Northing = 106.0, Altitude = 8.0 },
+                    new Position { Easting = 107.0, Northing = 107.0, Altitude = 8.5 },
+                    new Position { Easting = 108.0, Northing = 108.0, Altitude = 9.0 },
+                    new Position { Easting = 109.0, Northing = 109.0, Altitude = 9.5 },
+                    new Position { Easting = 110.0, Northing = 110.0, Altitude = 10.0 }
                 },
                 IsLocked = true,
                 MinDistanceThreshold = 0.5,
@@ -168,8 +168,8 @@ namespace AgValoniaGPS.Services.Tests.Field
             var abLine = new ABLine
             {
                 Name = "Test Delete",
-                PointA = new Models.Position { Easting = 1000.0, Northing = 2000.0 },
-                PointB = new Models.Position { Easting = 1100.0, Northing = 2100.0 },
+                PointA = new Position { Easting = 1000.0, Northing = 2000.0 },
+                PointB = new Position { Easting = 1100.0, Northing = 2100.0 },
                 Heading = 0.0
             };
             _fieldService.SaveABLine(abLine, _testDirectory);
