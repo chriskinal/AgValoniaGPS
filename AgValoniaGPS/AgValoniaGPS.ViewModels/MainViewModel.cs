@@ -5,6 +5,9 @@ using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
 using AgValoniaGPS.Services.GPS;
+using AgValoniaGPS.Services.Configuration;
+using AgValoniaGPS.Services.Session;
+using AgValoniaGPS.Services.Profile;
 using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
@@ -23,6 +26,11 @@ public class MainViewModel : ReactiveObject
     // Wave 1 Services
     private readonly IPositionUpdateService _positionService;
     private readonly IHeadingCalculatorService _headingService;
+
+    // Wave 8 State Management Services
+    private readonly IConfigurationService _configService;
+    private readonly ISessionManagementService _sessionService;
+    private readonly IProfileManagementService _profileService;
 
     private string _statusMessage = "Starting...";
     private double _latitude;
@@ -62,7 +70,10 @@ public class MainViewModel : ReactiveObject
         IFieldStatisticsService fieldStatistics,
         VehicleConfiguration vehicleConfig,
         IPositionUpdateService positionService,
-        IHeadingCalculatorService headingService)
+        IHeadingCalculatorService headingService,
+        IConfigurationService configService,
+        ISessionManagementService sessionService,
+        IProfileManagementService profileService)
     {
         _udpService = udpService;
         _gpsService = gpsService;
@@ -73,6 +84,9 @@ public class MainViewModel : ReactiveObject
         _vehicleConfig = vehicleConfig;
         _positionService = positionService;
         _headingService = headingService;
+        _configService = configService;
+        _sessionService = sessionService;
+        _profileService = profileService;
         _nmeaParser = new NmeaParserService(gpsService);
 
         // Subscribe to GPS and UDP events
@@ -624,5 +638,190 @@ public class MainViewModel : ReactiveObject
             this.RaisePropertyChanged(nameof(WorkedAreaDisplay));
             this.RaisePropertyChanged(nameof(RemainingPercent));
         }
+
+        // Update session management with new field
+        if (field != null)
+        {
+            _sessionService.UpdateCurrentField(field.Name);
+        }
     }
+
+    // ========== Wave 8 State Management Properties ==========
+
+    private string _currentVehicleProfile = "Default";
+    private string _currentUserProfile = "Default";
+    private string _sessionStateInfo = "No active session";
+
+    public string CurrentVehicleProfile
+    {
+        get => _currentVehicleProfile;
+        set => this.RaiseAndSetIfChanged(ref _currentVehicleProfile, value);
+    }
+
+    public string CurrentUserProfile
+    {
+        get => _currentUserProfile;
+        set => this.RaiseAndSetIfChanged(ref _currentUserProfile, value);
+    }
+
+    public string SessionStateInfo
+    {
+        get => _sessionStateInfo;
+        set => this.RaiseAndSetIfChanged(ref _sessionStateInfo, value);
+    }
+
+    /// <summary>
+    /// Load settings from configuration service (reads v6.x XML files)
+    /// </summary>
+    public async System.Threading.Tasks.Task LoadVehicleSettingsAsync(string vehicleName)
+    {
+        try
+        {
+            var result = await _configService.LoadSettingsAsync(vehicleName);
+
+            if (result.Success)
+            {
+                CurrentVehicleProfile = vehicleName;
+                SessionStateInfo = $"Settings loaded from {result.Source} for {vehicleName}";
+
+                // Apply vehicle settings to VehicleConfiguration
+                var vehicleSettings = _configService.GetVehicleSettings();
+                _vehicleConfig.Wheelbase = vehicleSettings.Wheelbase;
+                _vehicleConfig.TrackWidth = vehicleSettings.Track;
+                _vehicleConfig.MaxSteerAngle = vehicleSettings.MaxSteerAngle;
+                _vehicleConfig.AntennaHeight = vehicleSettings.AntennaHeight;
+                _vehicleConfig.AntennaPivot = vehicleSettings.AntennaPivot;
+                _vehicleConfig.AntennaOffset = vehicleSettings.AntennaOffset;
+
+                StatusMessage = $"Vehicle profile '{vehicleName}' loaded successfully";
+            }
+            else
+            {
+                SessionStateInfo = $"Failed to load settings: {result.ErrorMessage}";
+                StatusMessage = "Failed to load vehicle profile";
+            }
+        }
+        catch (Exception ex)
+        {
+            SessionStateInfo = $"Error loading settings: {ex.Message}";
+            StatusMessage = "Error loading vehicle profile";
+        }
+    }
+
+    /// <summary>
+    /// Save current settings using configuration service (saves to JSON + XML)
+    /// </summary>
+    public async System.Threading.Tasks.Task SaveVehicleSettingsAsync()
+    {
+        try
+        {
+            // Update configuration with current vehicle settings
+            var vehicleSettings = new AgValoniaGPS.Models.Configuration.VehicleSettings
+            {
+                Wheelbase = _vehicleConfig.Wheelbase,
+                Track = _vehicleConfig.TrackWidth,
+                MaxSteerAngle = _vehicleConfig.MaxSteerAngle,
+                AntennaHeight = _vehicleConfig.AntennaHeight,
+                AntennaPivot = _vehicleConfig.AntennaPivot,
+                AntennaOffset = _vehicleConfig.AntennaOffset,
+                MaxAngularVelocity = 80.0, // Default values
+                PivotBehindAnt = 0.0,
+                SteerAxleAhead = 0.0,
+                VehicleType = 0,
+                VehicleHitchLength = 0.0,
+                MinUturnRadius = 4.0
+            };
+
+            var updateResult = await _configService.UpdateVehicleSettingsAsync(vehicleSettings);
+
+            if (updateResult.IsValid)
+            {
+                var saveResult = await _configService.SaveSettingsAsync();
+
+                if (saveResult.Success)
+                {
+                    var formatCount = (saveResult.JsonSaved ? 1 : 0) + (saveResult.XmlSaved ? 1 : 0);
+                    SessionStateInfo = $"Settings saved to {formatCount} format(s) (JSON: {saveResult.JsonSaved}, XML: {saveResult.XmlSaved})";
+                    StatusMessage = "Vehicle settings saved successfully";
+                }
+                else
+                {
+                    SessionStateInfo = $"Save failed: {saveResult.ErrorMessage}";
+                    StatusMessage = "Failed to save vehicle settings";
+                }
+            }
+            else
+            {
+                SessionStateInfo = $"Validation failed: {string.Join(", ", updateResult.Errors)}";
+                StatusMessage = "Invalid vehicle settings";
+            }
+        }
+        catch (Exception ex)
+        {
+            SessionStateInfo = $"Error saving settings: {ex.Message}";
+            StatusMessage = "Error saving vehicle settings";
+        }
+    }
+
+    /// <summary>
+    /// Get session state snapshot for display
+    /// </summary>
+    public System.Threading.Tasks.Task UpdateSessionStateDisplayAsync()
+    {
+        try
+        {
+            var sessionState = _sessionService.GetCurrentSessionState();
+
+            if (sessionState != null)
+            {
+                SessionStateInfo = $"Field: {sessionState.CurrentFieldName ?? "None"} | " +
+                                 $"User: {sessionState.UserProfileName} | " +
+                                 $"Vehicle: {sessionState.VehicleProfileName} | " +
+                                 $"Session: {(DateTime.UtcNow - sessionState.SessionStartTime).TotalMinutes:F0}m";
+            }
+            else
+            {
+                SessionStateInfo = "No active session";
+            }
+        }
+        catch (Exception ex)
+        {
+            SessionStateInfo = $"Session error: {ex.Message}";
+        }
+
+        return System.Threading.Tasks.Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Switch vehicle profile using profile management service
+    /// </summary>
+    public async System.Threading.Tasks.Task SwitchVehicleProfileAsync(string profileName)
+    {
+        try
+        {
+            var result = await _profileService.SwitchVehicleProfileAsync(profileName, carryOverSession: true);
+
+            if (result.Success)
+            {
+                CurrentVehicleProfile = profileName;
+                StatusMessage = $"Switched to vehicle profile: {profileName}";
+
+                // Reload settings from new profile
+                await LoadVehicleSettingsAsync(profileName);
+            }
+            else
+            {
+                StatusMessage = $"Failed to switch profile: {result.ErrorMessage}";
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error switching profile: {ex.Message}";
+        }
+    }
+
+    // Expose services for UI access
+    public IConfigurationService ConfigurationService => _configService;
+    public ISessionManagementService SessionManagementService => _sessionService;
+    public IProfileManagementService ProfileManagementService => _profileService;
 }

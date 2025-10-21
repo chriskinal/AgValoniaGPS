@@ -54,8 +54,11 @@ public class UdpCommunicationService : IUdpCommunicationService, IDisposable
 
         try
         {
-            // Get local IP address
+            // Get local IP address (prioritizes 192.168.5.x AgIO board subnet)
             LocalIPAddress = GetLocalIPAddress();
+
+            // Log the selected IP for debugging
+            System.Diagnostics.Debug.WriteLine($"[UDP] Selected IP address: {LocalIPAddress}");
 
             // Create UDP socket on port 9999
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -280,11 +283,69 @@ public class UdpCommunicationService : IUdpCommunicationService, IDisposable
         try
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
+
+            // Log all available IPs for debugging
+            System.Diagnostics.Debug.WriteLine($"[UDP] Available network interfaces:");
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    return ip.ToString();
+                    System.Diagnostics.Debug.WriteLine($"[UDP]   - {ip}");
+                }
+            }
+
+            // Priority 1: Look for IP in the 192.168.5.x subnet (AgIO board subnet)
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    var ipStr = ip.ToString();
+                    if (ipStr.StartsWith("192.168.5."))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[UDP] Selected 192.168.5.x (AgIO board): {ipStr}");
+                        return ipStr;
+                    }
+                }
+            }
+
+            // Priority 2: Look for any valid private IP (skip link-local and loopback)
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    var ipStr = ip.ToString();
+
+                    // Skip loopback (127.x.x.x)
+                    if (ipStr.StartsWith("127."))
+                        continue;
+
+                    // Skip link-local (169.254.x.x) - this is what was causing your issue!
+                    if (ipStr.StartsWith("169.254."))
+                        continue;
+
+                    // Accept any other private IP (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+                    if (ipStr.StartsWith("192.168.") ||
+                        ipStr.StartsWith("10.") ||
+                        (ipStr.StartsWith("172.") &&
+                         int.TryParse(ipStr.Split('.')[1], out var second) &&
+                         second >= 16 && second <= 31))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[UDP] Selected private IP: {ipStr}");
+                        return ipStr;
+                    }
+                }
+            }
+
+            // Priority 3: Fall back to any IPv4 (if only public IPs available)
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    var ipStr = ip.ToString();
+                    if (!ipStr.StartsWith("127.") && !ipStr.StartsWith("169.254."))
+                    {
+                        return ipStr;
+                    }
                 }
             }
         }

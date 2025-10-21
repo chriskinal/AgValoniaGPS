@@ -115,6 +115,15 @@ public partial class MainWindow : Window
         }
     }
 
+    private void BtnSettings_Click(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new SettingsDialog
+        {
+            DataContext = ViewModel
+        };
+        dialog.ShowDialog(this);
+    }
+
     private async void BtnFields_Click(object? sender, RoutedEventArgs e)
     {
         if (App.Services == null) return;
@@ -130,6 +139,60 @@ public partial class MainWindow : Window
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "AgOpenGPS",
                 "Fields");
+        }
+
+        // Show folder picker first to let user choose fields directory
+        var folderDialog = new Avalonia.Platform.Storage.FilePickerOpenOptions
+        {
+            Title = "Select AgOpenGPS Fields Directory",
+            AllowMultiple = false
+        };
+
+        var storageProvider = this.StorageProvider;
+        if (storageProvider != null)
+        {
+            // Try to set suggested start location to the current fields directory
+            if (Directory.Exists(fieldsDir))
+            {
+                try
+                {
+                    // Convert local path to absolute Uri for Avalonia StorageProvider
+                    var absolutePath = Path.GetFullPath(fieldsDir);
+                    var uri = new Uri(absolutePath, UriKind.Absolute);
+                    var startFolder = await storageProvider.TryGetFolderFromPathAsync(uri);
+                    if (startFolder != null)
+                    {
+                        folderDialog.SuggestedStartLocation = startFolder;
+                    }
+                }
+                catch { }
+            }
+
+            var folders = await storageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
+            {
+                Title = "Select AgOpenGPS Fields Directory",
+                AllowMultiple = false,
+                SuggestedStartLocation = folderDialog.SuggestedStartLocation
+            });
+
+            if (folders != null && folders.Count > 0)
+            {
+                // User selected a directory
+                var selectedPath = folders[0].Path.LocalPath;
+                if (!string.IsNullOrEmpty(selectedPath))
+                {
+                    fieldsDir = selectedPath;
+                    if (ViewModel != null)
+                    {
+                        ViewModel.FieldsRootDirectory = fieldsDir;
+                    }
+                }
+            }
+            else
+            {
+                // User cancelled the folder picker
+                return;
+            }
         }
 
         var dialog = new FieldSelectionDialog(fieldService, fieldsDir);

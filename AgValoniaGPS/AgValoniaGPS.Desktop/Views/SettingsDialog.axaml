@@ -1,0 +1,196 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AgValoniaGPS.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="AgValoniaGPS.Desktop.Views.SettingsDialog"
+        x:DataType="vm:MainViewModel"
+        Title="Settings - Wave 8 State Management"
+        Width="800" Height="600"
+        Background="#2C3E50"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <!-- Panel Style -->
+        <Style Selector="Border.Panel">
+            <Setter Property="Background" Value="#34495E"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Section Header Style -->
+        <Style Selector="TextBlock.SectionHeader">
+            <Setter Property="Foreground" Value="#3498DB"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Label Style -->
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Foreground" Value="#BDC3C7"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Value Style -->
+        <Style Selector="TextBlock.Value">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Modern Button Style -->
+        <Style Selector="Button.ModernButton">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style Selector="Button.ModernButton:pointerover">
+            <Setter Property="Background" Value="#2980B9"/>
+        </Style>
+
+        <!-- Status Indicator Style -->
+        <Style Selector="Ellipse.StatusOk">
+            <Setter Property="Fill" Value="#27AE60"/>
+        </Style>
+        <Style Selector="Ellipse.StatusError">
+            <Setter Property="Fill" Value="#E74C3C"/>
+        </Style>
+    </Window.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <!-- Wave 8 Services Status Header -->
+            <Border Classes="Panel" BorderBrush="#3498DB" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Classes="SectionHeader" Text="Wave 8 State Management Services" FontSize="18"/>
+                    <TextBlock Classes="Value" Text="{Binding SessionStateInfo}" Foreground="#ECF0F1" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Configuration Service Panel -->
+            <Border Classes="Panel">
+                <StackPanel>
+                    <TextBlock Classes="SectionHeader" Text="⚙️ Configuration Service"/>
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0,0,0,15">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="Label" Text="Vehicle Profile:"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="Value" Text="{Binding CurrentVehicleProfile}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="Label" Text="Wheelbase:"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="Value" Text="{Binding VehicleConfig.Wheelbase, StringFormat='{}{0:F1} cm'}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="Label" Text="Track Width:"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="Value" Text="{Binding VehicleConfig.TrackWidth, StringFormat='{}{0:F1} cm'}"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="Label" Text="Max Steer Angle:"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="Value" Text="{Binding VehicleConfig.MaxSteerAngle, StringFormat='{}{0:F1}°'}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Classes="Label" Text="Antenna Height:"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="Value" Text="{Binding VehicleConfig.AntennaHeight, StringFormat='{}{0:F1} cm'}"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Classes="Label" Text="Antenna Pivot:"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Classes="Value" Text="{Binding VehicleConfig.AntennaPivot, StringFormat='{}{0:F1} cm'}"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Classes="Label" Text="Antenna Offset:"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Classes="Value" Text="{Binding VehicleConfig.AntennaOffset, StringFormat='{}{0:F1} cm'}"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Classes="ModernButton" Content="Load Settings (v6.x XML)" Click="BtnLoadSettings_Click"/>
+                        <Button Classes="ModernButton" Content="Save Settings (JSON + XML)" Click="BtnSaveSettings_Click" Background="#27AE60"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Session Management Panel -->
+            <Border Classes="Panel">
+                <StackPanel>
+                    <TextBlock Classes="SectionHeader" Text="📋 Session Management"/>
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto" Margin="0,0,0,15">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="Label" Text="Active Field:"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="Value" Text="{Binding ActiveFieldName}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="Label" Text="User Profile:"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="Value" Text="{Binding CurrentUserProfile}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="Label" Text="Status:"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="Value" Text="{Binding StatusMessage}"/>
+                    </Grid>
+
+                    <Button Classes="ModernButton" Content="Refresh Session State" Click="BtnRefreshSession_Click" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Communication Status Panel -->
+            <Border Classes="Panel">
+                <StackPanel>
+                    <TextBlock Classes="SectionHeader" Text="📡 Communication Status"/>
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" Margin="0,0,0,15">
+                        <!-- GPS Status -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="Label" Text="GPS:"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="Value" Text="{Binding FixQuality}"/>
+
+                        <!-- NTRIP Status -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="Label" Text="NTRIP:"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="Value" Text="{Binding NtripStatus}"/>
+
+                        <!-- AutoSteer Status -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="Label" Text="AutoSteer:"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="Value" Text="{Binding IsAutoSteerDataOk}"/>
+
+                        <!-- Machine Status -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="Label" Text="Machine:"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="Value" Text="{Binding IsMachineDataOk}"/>
+
+                        <!-- IMU Status -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Classes="Label" Text="IMU:"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="Value" Text="{Binding IsImuDataOk}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- GPS Data Panel -->
+            <Border Classes="Panel">
+                <StackPanel>
+                    <TextBlock Classes="SectionHeader" Text="🛰️ GPS Data"/>
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="Label" Text="Latitude:"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="Value" Text="{Binding Latitude, StringFormat='{}{0:F7}°'}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="Label" Text="Longitude:"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="Value" Text="{Binding Longitude, StringFormat='{}{0:F7}°'}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="Label" Text="Speed:"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="Value" Text="{Binding Speed, StringFormat='{}{0:F2} km/h'}"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Classes="Label" Text="Satellites:"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="Value" Text="{Binding SatelliteCount}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Classes="Label" Text="Heading:"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="Value" Text="{Binding Heading, StringFormat='{}{0:F2} rad'} ({Binding HeadingSource})"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Classes="Label" Text="Network:"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Classes="Value" Text="{Binding NetworkStatus}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Close Button -->
+            <Button Classes="ModernButton" Content="Close" Click="BtnClose_Click" HorizontalAlignment="Center" Width="150" Margin="0,10,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
