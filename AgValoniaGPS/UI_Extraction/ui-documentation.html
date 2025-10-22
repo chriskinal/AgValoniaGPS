@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgOpenGPS UI Documentation</title>
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        header h1 { margin-bottom: 0.5rem; }
+        header p { opacity: 0.9; }
+        nav { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 1rem; text-align: center; position: sticky; top: 0; z-index: 100; }
+        nav a { margin: 0 1rem; text-decoration: none; color: #667eea; font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: #764ba2; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-bottom: 1.5rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem; }
+        h3 { color: #555; margin: 1.5rem 0 1rem; }
+        h4 { color: #666; margin: 1rem 0 0.5rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 8px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { opacity: 0.9; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .complexity-bar { display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin: 1rem 0; }
+        .complexity-segment { transition: opacity 0.3s; }
+        .complexity-segment:hover { opacity: 0.8; cursor: help; }
+        .complexity-segment.complex { background: #ff4444; }
+        .complexity-segment.moderate { background: #ffa500; }
+        .complexity-segment.simple { background: #4caf50; }
+        .complexity-legend { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; }
+        #searchBox { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 1rem; }
+        #searchBox:focus { outline: none; border-color: #667eea; }
+        .forms-list { max-height: 600px; overflow-y: auto; }
+        .form-item { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 0.5rem; transition: all 0.3s; }
+        .form-item.complex { border-left: 4px solid #ff4444; }
+        .form-item.moderate { border-left: 4px solid #ffa500; }
+        .form-item.simple { border-left: 4px solid #4caf50; }
+        .form-header { padding: 1rem; cursor: pointer; user-select: none; }
+        .form-header:hover { background: #f9f9f9; }
+        .form-header h3 { margin: 0; display: flex; justify-content: space-between; align-items: center; color: #333; }
+        .expand-icon { font-size: 0.8rem; transition: transform 0.3s; }
+        .form-header.expanded .expand-icon { transform: rotate(180deg); }
+        .form-meta { display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .form-title { color: #666; font-style: italic; }
+        .badge { background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem; }
+        .form-details { padding: 0 1rem 1rem 1rem; background: #f9f9f9; }
+        .form-details ul { list-style-position: inside; margin-left: 1rem; }
+        .form-details li { margin: 0.25rem 0; }
+        code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.9rem; }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .tag { background: #e0e0e0; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
+        .tag.entry-point { background: #4caf50; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f4f4f4; font-weight: 600; color: #333; }
+        tr:hover { background: #f9f9f9; }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AgOpenGPS UI Documentation</h1>
+        <p>Extracted: 2025-10-21 20:34:16 | 74 Forms | 10,774 Controls</p>
+    </header>
+    <nav>
+        <a href="#overview">Overview</a>
+        <a href="#forms">Forms</a>
+        <a href="#navigation">Navigation</a>
+        <a href="#statistics">Statistics</a>
+    </nav>
+    <div class="container">
+        <section id="overview" class="card">
+            <h2>Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value">74</div><div class="stat-label">Forms</div></div>
+                <div class="stat-card"><div class="stat-value">10,774</div><div class="stat-label">Controls</div></div>
+                <div class="stat-card"><div class="stat-value">670</div><div class="stat-label">Event Handlers</div></div>
+                <div class="stat-card"><div class="stat-value">52</div><div class="stat-label">Menu Items</div></div>
+            </div>
+            <h3>Complexity Breakdown</h3>
+            <div class="complexity-bar">
+                <div class="complexity-segment complex" style="width: 8.1%" title="Complex: 6 forms"></div>
+                <div class="complexity-segment moderate" style="width: 20.3%" title="Moderate: 15 forms"></div>
+                <div class="complexity-segment simple" style="width: 71.6%" title="Simple: 53 forms"></div>
+            </div>
+            <div class="complexity-legend">
+                <span class="legend-item"><span class="legend-color complex"></span> Complex (>500): 6</span>
+                <span class="legend-item"><span class="legend-color moderate"></span> Moderate (100-500): 15</span>
+                <span class="legend-item"><span class="legend-color simple"></span> Simple (<100): 53</span>
+            </div>
+        </section>
+        <section id="forms" class="card">
+            <h2>Forms</h2>
+            <input type="text" id="searchBox" placeholder="Search forms..." onkeyup="filterForms()">
+            <div class="forms-list" id="formsList">
+                <div class="form-item simple" data-name="configdata">
+                    <div class="form-header" onclick="toggleForm('ConfigData')">
+                        <h3>ConfigData <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigData" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="confighelp">
+                    <div class="form-header" onclick="toggleForm('ConfigHelp')">
+                        <h3>ConfigHelp <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigHelp" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="configmenu">
+                    <div class="form-header" onclick="toggleForm('ConfigMenu')">
+                        <h3>ConfigMenu <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigMenu" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="configmodule">
+                    <div class="form-header" onclick="toggleForm('ConfigModule')">
+                        <h3>ConfigModule <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigModule" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="configsummarycontrol">
+                    <div class="form-header" onclick="toggleForm('ConfigSummaryControl')">
+                        <h3>ConfigSummaryControl <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">103 controls</span>
+                            <span class="badge">0 handlers</span>
+                            <span class="badge">859×584</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigSummaryControl" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 103</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="configtool">
+                    <div class="form-header" onclick="toggleForm('ConfigTool')">
+                        <h3>ConfigTool <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigTool" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="configvehicle">
+                    <div class="form-header" onclick="toggleForm('ConfigVehicle')">
+                        <h3>ConfigVehicle <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigVehicle" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="configvehiclecontrol">
+                    <div class="form-header" onclick="toggleForm('ConfigVehicleControl')">
+                        <h3>ConfigVehicleControl <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">158 controls</span>
+                            <span class="badge">9 handlers</span>
+                            <span class="badge">859×584</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-ConfigVehicleControl" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 158</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>rbtnTractor_Click</code>: No specific actions identified</li>
+                            <li><code>rbtnHarvester_Click</code>: No specific actions identified</li>
+                            <li><code>rbtnArticulated_Click</code>: No specific actions identified</li>
+                            <li><code>rbtnTractorBrand_CheckedChanged</code>: No specific actions identified</li>
+                            <li><code>rbtnHarvesterBrand_CheckedChanged</code>: No specific actions identified</li>
+                            <li><code>rbtnArticulatedBrand_CheckedChanged</code>: No specific actions identified</li>
+                            <li><code>cboxIsImage_Click</code>: Saves data</li>
+                            <li><code>btnOpacityDn_Click</code>: Saves data</li>
+                            <li><code>btnOpacityUp_Click</code>: Saves data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="controls">
+                    <div class="form-header" onclick="toggleForm('Controls')">
+                        <h3>Controls <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-Controls" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="form_about">
+                    <div class="form-header" onclick="toggleForm('Form_About')">
+                        <h3>Form_About <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: About AgOpenGPS</span>
+                            <span class="badge">90 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">984×644</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-Form_About" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 90</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>linkLabelGit_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>linkLabelCombineForum_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>Form_About_Load</code>: No specific actions identified</li>
+                            <li><code>button4_Click</code>: Saves data</li>
+                            <li><code>btnVideo_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="form_first">
+                    <div class="form-header" onclick="toggleForm('Form_First')">
+                        <h3>Form_First <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Accept Terms and Conditions</span>
+                            <span class="badge">74 controls</span>
+                            <span class="badge">6 handlers</span>
+                            <span class="badge">1026×659</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-Form_First" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 74</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>linkLabelGit_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>linkLabelCombineForum_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>Form_About_Load</code>: No specific actions identified</li>
+                            <li><code>button1_Click</code>: Closes window</li>
+                            <li><code>button2_Click</code>: No specific actions identified</li>
+                            <li><code>button3_Click</code>: Saves data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="form_help">
+                    <div class="form-header" onclick="toggleForm('Form_Help')">
+                        <h3>Form_Help <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: AgOpenGPS Help</span>
+                            <span class="badge">44 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">689×402</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-Form_Help" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 44</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>linkLabelGit_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>linkLabelCombineForum_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>linkLabelYouTube_LinkClicked</code>: No specific actions identified</li>
+                            <li><code>Form_About_Load</code>: No specific actions identified</li>
+                            <li><code>pictureBox2_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="form_keys">
+                    <div class="form-header" onclick="toggleForm('Form_Keys')">
+                        <h3>Form_Keys <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">217 controls</span>
+                            <span class="badge">6 handlers</span>
+                            <span class="badge">895×686</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-Form_Keys" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 217</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>btnEditShortcut_Click</code>: No specific actions identified</li>
+                            <li><code>tboxKey_TextChanged</code>: No specific actions identified</li>
+                            <li><code>Form_Keys_Load</code>: Loads data</li>
+                            <li><code>Form_Keys_FormClosing</code>: Saves data</li>
+                            <li><code>btnReset_Click</code>: Saves data; Loads data</li>
+                            <li><code>btnOK_Click</code>: Closes window</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formabdraw">
+                    <div class="form-header" onclick="toggleForm('FormABDraw')">
+                        <h3>FormABDraw <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Draw AB - Click 2 points on the Boundary to Begin</span>
+                            <span class="badge">107 controls</span>
+                            <span class="badge">25 handlers</span>
+                            <span class="badge">1006×703</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormABDraw" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 107</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormABDraw_Load</code>: No specific actions identified</li>
+                            <li><code>FormABDraw_FormClosing</code>: Saves data; Saves data; Saves data</li>
+                            <li><code>cboxIsZoom_CheckedChanged</code>: No specific actions identified</li>
+                            <li><code>btnExit_Click</code>: Closes window</li>
+                            <li><code>btnCancel_Click</code>: Closes window</li>
+                            <li><code>btnCancelTouch_Click</code>: Changes btnMakeABLine.Enabled; Changes btnMakeCurve.Enabled</li>
+                            <li><code>btnSelectCurve_Click</code>: No specific actions identified</li>
+                            <li><code>btnSelectCurveBk_Click</code>: No specific actions identified</li>
+                            <li><code>cboxIsVisible_Click</code>: No specific actions identified</li>
+                            <li><code>btnDeleteCurve_Click</code>: No specific actions identified</li>
+                            <li><em>... and 15 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isA</code> (bool)</li>
+                            <li><code>isCancel</code> (bool)</li>
+                            <li><code>zoomToggle</code> (bool)</li>
+                            <li><code>isDrawSections</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formagsharedownloader">
+                    <div class="form-header" onclick="toggleForm('FormAgShareDownloader')">
+                        <h3>FormAgShareDownloader <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Download Fields From AgShare</span>
+                            <span class="badge">38 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">1161×663</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormAgShareDownloader" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 38</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormAgShareDownloader_Load</code>: No specific actions identified</li>
+                            <li><code>lbFields_SelectedIndexChanged</code>: No specific actions identified</li>
+                            <li><code>btnOpen_Click</code>: Saves data; Saves data; Closes window</li>
+                            <li><code>BtnDownloadAll_Click</code>: Sets lblDownloading.Visible = true; Changes btnSaveAll.Enabled; Changes btnClose.Enabled; Changes btnOpen.Enabled; Changes btnSaveAll.Enabled; Changes chkForceOverwrite.Enabled; Sets progressBarDownloadAll.Visible = true; Sets progressBarDownloadAll.Visible = false; Sets lblDownloading.Visible = false; Changes btnClose.Enabled; Changes btnOpen.Enabled; Changes btnSaveAll.Enabled; Changes chkForceOverwrite.Enabled</li>
+                            <li><code>btnClose_Click</code>: Closes window</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formagsharesettings">
+                    <div class="form-header" onclick="toggleForm('FormAgShareSettings')">
+                        <h3>FormAgShareSettings <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: AgShare Settings</span>
+                            <span class="badge">57 controls</span>
+                            <span class="badge">12 handlers</span>
+                            <span class="badge">584×373</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormAgShareSettings" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 57</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormAgShareSettings_Load</code>: Changes btnPaste.Enabled; Changes textBoxServer.Enabled</li>
+                            <li><code>OnFormClosed</code>: Closes window</li>
+                            <li><code>ClipboardCheckTimer_Tick</code>: Changes btnPaste.Enabled</li>
+                            <li><code>buttonTestConnection_Click</code>: Changes buttonSave.Enabled</li>
+                            <li><code>buttonSave_Click</code>: Saves data</li>
+                            <li><code>textBoxAnySetting_TextChanged</code>: Changes buttonSave.Enabled</li>
+                            <li><code>btnToggleUpload_Click</code>: Saves data</li>
+                            <li><code>btnPaste_Click</code>: Changes btnPaste.Enabled</li>
+                            <li><code>textBoxServer_Click</code>: No specific actions identified</li>
+                            <li><code>linkRegister_LinkClicked</code>: No specific actions identified</li>
+                            <li><em>... and 2 more</em></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item complex" data-name="formallsettings">
+                    <div class="form-header" onclick="toggleForm('FormAllSettings')">
+                        <h3>FormAllSettings <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create Image of Settings or Copy to clipboard to paste in Telegram</span>
+                            <span class="badge">1080 controls</span>
+                            <span class="badge">3 handlers</span>
+                            <span class="badge">1188×671</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormAllSettings" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 1080</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>btnScreenShot_Click</code>: No specific actions identified</li>
+                            <li><code>btnCreatePNG_Click</code>: Saves data; Closes window</li>
+                            <li><code>timer1_Tick</code>: Loads data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formbndtool">
+                    <div class="form-header" onclick="toggleForm('FormBndTool')">
+                        <h3>FormBndTool <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create Boundary From Mapping</span>
+                            <span class="badge">146 controls</span>
+                            <span class="badge">24 handlers</span>
+                            <span class="badge">1006×726</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormBndTool" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 146</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormBndTool_Load</code>: Sets panel1.Visible = false</li>
+                            <li><code>FormBndTool_FormClosing</code>: Saves data</li>
+                            <li><code>FormBndTool_ResizeEnd</code>: Loads data; Loads data</li>
+                            <li><code>btnAddPoints_Click</code>: Changes btnAddPoints.Enabled; Changes btnAddPoints.Enabled</li>
+                            <li><code>btnResetReduce_Click</code>: Sets cboxIsZoom.Visible = false; Sets btnSlice.Visible = false; Sets btnCenterOGL.Visible = false; Sets btnZoomIn.Visible = false; Sets btnZoomOut.Visible = false; Sets btnMoveDn.Visible = false; Sets btnMoveUp.Visible = false; Sets btnMoveLeft.Visible = false; Sets btnMoveRight.Visible = false; Changes btnStartStop.Enabled; Changes cboxPointDistance.Enabled; Changes cboxSmooth.Enabled; Changes btnMakeBoundary.Enabled; Changes cboxPointDistance.Enabled</li>
+                            <li><code>btnMakeBoundary_Click</code>: Saves data; Changes btnStartStop.Enabled; Changes cboxPointDistance.Enabled; Changes cboxSmooth.Enabled; Changes btnMakeBoundary.Enabled; Sets cboxIsZoom.Visible = true; Sets btnSlice.Visible = true; Sets btnCenterOGL.Visible = true; Sets btnCancelTouch.Visible = true; Sets btnZoomIn.Visible = true; Sets btnZoomOut.Visible = true; Sets btnMoveDn.Visible = false; Sets btnMoveUp.Visible = false; Sets btnMoveLeft.Visible = false; Sets btnMoveRight.Visible = false</li>
+                            <li><code>cboxSmooth_SelectedIndexChanged</code>: No specific actions identified</li>
+                            <li><code>cboxPointDistance_SelectedIndexChanged</code>: Changes cboxPointDistance.Enabled; Sets panel1.Visible = true; Sets panel1.Visible = false; Changes btnStartStop.Enabled</li>
+                            <li><code>btnZoomOut_Click</code>: No specific actions identified</li>
+                            <li><code>btnMoveDn_Click</code>: No specific actions identified</li>
+                            <li><em>... and 14 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isA</code> (bool)</li>
+                            <li><code>isC</code> (bool)</li>
+                            <li><code>isStep</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formboundary">
+                    <div class="form-header" onclick="toggleForm('FormBoundary')">
+                        <h3>FormBoundary <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Boundary</span>
+                            <span class="badge">99 controls</span>
+                            <span class="badge">14 handlers</span>
+                            <span class="badge">1084×310</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormBoundary" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 99</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormBoundary_Load</code>: Closes window; Sets panelMain.Visible = true; Sets panelChoose.Visible = false; Sets panelKML.Visible = false</li>
+                            <li><code>FormBoundary_FormClosing</code>: No specific actions identified</li>
+                            <li><code>DriveThru_Click</code>: No specific actions identified</li>
+                            <li><code>B_Click</code>: Changes btnDelete.Enabled; Changes btnDelete.Enabled</li>
+                            <li><code>btnDelete_Click</code>: Saves data; Changes btnDelete.Enabled</li>
+                            <li><code>btnOpenGoogleEarth_Click</code>: Closes window</li>
+                            <li><code>btnReturn_Click</code>: Closes window; Sets panelMain.Visible = true; Sets panelChoose.Visible = false; Sets panelKML.Visible = false</li>
+                            <li><code>btnAdd_Click</code>: Sets panelMain.Visible = false; Sets panelKML.Visible = false; Sets panelChoose.Visible = true</li>
+                            <li><code>btnLoadBoundaryFromGE_Click</code>: Shows dialog; Saves data; Sets mf.Visible = true; Sets mf.Visible = true; Sets panelMain.Visible = true; Sets panelChoose.Visible = false; Sets panelKML.Visible = false</li>
+                            <li><code>btnDriveOrExt_Click</code>: Sets panelMain.Visible = false; Sets panelChoose.Visible = false; Sets panelKML.Visible = false</li>
+                            <li><em>... and 4 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isClosing</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formboundaryplayer">
+                    <div class="form-header" onclick="toggleForm('FormBoundaryPlayer')">
+                        <h3>FormBoundaryPlayer <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Stop Record Pause Boundary</span>
+                            <span class="badge">87 controls</span>
+                            <span class="badge">12 handlers</span>
+                            <span class="badge">249×483</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormBoundaryPlayer" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 87</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormBoundaryPlayer_Load</code>: No specific actions identified</li>
+                            <li><code>FormBoundaryPlayer_FormClosing</code>: No specific actions identified</li>
+                            <li><code>nudOffset_Click</code>: No specific actions identified</li>
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>btnStop_Click</code>: Saves data; Closes window; Sets mf.Visible = true</li>
+                            <li><code>btnPausePlay_Click</code>: Changes btnAddPoint.Enabled; Changes btnDeleteLast.Enabled; Changes btnAddPoint.Enabled; Changes btnDeleteLast.Enabled</li>
+                            <li><code>btnAddPoint_Click</code>: No specific actions identified</li>
+                            <li><code>btnDeleteLast_Click</code>: No specific actions identified</li>
+                            <li><code>btnRestart_Click</code>: No specific actions identified</li>
+                            <li><code>btnLeftRight_Click</code>: No specific actions identified</li>
+                            <li><em>... and 2 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isClosing</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formbuildboundaryfromtracks">
+                    <div class="form-header" onclick="toggleForm('FormBuildBoundaryFromTracks')">
+                        <h3>FormBuildBoundaryFromTracks <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Build Boundary From Tracks</span>
+                            <span class="badge">72 controls</span>
+                            <span class="badge">16 handlers</span>
+                            <span class="badge">1008×729</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormBuildBoundaryFromTracks" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 72</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormBuildBoundaryFromTracks_Load</code>: No specific actions identified</li>
+                            <li><code>OnTrackSelectionChanged</code>: No specific actions identified</li>
+                            <li><code>glControlPreview_Load</code>: No specific actions identified</li>
+                            <li><code>glControlPreview_Resize</code>: No specific actions identified</li>
+                            <li><code>glControlPreview_Paint</code>: No specific actions identified</li>
+                            <li><code>btnResetPreview_Click</code>: Loads data</li>
+                            <li><code>btnSelectPrevious_Click</code>: No specific actions identified</li>
+                            <li><code>btnSelectNext_Click</code>: No specific actions identified</li>
+                            <li><code>btnExtendForward_Click</code>: No specific actions identified</li>
+                            <li><code>btnExtendBackward_Click</code>: No specific actions identified</li>
+                            <li><em>... and 6 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>_showTrimmedOnly</code> (bool)</li>
+                            <li><code>_redrawPending</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item complex" data-name="formbuildtracks">
+                    <div class="form-header" onclick="toggleForm('FormBuildTracks')">
+                        <h3>FormBuildTracks <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Tracks</span>
+                            <span class="badge">501 controls</span>
+                            <span class="badge">57 handlers</span>
+                            <span class="badge">1924×757</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormBuildTracks" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 501</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormBuildTracks_Load</code>: Sets panelEditName.Visible = false; Sets panelMain.Visible = true; Sets panelCurve.Visible = false; Sets panelName.Visible = false; Sets panelKML.Visible = false; Sets panelChoose.Visible = false; Sets panelABLine.Visible = false; Sets panelAPlus.Visible = false; Sets panelLatLonPlus.Visible = false; Sets panelLatLonLatLon.Visible = false; Sets panelPivot.Visible = false; Changes nudLatitudeA.Enabled; Changes nudLongitudeA.Enabled; Changes nudLatitudeB.Enabled; Changes nudLatitudeB.Enabled; Changes nudHeading.Enabled; Changes nudLatitudePlus.Enabled; Changes nudLongitudePlus.Enabled; Changes nudHeadingLatLonPlus.Enabled</li>
+                            <li><code>FormBuildTracks_FormClosing</code>: Saves data</li>
+                            <li><code>btnCancelMain_Click</code>: Closes window</li>
+                            <li><code>btnListUse_Click</code>: Saves data; Closes window; Closes window; Closes window; Closes window</li>
+                            <li><code>A_Click</code>: No specific actions identified</li>
+                            <li><code>LineSelected_Click</code>: No specific actions identified</li>
+                            <li><code>btnMoveUp_Click</code>: No specific actions identified</li>
+                            <li><code>btnMoveDn_Click</code>: No specific actions identified</li>
+                            <li><code>btnSwapAB_Click</code>: No specific actions identified</li>
+                            <li><code>btnHideShow_Click</code>: No specific actions identified</li>
+                            <li><em>... and 47 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isClosing</code> (bool)</li>
+                            <li><code>isRefRightSide</code> (bool)</li>
+                            <li><code>isOn</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formbuttonsrightpanel">
+                    <div class="form-header" onclick="toggleForm('FormButtonsRightPanel')">
+                        <h3>FormButtonsRightPanel <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Button Arrange</span>
+                            <span class="badge">125 controls</span>
+                            <span class="badge">14 handlers</span>
+                            <span class="badge">741×664</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormButtonsRightPanel" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 125</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormToolPivot_Load</code>: No specific actions identified</li>
+                            <li><code>btnAutoSteer_Click</code>: Changes btnAutoSteer.Enabled</li>
+                            <li><code>btnAutoYouTurn_Click</code>: Changes btnAutoYouTurn.Enabled</li>
+                            <li><code>btnSectionMasterAuto_Click</code>: Changes btnSectionMasterAuto.Enabled</li>
+                            <li><code>btnSectionMasterManual_Click</code>: Changes btnSectionMasterManual.Enabled</li>
+                            <li><code>btnAll_Click</code>: Saves data; Changes btnAutoSteer.Enabled; Changes btnAutoYouTurn.Enabled; Changes btnSectionMasterManual.Enabled; Changes btnSectionMasterAuto.Enabled; Changes btnCycleLinesBk.Enabled; Changes btnCycleLines.Enabled; Changes btnTrack.Enabled; Changes btnContour.Enabled</li>
+                            <li><code>btnTrack_Click</code>: Changes btnTrack.Enabled</li>
+                            <li><code>btnCycleLinesBk_Click</code>: Changes btnCycleLinesBk.Enabled</li>
+                            <li><code>btnCycleLines_Click</code>: Changes btnCycleLines.Enabled</li>
+                            <li><code>btnContour_Click</code>: Changes btnContour.Enabled</li>
+                            <li><em>... and 4 more</em></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formcolor">
+                    <div class="form-header" onclick="toggleForm('FormColor')">
+                        <h3>FormColor <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Color Set</span>
+                            <span class="badge">81 controls</span>
+                            <span class="badge">11 handlers</span>
+                            <span class="badge">665×396</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormColor" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 81</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormDisplaySettings_Load</code>: No specific actions identified</li>
+                            <li><code>bntOK_Click</code>: Saves data; Closes window</li>
+                            <li><code>btnFrameDay_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>btnFrameNight_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>btnFieldDay_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>btnFieldNight_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>btnSwap_Click</code>: No specific actions identified</li>
+                            <li><code>btnNightText_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>btnDayText_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>hsbarSmooth_ValueChanged</code>: No specific actions identified</li>
+                            <li><em>... and 1 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>daySet</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formcolorpicker">
+                    <div class="form-header" onclick="toggleForm('FormColorPicker')">
+                        <h3>FormColorPicker <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Color Picker</span>
+                            <span class="badge">113 controls</span>
+                            <span class="badge">6 handlers</span>
+                            <span class="badge">591×615</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormColorPicker" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 113</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>btnSave_Click</code>: Closes window</li>
+                            <li><code>colorBox2D_ColorChanged</code>: No specific actions identified</li>
+                            <li><code>colorSlider_ColorChanged</code>: No specific actions identified</li>
+                            <li><code>FormColorPicker_Load</code>: Saves data</li>
+                            <li><code>btn00_Click</code>: Saves data</li>
+                            <li><code>chkUse_CheckedChanged</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isUse</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formcolorsection">
+                    <div class="form-header" onclick="toggleForm('FormColorSection')">
+                        <h3>FormColorSection <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Section Color Set</span>
+                            <span class="badge">191 controls</span>
+                            <span class="badge">7 handlers</span>
+                            <span class="badge">883×566</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormColorSection" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 191</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormDisplaySettings_Load</code>: No specific actions identified</li>
+                            <li><code>bntOK_Click</code>: Saves data; Closes window</li>
+                            <li><code>chkUse_CheckedChanged</code>: No specific actions identified</li>
+                            <li><code>btnC01_Click</code>: Opens FormColorPicker; Shows dialog; Saves data</li>
+                            <li><code>cboxIsMulti_Click</code>: No specific actions identified</li>
+                            <li><code>FormSectionColor_FormClosing</code>: No specific actions identified</li>
+                            <li><code>cb01_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isUse</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item complex" data-name="formconfig">
+                    <div class="form-header" onclick="toggleForm('FormConfig')">
+                        <h3>FormConfig <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Configuration</span>
+                            <span class="badge">2133 controls</span>
+                            <span class="badge">10 handlers</span>
+                            <span class="badge">995×715</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormConfig" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 2133</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormConfig_Load</code>: Saves data</li>
+                            <li><code>FormConfig_FormClosing</code>: Loads data; Saves data</li>
+                            <li><code>btnOK_Click</code>: Closes window</li>
+                            <li><code>tabSummary_Enter</code>: No specific actions identified</li>
+                            <li><code>tabSummary_Leave</code>: No specific actions identified</li>
+                            <li><code>tabDisplay_Enter</code>: No specific actions identified</li>
+                            <li><code>tabDisplay_Leave</code>: Saves data</li>
+                            <li><code>rbtnDisplayImperial_Click</code>: Closes window</li>
+                            <li><code>rbtnDisplayMetric_Click</code>: Closes window</li>
+                            <li><code>nudNumGuideLines_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isClosing</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formcorrection">
+                    <div class="form-header" onclick="toggleForm('FormCorrection')">
+                        <h3>FormCorrection <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Roll Correction Graph</span>
+                            <span class="badge">57 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">809×424</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormCorrection" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 57</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>FormSteerGraph_Load</code>: No specific actions identified</li>
+                            <li><code>btnScroll_Click_1</code>: No specific actions identified</li>
+                            <li><code>btnPoleOrMoving_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isPole</code> (bool)</li>
+                            <li><code>isScroll</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formdialog">
+                    <div class="form-header" onclick="toggleForm('FormDialog')">
+                        <h3>FormDialog <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: FormDialog</span>
+                            <span class="badge">23 controls</span>
+                            <span class="badge">2 handlers</span>
+                            <span class="badge">800×229</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormDialog" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 23</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>btnOK_Click</code>: No specific actions identified</li>
+                            <li><code>btnCancel_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formdrivepicker">
+                    <div class="form-header" onclick="toggleForm('FormDrivePicker')">
+                        <h3>FormDrivePicker <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: FormFilePicker</span>
+                            <span class="badge">22 controls</span>
+                            <span class="badge">3 handlers</span>
+                            <span class="badge">971×407</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormDrivePicker" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 22</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFilePicker_Load</code>: No specific actions identified</li>
+                            <li><code>btnOpenExistingLv_Click</code>: Closes window</li>
+                            <li><code>btnDeleteAB_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formenterflag">
+                    <div class="form-header" onclick="toggleForm('FormEnterFlag')">
+                        <h3>FormEnterFlag <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Enter AB or A+</span>
+                            <span class="badge">71 controls</span>
+                            <span class="badge">7 handlers</span>
+                            <span class="badge">771×266</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormEnterFlag" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 71</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormEnterAB_Load</code>: No specific actions identified</li>
+                            <li><code>nudLatitude_Click</code>: No specific actions identified</li>
+                            <li><code>nudLongitude_Click</code>: No specific actions identified</li>
+                            <li><code>btnCancel_Click</code>: Closes window</li>
+                            <li><code>btnRed_Click</code>: Opens FormFlags; Saves data; Closes window</li>
+                            <li><code>btnImportFlags_Click</code>: Shows dialog; Saves data</li>
+                            <li><code>btnExportFlags_Click</code>: Shows dialog</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formeventviewer">
+                    <div class="form-header" onclick="toggleForm('FormEventViewer')">
+                        <h3>FormEventViewer <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Event Log Viewer</span>
+                            <span class="badge">17 controls</span>
+                            <span class="badge">3 handlers</span>
+                            <span class="badge">681×365</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormEventViewer" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 17</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormEventViewer_Load</code>: No specific actions identified</li>
+                            <li><code>btnExit_Click</code>: Closes window</li>
+                            <li><code>btnRefresh_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formfielddata">
+                    <div class="form-header" onclick="toggleForm('FormFieldData')">
+                        <h3>FormFieldData <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: System Data</span>
+                            <span class="badge">141 controls</span>
+                            <span class="badge">3 handlers</span>
+                            <span class="badge">197×483</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFieldData" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 141</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFieldData_Load</code>: No specific actions identified</li>
+                            <li><code>timer1_Tick</code>: Sets lblTotalArea.Visible = true; Sets lblAreaRemain.Visible = true; Sets lblTimeRemaining.Visible = true; Sets lblRemainPercent.Visible = true; Sets labelRemain.Visible = true; Sets lblActualRemain.Visible = true; Sets labelRemain2.Visible = true; Sets lblTotalArea.Visible = false; Sets lblAreaRemain.Visible = false; Sets lblTimeRemaining.Visible = false; Sets lblRemainPercent.Visible = false; Sets lblActualRemain.Visible = false; Sets labelRemain2.Visible = false; Sets labelRemain.Visible = false</li>
+                            <li><code>btnTripReset_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formfielddir">
+                    <div class="form-header" onclick="toggleForm('FormFieldDir')">
+                        <h3>FormFieldDir <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create New Field </span>
+                            <span class="badge">45 controls</span>
+                            <span class="badge">7 handlers</span>
+                            <span class="badge">676×260</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFieldDir" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 45</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFieldDir_Load</code>: Changes btnSave.Enabled</li>
+                            <li><code>tboxFieldName_TextChanged</code>: Changes btnSave.Enabled; Changes btnSave.Enabled</li>
+                            <li><code>btnSerialCancel_Click</code>: Closes window</li>
+                            <li><code>btnAddDate_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddTime_Click</code>: No specific actions identified</li>
+                            <li><code>btnSave_Click</code>: Saves data; Closes window; Changes mf.Enabled</li>
+                            <li><code>tboxFieldName_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formfieldexisting">
+                    <div class="form-header" onclick="toggleForm('FormFieldExisting')">
+                        <h3>FormFieldExisting <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Field Save As</span>
+                            <span class="badge">115 controls</span>
+                            <span class="badge">12 handlers</span>
+                            <span class="badge">1004×670</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFieldExisting" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 115</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFieldExisting_Load</code>: Closes window; Closes window; Closes window; Closes window; Changes btnSave.Enabled; Changes timer1.Enabled</li>
+                            <li><code>tboxFieldName_TextChanged</code>: Changes btnSave.Enabled; Changes btnSave.Enabled</li>
+                            <li><code>btnSerialCancel_Click</code>: Closes window</li>
+                            <li><code>btnSave_Click</code>: Saves data; Closes window; Closes window</li>
+                            <li><code>tboxFieldName_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddDate_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddTime_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddVehicleName_Click</code>: No specific actions identified</li>
+                            <li><code>btnSort_Click</code>: No specific actions identified</li>
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><em>... and 2 more</em></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formfieldisoxml">
+                    <div class="form-header" onclick="toggleForm('FormFieldISOXML')">
+                        <h3>FormFieldISOXML <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create New Field From ISO-XML</span>
+                            <span class="badge">54 controls</span>
+                            <span class="badge">8 handlers</span>
+                            <span class="badge">614×524</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFieldISOXML" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 54</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFieldIsoXml_Load</code>: Shows dialog; Closes window; Loads data; Changes btnBuildFields.Enabled; Changes btnBuildFields.Enabled</li>
+                            <li><code>tree_AfterSelect</code>: Changes btnBuildFields.Enabled; Changes btnAddDate.Enabled; Changes btnAddTime.Enabled; Changes tboxFieldName.Enabled</li>
+                            <li><code>btnBuildFields_Click</code>: Saves data; Closes window; Sets mf.Visible = true</li>
+                            <li><code>tboxFieldName_TextChanged</code>: No specific actions identified</li>
+                            <li><code>tboxFieldName_Click</code>: No specific actions identified</li>
+                            <li><code>btnSerialCancel_Click</code>: Closes window</li>
+                            <li><code>btnAddDate_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddTime_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>iso</code> (XmlDocument)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formfieldkml">
+                    <div class="form-header" onclick="toggleForm('FormFieldKML')">
+                        <h3>FormFieldKML <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create New Field </span>
+                            <span class="badge">49 controls</span>
+                            <span class="badge">8 handlers</span>
+                            <span class="badge">608×332</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFieldKML" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 49</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFieldDir_Load</code>: Changes btnSave.Enabled</li>
+                            <li><code>tboxFieldName_TextChanged</code>: Changes btnLoadKML.Enabled; Changes btnLoadKML.Enabled</li>
+                            <li><code>btnSerialCancel_Click</code>: Closes window</li>
+                            <li><code>btnSave_Click</code>: Saves data; Loads data; Closes window</li>
+                            <li><code>tboxFieldName_Click</code>: No specific actions identified</li>
+                            <li><code>btnLoadKML_Click</code>: Shows dialog; Loads data</li>
+                            <li><code>btnAddDate_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddTime_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formfilepicker">
+                    <div class="form-header" onclick="toggleForm('FormFilePicker')">
+                        <h3>FormFilePicker <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: FormFilePicker</span>
+                            <span class="badge">41 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">991×578</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFilePicker" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 41</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFilePicker_Load</code>: Loads data; Changes timer1.Enabled</li>
+                            <li><code>btnByDistance_Click</code>: No specific actions identified</li>
+                            <li><code>btnOpenExistingLv_Click</code>: Closes window</li>
+                            <li><code>btnDeleteAB_Click</code>: No specific actions identified</li>
+                            <li><code>btnDeleteField_Click</code>: Loads data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formflags">
+                    <div class="form-header" onclick="toggleForm('FormFlags')">
+                        <h3>FormFlags <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Flags</span>
+                            <span class="badge">91 controls</span>
+                            <span class="badge">9 handlers</span>
+                            <span class="badge">300×318</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormFlags" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 91</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormFlags_Load</code>: No specific actions identified</li>
+                            <li><code>btnNorth_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnSouth_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnExit_Click</code>: Saves data; Closes window; Changes timer1.Enabled</li>
+                            <li><code>btnDeleteFlag_Click</code>: Saves data; Closes window</li>
+                            <li><code>tboxFlagNotes_Leave</code>: No specific actions identified</li>
+                            <li><code>tboxFlagNotes_KeyPress</code>: No specific actions identified</li>
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>tboxFlagNotes_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item complex" data-name="formgps">
+                    <div class="form-header" onclick="toggleForm('FormGPS')">
+                        <h3>FormGPS <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: AgOpenGPS</span>
+                            <span class="badge">720 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">1000×720</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormGPS" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Menu Items: 52</li>
+                            <li>Toolbar Buttons: 8</li>
+                            <li>Other Controls: 660</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>SystemEvents_PowerModeChanged</code>: Closes window; Closes window</li>
+                            <li><code>FormGPS_Load</code>: Opens Form_First; Opens FormNewProfile; Shows dialog; Saves data; Saves data; Saves data; Loads data; Shows dialog; Changes panelRight.Enabled; Changes btnBrightnessDn.Enabled; Changes btnBrightnessUp.Enabled; Changes btnBrightnessDn.Enabled; Changes btnBrightnessUp.Enabled</li>
+                            <li><code>FormGPS_FormClosing</code>: Closes window; Saves data</li>
+                            <li><code>FormGPS_ResizeEnd</code>: No specific actions identified</li>
+                            <li><code>FormGPS_Move</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>leftMouseDownOnOpenGL</code> (bool)</li>
+                            <li><code>isBtnAutoSteerOn</code> (bool)</li>
+                            <li><code>isSavingFile</code> (bool)</li>
+                            <li><code>isStanleyUsed</code> (bool)</li>
+                            <li><code>isGPSSentencesOn</code> (bool)</li>
+                            <li><code>isShuttingDown</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formgpsdata">
+                    <div class="form-header" onclick="toggleForm('FormGPSData')">
+                        <h3>FormGPSData <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: System Data</span>
+                            <span class="badge">138 controls</span>
+                            <span class="badge">3 handlers</span>
+                            <span class="badge">120×330</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormGPSData" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 138</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>FormGPSData_Load</code>: No specific actions identified</li>
+                            <li><code>FormGPSData_FormClosing</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formgraphheading">
+                    <div class="form-header" onclick="toggleForm('FormGraphHeading')">
+                        <h3>FormGraphHeading <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Roll Correction Graph</span>
+                            <span class="badge">49 controls</span>
+                            <span class="badge">3 handlers</span>
+                            <span class="badge">495×470</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormGraphHeading" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 49</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>FormSteerGraph_Load</code>: No specific actions identified</li>
+                            <li><code>label1_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isScroll</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formgraphsteer">
+                    <div class="form-header" onclick="toggleForm('FormGraphSteer')">
+                        <h3>FormGraphSteer <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: AutoSteer Graph</span>
+                            <span class="badge">55 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">498×312</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormGraphSteer" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 55</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>FormSteerGraph_Load</code>: No specific actions identified</li>
+                            <li><code>btnGainUp_Click</code>: No specific actions identified</li>
+                            <li><code>btnGainAuto_Click</code>: No specific actions identified</li>
+                            <li><code>btnGainDown_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isAuto</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formgraphxte">
+                    <div class="form-header" onclick="toggleForm('FormGraphXTE')">
+                        <h3>FormGraphXTE <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: XTE Graph</span>
+                            <span class="badge">56 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">441×216</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormGraphXTE" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 56</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>FormSteerGraph_Load</code>: No specific actions identified</li>
+                            <li><code>btnGainUp_Click</code>: No specific actions identified</li>
+                            <li><code>btnGainAuto_Click</code>: No specific actions identified</li>
+                            <li><code>btnGainDown_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isAuto</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formgrid">
+                    <div class="form-header" onclick="toggleForm('FormGrid')">
+                        <h3>FormGrid <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: 2 Points - Align Grid</span>
+                            <span class="badge">39 controls</span>
+                            <span class="badge">12 handlers</span>
+                            <span class="badge">605×501</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormGrid" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 39</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormABDraw_Load</code>: No specific actions identified</li>
+                            <li><code>FormABDraw_FormClosing</code>: Saves data</li>
+                            <li><code>btnExit_Click</code>: Closes window</li>
+                            <li><code>btnCancel_Click</code>: Closes window</li>
+                            <li><code>btnCancelTouch_Click</code>: No specific actions identified</li>
+                            <li><code>oglSelf_MouseDown</code>: No specific actions identified</li>
+                            <li><code>oglSelf_Paint</code>: Loads data</li>
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>btnAlignToTrack_Click</code>: Closes window</li>
+                            <li><code>FormABDraw_ResizeEnd</code>: Loads data; Loads data</li>
+                            <li><em>... and 2 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isA</code> (bool)</li>
+                            <li><code>isDrawSections</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formheadache">
+                    <div class="form-header" onclick="toggleForm('FormHeadAche')">
+                        <h3>FormHeadAche <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Click 2 points on the Boundary to Begin</span>
+                            <span class="badge">119 controls</span>
+                            <span class="badge">24 handlers</span>
+                            <span class="badge">1006×709</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormHeadAche" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 119</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormHeadLine_Load</code>: Loads data</li>
+                            <li><code>FormHeadLine_FormClosing</code>: Saves data; Saves data</li>
+                            <li><code>FormHeadAche_ResizeEnd</code>: Loads data; Loads data</li>
+                            <li><code>btnCycleForward_Click</code>: No specific actions identified</li>
+                            <li><code>btnCycleBackward_Click</code>: No specific actions identified</li>
+                            <li><code>btnDeleteCurve_Click</code>: No specific actions identified</li>
+                            <li><code>oglSelf_MouseDown</code>: Saves data; Saves data</li>
+                            <li><code>oglSelf_Paint</code>: Loads data</li>
+                            <li><code>oglSelf_Resize</code>: Loads data; Loads data</li>
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><em>... and 14 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isA</code> (bool)</li>
+                            <li><code>zoomToggle</code> (bool)</li>
+                            <li><code>isLinesVisible</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formheadline">
+                    <div class="form-header" onclick="toggleForm('FormHeadLine')">
+                        <h3>FormHeadLine <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Click 2 points on the Boundary to Begin</span>
+                            <span class="badge">109 controls</span>
+                            <span class="badge">22 handlers</span>
+                            <span class="badge">1006×726</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormHeadLine" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 109</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormHeadLine_Load</code>: Changes btnClipLine.Enabled</li>
+                            <li><code>FormHeadLine_ResizeEnd</code>: Loads data; Loads data</li>
+                            <li><code>FormHeadLine_FormClosing</code>: Saves data</li>
+                            <li><code>oglSelf_MouseDown</code>: Changes btnClipLine.Enabled</li>
+                            <li><code>oglSelf_Paint</code>: Loads data</li>
+                            <li><code>oglSelf_Load</code>: No specific actions identified</li>
+                            <li><code>oglSelf_Resize</code>: Loads data; Loads data</li>
+                            <li><code>timer1_Tick</code>: Changes btnClipLine.Enabled; Changes btnALength.Enabled; Changes btnBLength.Enabled; Changes btnAShrink.Enabled; Changes btnBShrink.Enabled; Changes btnClipLine.Enabled; Changes btnBLength.Enabled; Changes btnALength.Enabled; Changes btnAShrink.Enabled; Changes btnBShrink.Enabled; Changes btnUndo.Enabled; Changes btnUndo.Enabled; Changes btnBndLoop.Enabled; Changes btnBndLoop.Enabled</li>
+                            <li><code>btnExit_Click</code>: Saves data; Saves data; Closes window</li>
+                            <li><code>nudSetDistance_Click</code>: No specific actions identified</li>
+                            <li><em>... and 12 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isA</code> (bool)</li>
+                            <li><code>zoomToggle</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formjob">
+                    <div class="form-header" onclick="toggleForm('FormJob')">
+                        <h3>FormJob <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">95 controls</span>
+                            <span class="badge">12 handlers</span>
+                            <span class="badge">624×559</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormJob" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 95</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormJob_Load</code>: Closes window; Changes btnJobResume.Enabled; Changes btnJobResume.Enabled; Changes btnJobResume.Enabled; Changes btnJobClose.Enabled</li>
+                            <li><code>btnJobNew_Click</code>: Saves data; Closes window</li>
+                            <li><code>btnJobResume_Click</code>: Closes window</li>
+                            <li><code>btnJobOpen_Click</code>: Opens FormFilePicker; Saves data; Shows dialog; Closes window</li>
+                            <li><code>btnInField_Click</code>: Opens FormDrivePicker; Saves data; Shows dialog; Closes window; Closes window</li>
+                            <li><code>btnFromKML_Click</code>: Closes window</li>
+                            <li><code>btnFromExisting_Click</code>: Closes window</li>
+                            <li><code>btnJobClose_Click</code>: Saves data; Closes window</li>
+                            <li><code>FormJob_FormClosing</code>: Saves data</li>
+                            <li><code>btnFromISOXML_Click</code>: Saves data; Closes window</li>
+                            <li><em>... and 2 more</em></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formkeyboard">
+                    <div class="form-header" onclick="toggleForm('FormKeyboard')">
+                        <h3>FormKeyboard <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Keyboard</span>
+                            <span class="badge">23 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">942×454</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormKeyboard" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 23</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormKeyboard_Load</code>: No specific actions identified</li>
+                            <li><code>RegisterKeyboard1_ButtonPressed</code>: Closes window; Closes window</li>
+                            <li><code>btnCharLeft_Click</code>: No specific actions identified</li>
+                            <li><code>btnCharRight_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formloadprofile">
+                    <div class="form-header" onclick="toggleForm('FormLoadProfile')">
+                        <h3>FormLoadProfile <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Load Profile</span>
+                            <span class="badge">33 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">639×437</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormLoadProfile" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 33</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormLoadProfile_Load</code>: Loads data; Loads data; Loads data</li>
+                            <li><code>listViewProfiles_SelectedIndexChanged</code>: Changes buttonOK.Enabled; Changes buttonProfileDelete.Enabled</li>
+                            <li><code>buttonProfileDelete_Click</code>: Loads data; Loads data; Loads data</li>
+                            <li><code>buttonOK_Click</code>: Loads data</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formmap">
+                    <div class="form-header" onclick="toggleForm('FormMap')">
+                        <h3>FormMap <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Bing Maps for Background</span>
+                            <span class="badge">76 controls</span>
+                            <span class="badge">15 handlers</span>
+                            <span class="badge">1130×780</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormMap" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 76</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormMap_Load</code>: Changes btnDeleteAll.Enabled</li>
+                            <li><code>FormMap_FormClosing</code>: Saves data</li>
+                            <li><code>btnExit_Click</code>: Closes window</li>
+                            <li><code>gMapControl_MouseMove</code>: No specific actions identified</li>
+                            <li><code>gMapControl_MouseWheel</code>: No specific actions identified</li>
+                            <li><code>btnGo_Click</code>: No specific actions identified</li>
+                            <li><code>btnDeletePoint_Click</code>: No specific actions identified</li>
+                            <li><code>btnAddFence_Click</code>: Saves data; Sets mf.Visible = true; Changes btnAddFence.Enabled; Changes btnDeletePoint.Enabled</li>
+                            <li><code>btnDeleteAll_Click</code>: Saves data; Sets mf.Visible = false; Changes btnAddFence.Enabled; Changes btnDeletePoint.Enabled</li>
+                            <li><code>cboxEnableLineDraw_Click</code>: Changes btnAddFence.Enabled; Changes btnDeletePoint.Enabled; Changes btnAddFence.Enabled; Changes btnDeletePoint.Enabled</li>
+                            <li><em>... and 5 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isClosing</code> (bool)</li>
+                            <li><code>isColorMap</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formnewprofile">
+                    <div class="form-header" onclick="toggleForm('FormNewProfile')">
+                        <h3>FormNewProfile <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create New Profile</span>
+                            <span class="badge">39 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">637×390</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormNewProfile" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 39</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormNewProfile_Load</code>: Loads data; Loads data; Loads data</li>
+                            <li><code>textBoxName_Click</code>: Opens FormTimedMessage; Changes textBoxName.Enabled</li>
+                            <li><code>textBoxName_TextChanged</code>: Changes buttonOK.Enabled</li>
+                            <li><code>buttonOK_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formnumeric">
+                    <div class="form-header" onclick="toggleForm('FormNumeric')">
+                        <h3>FormNumeric <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Enter a Value</span>
+                            <span class="badge">33 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">460×545</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormNumeric" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 33</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormNumeric_Load</code>: No specific actions identified</li>
+                            <li><code>RegisterKeypad1_ButtonPressed</code>: Closes window; Closes window</li>
+                            <li><code>BtnDistanceUp_MouseDown</code>: No specific actions identified</li>
+                            <li><code>BtnDistanceDn_MouseDown</code>: No specific actions identified</li>
+                            <li><code>tboxNumber_Click</code>: No specific actions identified</li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isFirstKey</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formpan">
+                    <div class="form-header" onclick="toggleForm('FormPan')">
+                        <h3>FormPan <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">49 controls</span>
+                            <span class="badge">10 handlers</span>
+                            <span class="badge">180×180</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormPan" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 49</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>btnPanUp_Click</code>: No specific actions identified</li>
+                            <li><code>btnPanDn_Click</code>: No specific actions identified</li>
+                            <li><code>btnPanRight_Click</code>: No specific actions identified</li>
+                            <li><code>btnPanLeft_Click</code>: No specific actions identified</li>
+                            <li><code>btnUpLeft_Click</code>: No specific actions identified</li>
+                            <li><code>btnDownRight_Click</code>: No specific actions identified</li>
+                            <li><code>btnUpRight_Click</code>: No specific actions identified</li>
+                            <li><code>btnDownLeft_Click</code>: No specific actions identified</li>
+                            <li><code>btnPanCancel_Click</code>: Closes window</li>
+                            <li><code>FormPan_FormClosing</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formquickab">
+                    <div class="form-header" onclick="toggleForm('FormQuickAB')">
+                        <h3>FormQuickAB <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Tracks</span>
+                            <span class="badge">167 controls</span>
+                            <span class="badge">22 handlers</span>
+                            <span class="badge">763×654</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormQuickAB" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 167</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormQuickAB_Load</code>: Sets panelChoose.Visible = true; Sets panelCurve.Visible = false; Sets panelName.Visible = false; Sets panelABLine.Visible = false; Sets panelAPlus.Visible = false; Changes nudHeading.Enabled</li>
+                            <li><code>FormQuickAB_FormClosing</code>: Saves data</li>
+                            <li><code>btnzABCurve_Click</code>: Sets panelChoose.Visible = false; Sets panelCurve.Visible = true; Changes btnACurve.Enabled; Changes btnBCurve.Enabled; Changes btnPausePlay.Enabled</li>
+                            <li><code>btnzAPlus_Click</code>: Sets panelChoose.Visible = false; Sets panelAPlus.Visible = true; Changes btnAPlus.Enabled; Changes nudHeading.Enabled</li>
+                            <li><code>btnzABLine_Click</code>: Sets panelChoose.Visible = false; Sets panelABLine.Visible = true; Changes btnEnter_AB.Enabled; Changes btnALine.Enabled; Changes btnBLine.Enabled; Changes btnPausePlay.Enabled</li>
+                            <li><code>btnRefSideCurve_Click</code>: No specific actions identified</li>
+                            <li><code>btnACurve_Click</code>: Changes btnBCurve.Enabled; Changes btnBCurve.Enabled; Changes btnACurve.Enabled; Changes btnPausePlay.Enabled; Sets btnPausePlay.Visible = true</li>
+                            <li><code>btnBCurve_Click</code>: Closes window; Sets panelCurve.Visible = false; Sets panelName.Visible = true; Sets panelCurve.Visible = false; Sets panelName.Visible = true; Sets panelCurve.Visible = false; Sets panelName.Visible = false; Sets panelChoose.Visible = false</li>
+                            <li><code>btnPausePlayCurve_Click</code>: Changes btnACurve.Enabled; Changes btnACurve.Enabled; Changes btnBCurve.Enabled</li>
+                            <li><code>btnRefSideAB_Click</code>: No specific actions identified</li>
+                            <li><em>... and 12 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isRefRightSide</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formrecordname">
+                    <div class="form-header" onclick="toggleForm('FormRecordName')">
+                        <h3>FormRecordName <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Create New Record</span>
+                            <span class="badge">50 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">676×234</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormRecordName" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 50</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormRecordName_Load</code>: Changes buttonSave.Enabled</li>
+                            <li><code>tboxFieldName_TextChanged</code>: Changes buttonSave.Enabled; Changes buttonSave.Enabled</li>
+                            <li><code>buttonRecordCancel_Click</code>: Closes window</li>
+                            <li><code>tboxFieldName_Click</code>: No specific actions identified</li>
+                            <li><code>buttonSave_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formrecordpicker">
+                    <div class="form-header" onclick="toggleForm('FormRecordPicker')">
+                        <h3>FormRecordPicker <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: FormRecordPicker</span>
+                            <span class="badge">41 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">972×578</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormRecordPicker" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 41</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormRecordPicker_Load</code>: Loads data</li>
+                            <li><code>btnOpenExistingLv_Click</code>: No specific actions identified</li>
+                            <li><code>btnDeleteField_Click</code>: Loads data</li>
+                            <li><code>btnTurnOffRecPath_Click</code>: Saves data; Closes window; Sets mf.Visible = false</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formsaveornot">
+                    <div class="form-header" onclick="toggleForm('FormSaveOrNot')">
+                        <h3>FormSaveOrNot <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">62 controls</span>
+                            <span class="badge">5 handlers</span>
+                            <span class="badge">825×279</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormSaveOrNot" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 62</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormSaveOrNot_Load</code>: Sets labelExitToWindows.Visible = !Properties.Settings.Default.setWindow_isShutdownComputer; Sets lblExitCtr.Visible = !Properties.Settings.Default.setWindow_isShutdownComputer; Sets labelShutdownIn.Visible = Properties.Settings.Default.setWindow_isShutdownComputer; Sets lblShutCtr.Visible = Properties.Settings.Default.setWindow_isShutdownComputer</li>
+                            <li><code>btnOk_Click</code>: Closes window</li>
+                            <li><code>btnReturn_Click</code>: Closes window</li>
+                            <li><code>btnShutDown_Click</code>: Closes window</li>
+                            <li><code>timer1_Tick</code>: Closes window; Closes window</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formsaving">
+                    <div class="form-header" onclick="toggleForm('FormSaving')">
+                        <h3>FormSaving <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: FormSaving</span>
+                            <span class="badge">17 controls</span>
+                            <span class="badge">0 handlers</span>
+                            <span class="badge">933×491</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormSaving" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 17</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formshiftpos">
+                    <div class="form-header" onclick="toggleForm('FormShiftPos')">
+                        <h3>FormShiftPos <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Shift GPS Position (cm)</span>
+                            <span class="badge">86 controls</span>
+                            <span class="badge">10 handlers</span>
+                            <span class="badge">658×674</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormShiftPos" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 86</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormShiftPos_Load</code>: No specific actions identified</li>
+                            <li><code>btnNorth_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnSouth_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnWest_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnEast_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnZero_Click</code>: No specific actions identified</li>
+                            <li><code>bntOK_Click</code>: Closes window</li>
+                            <li><code>chkOffsetsOn_Click</code>: No specific actions identified</li>
+                            <li><code>nudNorth_Click</code>: No specific actions identified</li>
+                            <li><code>nudEast_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formsimcoords">
+                    <div class="form-header" onclick="toggleForm('FormSimCoords')">
+                        <h3>FormSimCoords <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Enter Coordinates For Simulator</span>
+                            <span class="badge">53 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">931×551</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormSimCoords" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 53</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormSimCoords_Load</code>: No specific actions identified</li>
+                            <li><code>bntOK_Click</code>: Closes window; Closes window; Closes window</li>
+                            <li><code>btnCancel_Click</code>: Closes window</li>
+                            <li><code>nud_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formsmoothab">
+                    <div class="form-header" onclick="toggleForm('FormSmoothAB')">
+                        <h3>FormSmoothAB <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Smooth AB Curve</span>
+                            <span class="badge">33 controls</span>
+                            <span class="badge">6 handlers</span>
+                            <span class="badge">231×393</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormSmoothAB" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 33</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>bntOK_Click</code>: Saves data; Closes window</li>
+                            <li><code>FormSmoothAB_Load</code>: No specific actions identified</li>
+                            <li><code>btnCancel_Click</code>: Closes window</li>
+                            <li><code>btnNorth_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnSouth_MouseDown</code>: No specific actions identified</li>
+                            <li><code>btnSave_Click</code>: Saves data; Saves data; Closes window</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item complex" data-name="formsteer">
+                    <div class="form-header" onclick="toggleForm('FormSteer')">
+                        <h3>FormSteer <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Auto Steer Configuration</span>
+                            <span class="badge">900 controls</span>
+                            <span class="badge">53 handlers</span>
+                            <span class="badge">898×628</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormSteer" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 900</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormSteer_Load</code>: Changes btnSteerAngleDown.Enabled; Changes btnSteerAngleUp.Enabled; Sets labelTurnSensor.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = true; Sets pbarSensor.Visible = false; Sets hsbarSensor.Visible = false; Sets lblhsbarSensor.Visible = false; Sets labelTurnSensor.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = true; Sets hsbarSensor.Visible = true; Sets lblhsbarSensor.Visible = true; Sets labelTurnSensor.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = true; Sets hsbarSensor.Visible = true; Sets lblhsbarSensor.Visible = true; Sets labelTurnSensor.Visible = false; Sets lblPercentFS.Visible = false; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = false; Sets hsbarSensor.Visible = false; Sets lblhsbarSensor.Visible = false</li>
+                            <li><code>FormSteer_FormClosing</code>: Saves data</li>
+                            <li><code>Timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>EnableAlert_Click</code>: Sets pboxSendSteer.Visible = true; Changes btnClose.Enabled; Sets labelTurnSensor.Visible = false; Sets lblPercentFS.Visible = false; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = false; Sets hsbarSensor.Visible = false; Sets lblhsbarSensor.Visible = false; Sets labelTurnSensor.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = true; Sets hsbarSensor.Visible = true; Sets lblhsbarSensor.Visible = true; Sets labelTurnSensor.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = false; Sets hsbarSensor.Visible = true; Sets pbarSensor.Visible = true; Sets lblhsbarSensor.Visible = true; Sets labelTurnSensor.Visible = true; Sets lblPercentFS.Visible = false; Sets nudMaxCounts.Visible = true; Sets pbarSensor.Visible = false; Sets hsbarSensor.Visible = false; Sets lblhsbarSensor.Visible = false</li>
+                            <li><code>nudMaxCounts_Click</code>: Sets pboxSendSteer.Visible = true; Changes btnClose.Enabled</li>
+                            <li><code>hsbarSensor_Scroll</code>: Sets pboxSendSteer.Visible = true; Changes btnClose.Enabled</li>
+                            <li><code>tabSettings_Enter</code>: No specific actions identified</li>
+                            <li><code>tabSettings_Leave</code>: Saves data</li>
+                            <li><code>hsbarUTurnCompensation_ValueChanged</code>: No specific actions identified</li>
+                            <li><code>cboxSteerInReverse_Click</code>: No specific actions identified</li>
+                            <li><em>... and 43 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>toSend</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item complex" data-name="formsteerwiz">
+                    <div class="form-header" onclick="toggleForm('FormSteerWiz')">
+                        <h3>FormSteerWiz <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Auto Steer Wizard</span>
+                            <span class="badge">1299 controls</span>
+                            <span class="badge">70 handlers</span>
+                            <span class="badge">805×558</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormSteerWiz" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 1299</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormSteer_Load</code>: Changes btnSteerAngleDown.Enabled; Changes btnSteerAngleUp.Enabled; Changes btnFreeDriveZero.Enabled; Sets label61.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = true; Sets pbarSensor.Visible = false; Sets hsbarSensor.Visible = false; Sets lblhsbarSensor.Visible = false; Sets label61.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = true; Sets hsbarSensor.Visible = true; Sets lblhsbarSensor.Visible = true; Sets label61.Visible = true; Sets lblPercentFS.Visible = true; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = true; Sets hsbarSensor.Visible = true; Sets lblhsbarSensor.Visible = true; Sets label61.Visible = false; Sets lblPercentFS.Visible = false; Sets nudMaxCounts.Visible = false; Sets pbarSensor.Visible = false; Sets hsbarSensor.Visible = false; Sets lblhsbarSensor.Visible = false</li>
+                            <li><code>FormSteer_FormClosing</code>: Saves data</li>
+                            <li><code>Timer1_Tick</code>: Saves data; Saves data</li>
+                            <li><code>sideBarTimer_Tick</code>: Changes btnStartSA_Left.Enabled; Changes btnStartSA_Left.Enabled</li>
+                            <li><code>btnLoadDefaults_Click</code>: Saves data; Loads data</li>
+                            <li><code>btnStartWizard_Click</code>: Sets panel1.Visible = false</li>
+                            <li><code>btnStopWizard_Click</code>: Sets panel1.Visible = true</li>
+                            <li><code>btnExit_Click</code>: Closes window</li>
+                            <li><code>nudMaxCounts_Click</code>: No specific actions identified</li>
+                            <li><code>cboxMotorDrive_SelectedIndexChanged</code>: No specific actions identified</li>
+                            <li><em>... and 60 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>toSend252</code> (bool)</li>
+                            <li><code>isWizardStarted</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formtimedmessage">
+                    <div class="form-header" onclick="toggleForm('FormTimedMessage')">
+                        <h3>FormTimedMessage <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: AgOpenGPS Message</span>
+                            <span class="badge">19 controls</span>
+                            <span class="badge">1 handlers</span>
+                            <span class="badge">276×134</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormTimedMessage" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 19</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>timer1_Tick</code>: Closes window; Changes timer1.Enabled</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formtram">
+                    <div class="form-header" onclick="toggleForm('FormTram')">
+                        <h3>FormTram <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: AB Line Tramline</span>
+                            <span class="badge">88 controls</span>
+                            <span class="badge">11 handlers</span>
+                            <span class="badge">353×354</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormTram" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 88</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormTram_Load</code>: Saves data; Closes window; Changes btnMode.Enabled</li>
+                            <li><code>FormTram_FormClosing</code>: Saves data; Saves data</li>
+                            <li><code>btnExit_Click</code>: Closes window</li>
+                            <li><code>nudPasses_ValueChanged</code>: Saves data</li>
+                            <li><code>nudPasses_Click</code>: No specific actions identified</li>
+                            <li><code>btnUpTrams_Click</code>: No specific actions identified</li>
+                            <li><code>btnDnTrams_Click</code>: No specific actions identified</li>
+                            <li><code>btnSwapAB_Click</code>: Saves data</li>
+                            <li><code>btnCancel_Click</code>: Closes window</li>
+                            <li><code>btnMode_Click</code>: No specific actions identified</li>
+                            <li><em>... and 1 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isSaving</code> (bool)</li>
+                            <li><code>isCurve</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item moderate" data-name="formtramline">
+                    <div class="form-header" onclick="toggleForm('FormTramLine')">
+                        <h3>FormTramLine <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: Draw AB - Click 2 points on the Boundary to Begin</span>
+                            <span class="badge">120 controls</span>
+                            <span class="badge">24 handlers</span>
+                            <span class="badge">1004×701</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormTramLine" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 120</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormTramLine_Load</code>: Loads data</li>
+                            <li><code>FormTramLine_ResizeEnd</code>: Loads data; Loads data</li>
+                            <li><code>FormTramLine_FormClosing</code>: Saves data; Saves data</li>
+                            <li><code>btnAddLines_Click</code>: No specific actions identified</li>
+                            <li><code>oglSelf_MouseDown</code>: No specific actions identified</li>
+                            <li><code>oglSelf_Paint</code>: Loads data</li>
+                            <li><code>timer1_Tick</code>: No specific actions identified</li>
+                            <li><code>oglSelf_Resize</code>: Loads data; Loads data</li>
+                            <li><code>oglSelf_Load</code>: No specific actions identified</li>
+                            <li><code>btnSelectCurve_Click</code>: No specific actions identified</li>
+                            <li><em>... and 14 more</em></li>
+                        </ul>
+                        <h4>State Variables</h4>
+                        <ul class="state-list">
+                            <li><code>isCancel</code> (bool)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="formwebcam">
+                    <div class="form-header" onclick="toggleForm('FormWebCam')">
+                        <h3>FormWebCam <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="form-title">Title: WebCam</span>
+                            <span class="badge">24 controls</span>
+                            <span class="badge">4 handlers</span>
+                            <span class="badge">398×268</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-FormWebCam" style="display: none;">
+                        <h4>Controls</h4>
+                        <ul>
+                            <li>Other Controls: 24</li>
+                        </ul>
+                        <h4>Event Handlers</h4>
+                        <ul class="event-list">
+                            <li><code>FormWebCam_Load</code>: No specific actions identified</li>
+                            <li><code>deviceComboBox_SelectedIndexChanged</code>: No specific actions identified</li>
+                            <li><code>startButton_Click</code>: No specific actions identified</li>
+                            <li><code>stopButton_Click</code>: No specific actions identified</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="gui">
+                    <div class="form-header" onclick="toggleForm('GUI')">
+                        <h3>GUI <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-GUI" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="opengl">
+                    <div class="form-header" onclick="toggleForm('OpenGL')">
+                        <h3>OpenGL <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-OpenGL" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="pgn">
+                    <div class="form-header" onclick="toggleForm('PGN')">
+                        <h3>PGN <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-PGN" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="saveopen">
+                    <div class="form-header" onclick="toggleForm('SaveOpen')">
+                        <h3>SaveOpen <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-SaveOpen" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="sections">
+                    <div class="form-header" onclick="toggleForm('Sections')">
+                        <h3>Sections <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-Sections" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-item simple" data-name="udpcomm">
+                    <div class="form-header" onclick="toggleForm('UDPComm')">
+                        <h3>UDPComm <span class="expand-icon">▼</span></h3>
+                        <div class="form-meta">
+                            <span class="badge">0 controls</span>
+                            <span class="badge">0 handlers</span>
+                        </div>
+                    </div>
+                    <div class="form-details" id="form-UDPComm" style="display: none;">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="navigation" class="card">
+            <h2>Form Navigation</h2>
+            <p>16 navigation relationships found</p>
+            <h3>Entry Points</h3>
+            <div class="tag-cloud">
+                <span class="tag entry-point">Controls</span>
+                <span class="tag entry-point">FormAgShareSettings</span>
+                <span class="tag entry-point">FormDialog</span>
+                <span class="tag entry-point">FormEventViewer</span>
+                <span class="tag entry-point">FormGPS</span>
+                <span class="tag entry-point">FormGPSData</span>
+                <span class="tag entry-point">FormPan</span>
+                <span class="tag entry-point">FormSaving</span>
+                <span class="tag entry-point">FormShiftPos</span>
+                <span class="tag entry-point">FormWebCam</span>
+                <span class="tag entry-point">Form_About</span>
+                <span class="tag entry-point">Form_Help</span>
+                <span class="tag entry-point">Form_Keys</span>
+                <span class="tag entry-point">GUI</span>
+                <span class="tag entry-point">OpenGL</span>
+                <span class="tag entry-point">PGN</span>
+                <span class="tag entry-point">SaveOpen</span>
+                <span class="tag entry-point">Sections</span>
+                <span class="tag entry-point">UDPComm</span>
+                <span class="tag entry-point">ConfigSummaryControl</span>
+            </div>
+            <h3>Navigation Relationships</h3>
+            <table class="nav-table">
+                <thead>
+                    <tr><th>From</th><th>To</th><th>Trigger</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FormGPS</td>
+                        <td>Form_First</td>
+                        <td><code>FormGPS_Load</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormGPS</td>
+                        <td>FormNewProfile</td>
+                        <td><code>FormGPS_Load</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormBoundary</td>
+                        <td>FormBuildBoundaryFromTracks</td>
+                        <td><code>btnBuildBoundaryFromTracks_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormEnterFlag</td>
+                        <td>FormFlags</td>
+                        <td><code>btnRed_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormJob</td>
+                        <td>FormFilePicker</td>
+                        <td><code>btnJobOpen_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormJob</td>
+                        <td>FormDrivePicker</td>
+                        <td><code>btnInField_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormJob</td>
+                        <td>FormAgShareDownloader</td>
+                        <td><code>btnJobAgShare_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormNewProfile</td>
+                        <td>FormTimedMessage</td>
+                        <td><code>textBoxName_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColor</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnFrameDay_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColor</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnFrameNight_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColor</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnFieldDay_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColor</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnFieldNight_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColor</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnNightText_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColor</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnDayText_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormColorSection</td>
+                        <td>FormColorPicker</td>
+                        <td><code>btnC01_Click</code></td>
+                    </tr>
+                    <tr>
+                        <td>FormSteer</td>
+                        <td>FormSteerWiz</td>
+                        <td><code>btnSteerWizard_Click</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section id="statistics" class="card">
+            <h2>Statistics</h2>
+            <h3>Most Complex Forms</h3>
+            <table class="stats-table">
+                <thead>
+                    <tr><th>Rank</th><th>Form</th><th>Total Controls</th><th>Event Handlers</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>FormConfig</td>
+                        <td>2,133</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>FormSteerWiz</td>
+                        <td>1,299</td>
+                        <td>70</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>FormAllSettings</td>
+                        <td>1,080</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>FormSteer</td>
+                        <td>900</td>
+                        <td>53</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>FormGPS</td>
+                        <td>720</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>FormBuildTracks</td>
+                        <td>501</td>
+                        <td>57</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Form_Keys</td>
+                        <td>217</td>
+                        <td>6</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>FormColorSection</td>
+                        <td>191</td>
+                        <td>7</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>FormQuickAB</td>
+                        <td>167</td>
+                        <td>22</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>ConfigVehicleControl</td>
+                        <td>158</td>
+                        <td>9</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script>
+
+        function filterForms() {
+            const input = document.getElementById('searchBox');
+            const filter = input.value.toLowerCase();
+            const forms = document.querySelectorAll('.form-item');
+
+            forms.forEach(form => {
+                const name = form.getAttribute('data-name');
+                form.style.display = name.includes(filter) ? '' : 'none';
+            });
+        }
+
+        function toggleForm(formName) {
+            const details = document.getElementById('form-' + formName);
+            const header = details.previousElementSibling;
+
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                header.classList.add('expanded');
+            } else {
+                details.style.display = 'none';
+                header.classList.remove('expanded');
+            }
+        }
+        
+    </script>
+</body>
+</html>
