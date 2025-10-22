@@ -12,6 +12,7 @@ public class UIExtractionResult
     public ExtractionStatistics Statistics { get; set; } = new();
     public NavigationGraph? NavigationGraph { get; set; }
     public Dictionary<string, FormStructure> FormStructures { get; set; } = new();
+    public DynamicBehaviorResult? DynamicBehavior { get; set; }
 }
 
 public class ExtractionStatistics

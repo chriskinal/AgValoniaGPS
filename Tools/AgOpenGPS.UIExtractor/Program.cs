@@ -126,6 +126,49 @@ class Program
         Console.WriteLine($"  - Analyzed {result.FormStructures.Count} complex form(s)");
         Console.WriteLine();
 
+        // Phase 6: Analyze dynamic UI behavior
+        Console.WriteLine("Analyzing dynamic UI behavior...");
+        var visibilityAnalyzer = new DynamicVisibilityAnalyzer();
+        var propertyAnalyzer = new PropertyChangeAnalyzer();
+        var stateMapper = new UIStateMapper();
+
+        var dynamicBehavior = new DynamicBehaviorResult();
+
+        // Analyze all .cs files for dynamic behavior
+        var csFiles = Directory.GetFiles(formsPath, "*.cs", SearchOption.AllDirectories)
+            .Where(f => !f.EndsWith(".Designer.cs"))
+            .ToList();
+
+        int fileCount = 0;
+        foreach (var file in csFiles)
+        {
+            var visibilityRules = visibilityAnalyzer.AnalyzeFile(file);
+            var propertyChanges = propertyAnalyzer.AnalyzeFile(file);
+
+            dynamicBehavior.VisibilityRules.AddRange(visibilityRules);
+            dynamicBehavior.PropertyChanges.AddRange(propertyChanges);
+            fileCount++;
+        }
+
+        // Build state variable usage map
+        dynamicBehavior.StateVariableUsage = visibilityAnalyzer.BuildVariableUsageMap(dynamicBehavior.VisibilityRules);
+
+        // Infer UI modes from visibility rules
+        dynamicBehavior.Modes = stateMapper.InferModesFromRules(dynamicBehavior.VisibilityRules, dynamicBehavior.PropertyChanges);
+        dynamicBehavior.Modes = stateMapper.MergeRelatedModes(dynamicBehavior.Modes);
+
+        // Infer state transitions
+        dynamicBehavior.StateTransitions = stateMapper.InferTransitions(dynamicBehavior.Modes, dynamicBehavior.VisibilityRules);
+
+        result.DynamicBehavior = dynamicBehavior;
+
+        Console.WriteLine($"  - Analyzed {fileCount} code-behind files");
+        Console.WriteLine($"  - Found {dynamicBehavior.VisibilityRules.Count} visibility rules");
+        Console.WriteLine($"  - Found {dynamicBehavior.PropertyChanges.Count} property changes");
+        Console.WriteLine($"  - Inferred {dynamicBehavior.Modes.Count} UI modes");
+        Console.WriteLine($"  - Identified {dynamicBehavior.StateTransitions.Count} state transitions");
+        Console.WriteLine();
+
         // Phase 5: Generate output files
         Console.WriteLine("Generating output files...");
 
@@ -163,6 +206,21 @@ class Program
         var htmlPath = Path.Combine(outputDir, "ui-documentation.html");
         htmlGenerator.GenerateInteractiveDoc(result, htmlPath);
 
+        // Phase 6: Dynamic behavior documentation
+        if (result.DynamicBehavior != null)
+        {
+            var behaviorGenerator = new DynamicBehaviorDocGenerator();
+            var stateMachinePath = Path.Combine(outputDir, "ui-state-machine.md");
+            var visibilityRulesPath = Path.Combine(outputDir, "visibility-rules.md");
+            var propertyChangesPath = Path.Combine(outputDir, "property-changes.md");
+            var avaloniaMvvmPath = Path.Combine(outputDir, "avalonia-mvvm-guide.md");
+
+            behaviorGenerator.GenerateUIStateMachineDoc(result.DynamicBehavior, stateMachinePath);
+            behaviorGenerator.GenerateVisibilityRulesDoc(result.DynamicBehavior, visibilityRulesPath);
+            behaviorGenerator.GeneratePropertyChangesDoc(result.DynamicBehavior, propertyChangesPath);
+            behaviorGenerator.GenerateAvaloniaMVVMGuide(result.DynamicBehavior, avaloniaMvvmPath);
+        }
+
         Console.WriteLine();
         Console.WriteLine("Extraction complete!");
         Console.WriteLine();
@@ -174,6 +232,13 @@ class Program
         Console.WriteLine($"  - Form Structure Diagrams: {diagramCount} files");
         Console.WriteLine($"  - Migration Guide: {migrationGuidePath}");
         Console.WriteLine($"  - Interactive HTML: {htmlPath}");
+        if (result.DynamicBehavior != null)
+        {
+            Console.WriteLine("  - UI State Machine: ui-state-machine.md");
+            Console.WriteLine("  - Visibility Rules: visibility-rules.md");
+            Console.WriteLine("  - Property Changes: property-changes.md");
+            Console.WriteLine("  - Avalonia MVVM Guide: avalonia-mvvm-guide.md");
+        }
         Console.WriteLine();
 
         // Show top-level statistics
