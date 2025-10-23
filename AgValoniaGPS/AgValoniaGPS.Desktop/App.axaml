@@ -7,9 +7,18 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Resources>
+        <!-- Existing converters -->
         <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
         <converters:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
         <converters:FixQualityToColorConverter x:Key="FixQualityToColorConverter"/>
+
+        <!-- Wave 9 Foundation converters -->
+        <converters:InverseBoolConverter x:Key="InverseBool"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility"/>
+        <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibility"/>
+        <converters:UnitConverter x:Key="UnitConverter"/>
+        <converters:EnumToStringConverter x:Key="EnumToString"/>
     </Application.Resources>
 
     <Application.DataTemplates>
