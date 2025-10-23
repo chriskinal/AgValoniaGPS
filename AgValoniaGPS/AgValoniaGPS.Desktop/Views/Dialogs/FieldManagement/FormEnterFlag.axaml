@@ -1,0 +1,102 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormEnterFlag"
+        x:DataType="vm:EnterFlagViewModel"
+        Title="Enter Flag"
+        Width="450" Height="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:EnterFlagViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <!-- Main Content -->
+        <StackPanel Grid.Row="0" Spacing="12">
+            <!-- Flag Name -->
+            <StackPanel>
+                <TextBlock Text="Flag Name *" FontWeight="SemiBold" FontSize="14"/>
+                <TextBox Text="{Binding FlagName}"
+                         Watermark="Enter flag name (max 30 chars)"
+                         Width="400" Height="36"/>
+            </StackPanel>
+
+            <!-- Position -->
+            <TextBlock Text="Position" FontWeight="SemiBold" FontSize="16" Margin="0,8,0,0"/>
+
+            <Grid ColumnDefinitions="*,16,*">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Latitude" FontWeight="SemiBold" FontSize="14"/>
+                    <NumericUpDown Value="{Binding Latitude}"
+                                   Minimum="-90" Maximum="90"
+                                   FormatString="F6"
+                                   Increment="0.000001"
+                                   Height="36"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Longitude" FontWeight="SemiBold" FontSize="14"/>
+                    <NumericUpDown Value="{Binding Longitude}"
+                                   Minimum="-180" Maximum="180"
+                                   FormatString="F6"
+                                   Increment="0.000001"
+                                   Height="36"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Use Current Position Button -->
+            <Button Content="Use Current GPS Position"
+                    Command="{Binding UseCurrentPositionCommand}"
+                    Width="200" Height="36"
+                    HorizontalAlignment="Left"/>
+
+            <!-- Flag Color -->
+            <StackPanel>
+                <TextBlock Text="Flag Color" FontWeight="SemiBold" FontSize="14"/>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Pick Color"
+                            Command="{Binding PickColorCommand}"
+                            Width="120" Height="36"/>
+                    <Border Width="36" Height="36"
+                            Background="{Binding FlagColorHex}"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            CornerRadius="4"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Notes -->
+            <StackPanel>
+                <TextBlock Text="Notes (Optional)" FontWeight="SemiBold" FontSize="14"/>
+                <TextBox Text="{Binding Notes}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Watermark="Enter notes"
+                         Width="400" Height="80"/>
+            </StackPanel>
+
+            <!-- Error Message -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Red"
+                       FontSize="12"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasError}"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,16,0,0"
+                    Spacing="8">
+            <Button Content="OK"
+                    Command="{Binding OKCommand}"
+                    Width="100" Height="36"/>
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormBoundary"
+        x:DataType="vm:BoundaryViewModel"
+        Title="Boundary Management"
+        Width="600" Height="500"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="Boundary Management" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="16">
+            <ListBox Grid.Column="0" Items="{Binding BoundaryPoints}" Height="320">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Latitude, StringFormat='Lat: {0:F6}, Lon: '}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Column="1" Spacing="8">
+                <Button Content="New" Command="{Binding NewBoundaryCommand}" Width="120" Height="36"/>
+                <Button Content="Load" Command="{Binding LoadBoundaryCommand}" Width="120" Height="36"/>
+                <Button Content="Save" Command="{Binding SaveBoundaryCommand}" Width="120" Height="36"/>
+                <Button Content="Simplify" Command="{Binding SimplifyCommand}" Width="120" Height="36"/>
+                <Button Content="Clear" Command="{Binding ClearCommand}" Width="120" Height="36"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Margin="0,12">
+            <TextBlock Text="{Binding PointCount, StringFormat='Points: {0}'}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding BoundaryArea, StringFormat='Area: {0:F2} hectares'}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding IsValid, StringFormat='Valid: {0}'}" FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="Close" Command="{Binding OKCommand}" Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

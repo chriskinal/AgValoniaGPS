@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormWebCam"
+        x:DataType="vm:WebCamViewModel"
+        Title="Camera Feed"
+        Width="640" Height="480"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto,Auto">
+        <Border Grid.Row="0" BorderBrush="LightGray" BorderThickness="2" Margin="8">
+            <TextBlock Text="{Binding PlaceholderMessage}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="32"/>
+        </Border>
+
+        <StackPanel Grid.Row="1" Margin="16,8" Spacing="8">
+            <TextBlock Text="{Binding CameraStatus}" FontSize="12" Foreground="Gray" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <Button Content="Start" Command="{Binding StartCommand}" Width="80" Height="36" IsEnabled="{Binding !IsStreaming}"/>
+            <Button Content="Stop" Command="{Binding StopCommand}" Width="80" Height="36" IsEnabled="{Binding IsStreaming}"/>
+            <Button Content="Close" Command="{Binding CancelCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

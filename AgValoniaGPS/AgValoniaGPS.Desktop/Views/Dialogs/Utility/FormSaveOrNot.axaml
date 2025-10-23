@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormSaveOrNot"
+        x:DataType="vm:SaveOrNotViewModel"
+        Title="{Binding Title}"
+        Width="400" Height="180"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:SaveOrNotViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Icon and Message -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="16,16,16,8" Spacing="12">
+            <TextBlock Text="⚠️" FontSize="32" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Message}"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Error Message -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   FontSize="12"
+                   Margin="16,0"
+                   IsVisible="{Binding HasError}"/>
+
+        <!-- Three Buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="16"
+                    Spacing="8">
+            <Button Content="Save"
+                    Command="{Binding SaveCommand}"
+                    Width="100" Height="36"/>
+            <Button Content="Don't Save"
+                    Command="{Binding DontSaveCommand}"
+                    Width="100" Height="36"/>
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

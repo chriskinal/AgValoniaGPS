@@ -1,0 +1,145 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="400"
+             x:Class="AgValoniaGPS.Desktop.Controls.NumericKeypad">
+
+    <UserControl.Styles>
+        <!-- Number Button Style -->
+        <Style Selector="Button.NumberButton">
+            <Setter Property="Background" Value="#34495E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="MinWidth" Value="60"/>
+            <Setter Property="MinHeight" Value="60"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Number Button Hover -->
+        <Style Selector="Button.NumberButton:pointerover">
+            <Setter Property="Background" Value="#3498DB"/>
+        </Style>
+
+        <!-- Number Button Pressed -->
+        <Style Selector="Button.NumberButton:pressed">
+            <Setter Property="Background" Value="#2980B9"/>
+            <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        </Style>
+
+        <!-- Function Button Style (Clear, Backspace, OK) -->
+        <Style Selector="Button.FunctionButton">
+            <Setter Property="Background" Value="#E67E22"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="MinWidth" Value="60"/>
+            <Setter Property="MinHeight" Value="60"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Function Button Hover -->
+        <Style Selector="Button.FunctionButton:pointerover">
+            <Setter Property="Background" Value="#D35400"/>
+        </Style>
+
+        <!-- Function Button Pressed -->
+        <Style Selector="Button.FunctionButton:pressed">
+            <Setter Property="Background" Value="#BA4A00"/>
+            <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        </Style>
+
+        <!-- OK Button Style -->
+        <Style Selector="Button.OkButton">
+            <Setter Property="Background" Value="#27AE60"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="MinWidth" Value="60"/>
+            <Setter Property="MinHeight" Value="60"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- OK Button Hover -->
+        <Style Selector="Button.OkButton:pointerover">
+            <Setter Property="Background" Value="#229954"/>
+        </Style>
+
+        <!-- OK Button Pressed -->
+        <Style Selector="Button.OkButton:pressed">
+            <Setter Property="Background" Value="#1E8449"/>
+            <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        </Style>
+
+        <!-- Display TextBlock -->
+        <Style Selector="TextBlock.Display">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#2C3E50"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel>
+        <!-- Display showing current value -->
+        <Border Background="#2C3E50" CornerRadius="8,8,0,0" Margin="0,0,0,5">
+            <TextBlock x:Name="DisplayText"
+                       Classes="Display"
+                       Text="{Binding $parent[UserControl].DisplayValue}"
+                       ToolTip.Tip="Current Value"/>
+        </Border>
+
+        <!-- Keypad Grid: 4 rows x 4 columns -->
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,*,*,*">
+
+            <!-- Row 1: [7][8][9][←] -->
+            <Button Grid.Row="0" Grid.Column="0" Classes="NumberButton" Content="7" Click="OnNumberClick" Tag="7"/>
+            <Button Grid.Row="0" Grid.Column="1" Classes="NumberButton" Content="8" Click="OnNumberClick" Tag="8"/>
+            <Button Grid.Row="0" Grid.Column="2" Classes="NumberButton" Content="9" Click="OnNumberClick" Tag="9"/>
+            <Button Grid.Row="0" Grid.Column="3" Classes="FunctionButton" Content="←" Click="OnBackspaceClick" ToolTip.Tip="Backspace"/>
+
+            <!-- Row 2: [4][5][6][C] -->
+            <Button Grid.Row="1" Grid.Column="0" Classes="NumberButton" Content="4" Click="OnNumberClick" Tag="4"/>
+            <Button Grid.Row="1" Grid.Column="1" Classes="NumberButton" Content="5" Click="OnNumberClick" Tag="5"/>
+            <Button Grid.Row="1" Grid.Column="2" Classes="NumberButton" Content="6" Click="OnNumberClick" Tag="6"/>
+            <Button Grid.Row="1" Grid.Column="3" Classes="FunctionButton" Content="C" Click="OnClearClick" ToolTip.Tip="Clear"/>
+
+            <!-- Row 3: [1][2][3][OK] -->
+            <Button Grid.Row="2" Grid.Column="0" Classes="NumberButton" Content="1" Click="OnNumberClick" Tag="1"/>
+            <Button Grid.Row="2" Grid.Column="1" Classes="NumberButton" Content="2" Click="OnNumberClick" Tag="2"/>
+            <Button Grid.Row="2" Grid.Column="2" Classes="NumberButton" Content="3" Click="OnNumberClick" Tag="3"/>
+            <Button Grid.Row="2" Grid.Column="3" Classes="OkButton" Content="✓" Click="OnEnterClick" ToolTip.Tip="Accept"/>
+
+            <!-- Row 4: [.][0][00][=] -->
+            <Button Grid.Row="3" Grid.Column="0"
+                    Classes="NumberButton"
+                    Content="."
+                    Click="OnDecimalClick"
+                    IsVisible="{Binding $parent[UserControl].ShowDecimalButton}"
+                    ToolTip.Tip="Decimal Point"/>
+            <Button Grid.Row="3" Grid.Column="1" Classes="NumberButton" Content="0" Click="OnNumberClick" Tag="0"/>
+            <Button Grid.Row="3" Grid.Column="2" Classes="NumberButton" Content="00" Click="OnNumberClick" Tag="00"/>
+            <Button Grid.Row="3" Grid.Column="3" Classes="OkButton" Content="=" Click="OnEnterClick" ToolTip.Tip="Accept"/>
+        </Grid>
+    </StackPanel>
+
+</UserControl>

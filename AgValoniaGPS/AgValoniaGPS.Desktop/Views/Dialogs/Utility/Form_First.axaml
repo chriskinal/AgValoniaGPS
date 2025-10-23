@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.Form_First"
+        x:DataType="vm:FirstViewModel"
+        Title="Welcome to AgValoniaGPS"
+        Width="700" Height="600"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <TextBlock Grid.Row="0" Text="Welcome to AgValoniaGPS" FontSize="24" FontWeight="Bold" Margin="24,24,24,16" HorizontalAlignment="Center"/>
+
+        <ScrollViewer Grid.Row="1" Margin="24,0,24,16">
+            <StackPanel Spacing="16">
+                <!-- Welcome Page -->
+                <Border IsVisible="{Binding IsWelcomePage}" BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="16">
+                    <TextBlock Text="{Binding WelcomeMessage}" TextWrapping="Wrap" LineHeight="24"/>
+                </Border>
+
+                <!-- License Page -->
+                <StackPanel IsVisible="{Binding IsLicensePage}" Spacing="12">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="16" MaxHeight="400">
+                        <ScrollViewer>
+                            <TextBlock Text="{Binding LicenseText}" TextWrapping="Wrap" FontFamily="Consolas" FontSize="11"/>
+                        </ScrollViewer>
+                    </Border>
+                    <CheckBox IsChecked="{Binding AcceptedLicense}" Content="I accept the terms of the GNU General Public License v3.0"/>
+                </StackPanel>
+
+                <!-- Terms Page -->
+                <StackPanel IsVisible="{Binding IsTermsPage}" Spacing="12">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="16" MaxHeight="400">
+                        <ScrollViewer>
+                            <TextBlock Text="{Binding TermsText}" TextWrapping="Wrap" FontSize="12"/>
+                        </ScrollViewer>
+                    </Border>
+                    <CheckBox IsChecked="{Binding AcceptedTerms}" Content="I accept the Terms of Service and understand the disclaimer of liability"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" Margin="24,0,24,8" HorizontalAlignment="Center" IsVisible="{Binding HasError}"/>
+
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto" Margin="24,0,24,24">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="●" Foreground="{Binding IsWelcomePage, Converter={StaticResource BoolToColorConverter}}"/>
+                <TextBlock Text="●" Foreground="{Binding IsLicensePage, Converter={StaticResource BoolToColorConverter}}"/>
+                <TextBlock Text="●" Foreground="{Binding IsTermsPage, Converter={StaticResource BoolToColorConverter}}"/>
+            </StackPanel>
+            
+            <Button Grid.Column="1" Content="Previous" Command="{Binding PreviousPage}" Width="100" Height="36" Margin="0,0,8,0" IsEnabled="{Binding CanGoBack}"/>
+            <Button Grid.Column="2" Content="Next" Command="{Binding NextPage}" Width="100" Height="36" Margin="0,0,8,0" IsEnabled="{Binding CanGoForward}"/>
+            <Button Grid.Column="3" Content="Finish" Command="{Binding OKCommand}" Width="100" Height="36"/>
+        </Grid>
+    </Grid>
+</Window>

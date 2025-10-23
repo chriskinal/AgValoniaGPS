@@ -1,0 +1,169 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Pickers"
+        xmlns:controls="using:AgValoniaGPS.Desktop.Controls"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="550"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Pickers.FormColorPicker"
+        x:DataType="vm:ColorPickerViewModel"
+        Title="Color Picker"
+        Width="600" Height="550"
+        WindowStartupLocation="CenterOwner"
+        Background="#2C3E50"
+        CanResize="False">
+
+    <Window.Styles>
+        <Style Selector="Button.ModernButton">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ModernButton:pointerover">
+            <Setter Property="Background" Value="#2980B9"/>
+        </Style>
+        <Style Selector="Button.ModernButton:pressed">
+            <Setter Property="Background" Value="#21618C"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#34495E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#7F8C8D"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+
+        <Style Selector="Slider">
+            <Setter Property="Foreground" Value="#3498DB"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="20">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,20">
+            <TextBlock Text="Color Picker" FontSize="24" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Select a color from the palette or customize using RGB sliders"
+                       Foreground="#BDC3C7" FontSize="14"/>
+        </StackPanel>
+
+        <!-- Color Selection Area -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto" Margin="0,0,0,20">
+            <!-- Color Palette -->
+            <Border Grid.Row="0"
+                    Background="#34495E"
+                    CornerRadius="8"
+                    Padding="10"
+                    Margin="0,0,0,15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Color Palette" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+                    <controls:ColorPalette DataContext="{Binding}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- RGB Sliders -->
+            <Border Grid.Row="1"
+                    Background="#34495E"
+                    CornerRadius="8"
+                    Padding="15"
+                    Margin="0,0,0,15">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="RGB Values" Foreground="White" FontSize="16" FontWeight="SemiBold"/>
+
+                    <!-- Red Slider -->
+                    <Grid ColumnDefinitions="60,*,60">
+                        <TextBlock Grid.Column="0" Text="Red:" Foreground="White" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1"
+                                Minimum="0" Maximum="255"
+                                Value="{Binding Red}"
+                                Margin="10,0"/>
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding Red}"
+                                 HorizontalContentAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Green Slider -->
+                    <Grid ColumnDefinitions="60,*,60">
+                        <TextBlock Grid.Column="0" Text="Green:" Foreground="White" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1"
+                                Minimum="0" Maximum="255"
+                                Value="{Binding Green}"
+                                Margin="10,0"/>
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding Green}"
+                                 HorizontalContentAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Blue Slider -->
+                    <Grid ColumnDefinitions="60,*,60">
+                        <TextBlock Grid.Column="0" Text="Blue:" Foreground="White" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1"
+                                Minimum="0" Maximum="255"
+                                Value="{Binding Blue}"
+                                Margin="10,0"/>
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding Blue}"
+                                 HorizontalContentAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Hex Value -->
+                    <Grid ColumnDefinitions="60,*">
+                        <TextBlock Grid.Column="0" Text="Hex:" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding HexValue}"
+                                 Margin="10,0,0,0"
+                                 Watermark="#RRGGBB"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Color Preview -->
+            <Border Grid.Row="2"
+                    Background="#34495E"
+                    CornerRadius="8"
+                    Padding="15">
+                <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Grid.Column="0"
+                               Text="Preview:"
+                               Foreground="White"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Margin="0,0,15,0"/>
+                    <Border Grid.Column="1"
+                            Background="{Binding SelectedColor}"
+                            BorderBrush="#7F8C8D"
+                            BorderThickness="2"
+                            CornerRadius="6"
+                            Height="60"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Error Message -->
+        <TextBlock Grid.Row="2"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="#E74C3C"
+                   FontSize="14"
+                   Margin="0,0,0,10"
+                   IsVisible="{Binding HasError}"/>
+
+        <!-- Action Buttons -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto">
+            <Button Grid.Column="1"
+                    Classes="ModernButton"
+                    Content="OK"
+                    Command="{Binding OKCommand}"
+                    Margin="0,0,10,0"/>
+            <Button Grid.Column="2"
+                    Classes="ModernButton"
+                    Content="Cancel"
+                    Command="{Binding CancelCommand}"/>
+        </Grid>
+    </Grid>
+</Window>

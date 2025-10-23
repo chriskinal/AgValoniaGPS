@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormSaving"
+        x:DataType="vm:SavingViewModel"
+        Title="Saving..."
+        Width="300" Height="150"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False">
+
+    <Design.DataContext>
+        <vm:SavingViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <StackPanel Grid.Row="0" Spacing="16" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Message}"
+                       FontSize="16"
+                       HorizontalAlignment="Center"/>
+
+            <ProgressBar Value="{Binding Progress}"
+                         IsIndeterminate="{Binding IsIndeterminate}"
+                         Height="8"
+                         Minimum="0" Maximum="100"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   FontSize="12"
+                   HorizontalAlignment="Center"
+                   IsVisible="{Binding HasError}"/>
+    </Grid>
+</Window>

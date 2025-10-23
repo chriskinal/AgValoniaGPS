@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormFieldExisting"
+        x:DataType="vm:FieldExistingViewModel"
+        Title="Load Existing Field"
+        Width="700" Height="500"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="Select Field to Load" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="300,*" ColumnSpacing="16">
+            <!-- Field List -->
+            <ListBox Grid.Column="0" Items="{Binding Fields}" SelectedItem="{Binding SelectedField}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding AreaHectares, StringFormat='{}{0:F2} ha'}" FontSize="12" Foreground="Gray"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Preview Panel -->
+            <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Field Preview" FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Text="{Binding FieldPreview}" TextWrapping="Wrap" FontFamily="Consolas"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,16,0,0">
+            <Button Content="Load" Command="{Binding LoadCommand}" Width="100" Height="36"/>
+            <Button Content="Delete" Command="{Binding DeleteCommand}" Width="100" Height="36"/>
+            <Button Content="Refresh" Command="{Binding RefreshCommand}" Width="100" Height="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

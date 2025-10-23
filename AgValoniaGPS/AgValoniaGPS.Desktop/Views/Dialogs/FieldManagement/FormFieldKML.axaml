@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormFieldKML"
+        x:DataType="vm:FieldKMLViewModel"
+        Title="Import KML Boundary"
+        Width="600" Height="450"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="KML File" FontWeight="Bold" FontSize="16"/>
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" Text="{Binding KMLFilePath}" IsReadOnly="True" Height="36"/>
+                <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseKMLCommand}" Width="100" Height="36" Margin="8,0,0,0"/>
+            </Grid>
+        </StackPanel>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="16" Margin="0,16">
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Features" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                <ListBox Items="{Binding Features}" SelectedItem="{Binding SelectedFeature}" Height="280">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding PointCount, StringFormat='Points: {0}'}" FontSize="12"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+            <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Preview" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="Import" Command="{Binding ImportCommand}" Width="100" Height="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

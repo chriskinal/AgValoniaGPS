@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AgValoniaGPS.ViewModels.Dialogs.Guidance;assembly=AgValoniaGPS.ViewModels"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Guidance.FormGrid"
+        x:DataType="vm:GridViewModel"
+        Title="Grid Guidance Setup"
+        Width="500" Height="500"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="Grid Guidance Setup" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="16">
+                <!-- Grid Spacing -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Grid Spacing" FontWeight="SemiBold"/>
+                    <NumericUpDown Value="{Binding GridSpacing}" Minimum="1" Maximum="100" Increment="1" MinHeight="36"/>
+                    <TextBlock Text="{Binding GridSpacingFormatted}" FontSize="12" Foreground="#888"/>
+                </StackPanel>
+
+                <!-- Grid Angle -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Grid Angle" FontWeight="SemiBold"/>
+                    <Slider Value="{Binding GridAngle}" Minimum="0" Maximum="360" MinHeight="36"/>
+                    <TextBlock Text="{Binding GridAngleFormatted}" FontSize="14"/>
+                </StackPanel>
+
+                <!-- Rotation Buttons -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Quick Rotation" FontWeight="SemiBold"/>
+                    <WrapPanel>
+                        <Button Content="+15°" Command="{Binding RotateGridCommand}" CommandParameter="15" MinWidth="80" MinHeight="36" Margin="0,0,8,0"/>
+                        <Button Content="+45°" Command="{Binding RotateGridCommand}" CommandParameter="45" MinWidth="80" MinHeight="36" Margin="0,0,8,0"/>
+                        <Button Content="+90°" Command="{Binding RotateGridCommand}" CommandParameter="90" MinWidth="80" MinHeight="36" Margin="0,0,8,0"/>
+                        <Button Content="-15°" Command="{Binding RotateGridCommand}" CommandParameter="-15" MinWidth="80" MinHeight="36" Margin="0,0,8,0"/>
+                        <Button Content="-45°" Command="{Binding RotateGridCommand}" CommandParameter="-45" MinWidth="80" MinHeight="36" Margin="0,0,8,0"/>
+                        <Button Content="-90°" Command="{Binding RotateGridCommand}" CommandParameter="-90" MinWidth="80" MinHeight="36"/>
+                    </WrapPanel>
+                </StackPanel>
+
+                <!-- Grid Origin -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Grid Origin" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding GridOriginFormatted}" FontSize="14"/>
+                    <Button Content="Set Origin (Current Position)" Command="{Binding SetOriginCommand}" MinHeight="36"/>
+                </StackPanel>
+
+                <!-- Number of Lines -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Number of Lines" FontWeight="SemiBold"/>
+                    <NumericUpDown Value="{Binding NumberOfLines}" Minimum="1" Maximum="20" Increment="1" MinHeight="36"/>
+                    <TextBlock Text="{Binding TotalLinesDisplay}" FontSize="12" Foreground="#888"/>
+                </StackPanel>
+
+                <!-- Show Grid -->
+                <CheckBox IsChecked="{Binding ShowGrid}" Content="Show Grid" FontSize="14" MinHeight="36"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Foreground="Red" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Apply Grid" Command="{Binding ApplyGridCommand}" MinWidth="100" MinHeight="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" MinWidth="80" MinHeight="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

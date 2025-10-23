@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AgValoniaGPS.ViewModels.Dialogs.Guidance;assembly=AgValoniaGPS.ViewModels"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Guidance.FormQuickAB"
+        x:DataType="vm:QuickABViewModel"
+        Title="Quick AB Line Creation"
+        Width="550" Height="600"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="Quick AB Line Creation" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="16">
+                <!-- Current Position -->
+                <Border BorderBrush="#CCC" BorderThickness="1" Padding="12" CornerRadius="4" Background="#F0F8FF">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Current GPS Position" FontWeight="Bold" FontSize="14"/>
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Latitude:" Margin="0,0,12,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LatitudeFormatted}" FontFamily="Consolas"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Longitude:" Margin="0,0,12,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LongitudeFormatted}" FontFamily="Consolas"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Heading:" Margin="0,0,12,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentHeadingFormatted}" FontFamily="Consolas"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Heading Mode -->
+                <StackPanel Spacing="4">
+                    <CheckBox IsChecked="{Binding UseCurrentHeading}"
+                              Content="Use Current GPS Heading"
+                              FontSize="14"
+                              MinHeight="36"/>
+                </StackPanel>
+
+                <!-- AB Line Heading -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="AB Line Heading" FontWeight="SemiBold"/>
+                    <Slider Value="{Binding ABLineHeading}" Minimum="0" Maximum="360" MinHeight="36"/>
+                    <TextBlock Text="{Binding ABLineHeadingFormatted}" FontSize="16" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Heading Offset -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Heading Offset from Current" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding HeadingOffsetFormatted}" FontSize="16" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Quick Adjust Buttons -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Quick Heading Adjustments" FontWeight="SemiBold"/>
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Button Content="+1°" Command="{Binding AdjustHeadingCommand}" CommandParameter="1" MinWidth="70" MinHeight="36" Margin="4"/>
+                        <Button Content="+5°" Command="{Binding AdjustHeadingCommand}" CommandParameter="5" MinWidth="70" MinHeight="36" Margin="4"/>
+                        <Button Content="+45°" Command="{Binding AdjustHeadingCommand}" CommandParameter="45" MinWidth="70" MinHeight="36" Margin="4"/>
+                        <Button Content="-1°" Command="{Binding AdjustHeadingCommand}" CommandParameter="-1" MinWidth="70" MinHeight="36" Margin="4"/>
+                        <Button Content="-5°" Command="{Binding AdjustHeadingCommand}" CommandParameter="-5" MinWidth="70" MinHeight="36" Margin="4"/>
+                        <Button Content="-45°" Command="{Binding AdjustHeadingCommand}" CommandParameter="-45" MinWidth="70" MinHeight="36" Margin="4"/>
+                    </WrapPanel>
+                </StackPanel>
+
+                <!-- Use Current Heading Button -->
+                <Button Content="Use Current Heading"
+                        Command="{Binding UseCurrentHeadingCommand}"
+                        MinHeight="40"
+                        FontSize="14"
+                        HorizontalAlignment="Stretch"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Foreground="Red" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Create AB Line" Command="{Binding CreateABLineCommand}" MinWidth="120" MinHeight="36" FontSize="14"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" MinWidth="80" MinHeight="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

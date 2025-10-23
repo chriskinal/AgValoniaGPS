@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormAgShareSettings"
+        x:DataType="vm:AgShareSettingsViewModel"
+        Title="AgShare Settings"
+        Width="600" Height="650"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <TextBlock Grid.Row="0" Text="AgShare Cloud Sync Settings" FontSize="20" FontWeight="Bold" Margin="16,16,16,8"/>
+
+        <ScrollViewer Grid.Row="1" Margin="16,0,16,8">
+            <StackPanel Spacing="16">
+                <!-- Enable/Disable -->
+                <CheckBox IsChecked="{Binding EnableAgShare}" Content="Enable AgShare Cloud Sync" FontWeight="SemiBold"/>
+
+                <!-- Connection Settings -->
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="4" Padding="12" IsEnabled="{Binding EnableAgShare}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Connection Settings" FontWeight="SemiBold"/>
+                        
+                        <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Server URL:" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ServerUrl}"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Port:" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding Port}" Minimum="1" Maximum="65535"/>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Username:" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Username}"/>
+                            
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Password:" VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Password}" PasswordChar="●"/>
+                        </Grid>
+
+                        <CheckBox IsChecked="{Binding UseSSL}" Content="Use SSL/TLS encryption"/>
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Test Connection" Command="{Binding TestConnectionCommand}" Width="120" Height="36"/>
+                            <TextBlock Text="{Binding ConnectionStatusText}" VerticalAlignment="Center" Foreground="Gray"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Sync Settings -->
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="4" Padding="12" IsEnabled="{Binding EnableAgShare}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Sync Settings" FontWeight="SemiBold"/>
+                        
+                        <CheckBox IsChecked="{Binding AutoSync}" Content="Automatically sync at intervals"/>
+                        
+                        <Grid ColumnDefinitions="150,*" IsEnabled="{Binding AutoSync}">
+                            <TextBlock Grid.Column="0" Text="Sync interval (minutes):" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding SyncIntervalMinutes}" Minimum="1" Maximum="1440"/>
+                        </Grid>
+
+                        <TextBlock Text="Sync Items:" Margin="0,8,0,0"/>
+                        <CheckBox IsChecked="{Binding SyncFields}" Content="Sync field data"/>
+                        <CheckBox IsChecked="{Binding SyncBoundaries}" Content="Sync boundaries"/>
+                        <CheckBox IsChecked="{Binding SyncGuidanceLines}" Content="Sync guidance lines"/>
+                        <CheckBox IsChecked="{Binding SyncFlags}" Content="Sync flags and markers"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                            <Button Content="Sync Now" Command="{Binding SyncNowCommand}" Width="100" Height="36"/>
+                            <TextBlock Text="{Binding LastSyncText}" VerticalAlignment="Center" Foreground="Gray"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" Margin="16,0,16,8" IsVisible="{Binding HasError}"/>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

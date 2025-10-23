@@ -1,0 +1,172 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Pickers"
+        mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="550"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Pickers.FormFilePicker"
+        x:DataType="vm:FilePickerViewModel"
+        Title="File Picker"
+        Width="700" Height="550"
+        WindowStartupLocation="CenterOwner"
+        Background="#2C3E50"
+        CanResize="True">
+
+    <Window.Styles>
+        <Style Selector="Button.ModernButton">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ModernButton:pointerover">
+            <Setter Property="Background" Value="#2980B9"/>
+        </Style>
+        <Style Selector="Button.ModernButton:disabled">
+            <Setter Property="Background" Value="#7F8C8D"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Background" Value="#3498DB"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover">
+            <Setter Property="Background" Value="#34495E"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="20">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,15">
+            <TextBlock Text="File Picker" FontSize="24" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Browse and select a file from your computer"
+                       Foreground="#BDC3C7" FontSize="14"/>
+        </StackPanel>
+
+        <!-- Navigation Bar -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+            <Button Grid.Column="0"
+                    Classes="ModernButton"
+                    Content="⬆ Up"
+                    Command="{Binding NavigateUpCommand}"
+                    Margin="0,0,10,0"
+                    MinWidth="80"/>
+            <TextBox Grid.Column="1"
+                     Text="{Binding CurrentPath}"
+                     IsReadOnly="True"
+                     Background="#34495E"
+                     Foreground="White"
+                     BorderBrush="#7F8C8D"
+                     CornerRadius="4"
+                     Padding="10"/>
+        </Grid>
+
+        <!-- Files List -->
+        <Border Grid.Row="2"
+                Background="#34495E"
+                CornerRadius="8"
+                Padding="1"
+                Margin="0,0,0,15">
+            <ScrollViewer>
+                <ListBox ItemsSource="{Binding Files}"
+                         SelectedItem="{Binding SelectedFile}"
+                         Background="Transparent"
+                         BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto"
+                                  Margin="5">
+                                <!-- Icon -->
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding Icon}"
+                                           FontSize="20"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,10,0"/>
+
+                                <!-- Name -->
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Name}"
+                                           Foreground="White"
+                                           FontSize="14"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"/>
+
+                                <!-- Size -->
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding Size}"
+                                           Foreground="#BDC3C7"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Margin="10,0"
+                                           Width="80"
+                                           TextAlignment="Right"/>
+
+                                <!-- Modified Date -->
+                                <TextBlock Grid.Column="3"
+                                           Text="{Binding ModifiedString}"
+                                           Foreground="#95A5A6"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Width="130"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="DoubleTapped">
+                            <InvokeCommandAction Command="{Binding SelectFileCommand}"
+                                               CommandParameter="{Binding SelectedFile}"/>
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+                </ListBox>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Selected File Path -->
+        <Grid Grid.Row="3" ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+            <TextBlock Grid.Column="0"
+                       Text="Selected:"
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1"
+                     Text="{Binding SelectedFilePath}"
+                     Background="#34495E"
+                     Foreground="White"
+                     BorderBrush="#7F8C8D"
+                     CornerRadius="4"
+                     Padding="10"/>
+        </Grid>
+
+        <!-- Error Message and Action Buttons -->
+        <Grid Grid.Row="4" RowDefinitions="Auto,Auto">
+            <!-- Error Message -->
+            <TextBlock Grid.Row="0"
+                       Text="{Binding ErrorMessage}"
+                       Foreground="#E74C3C"
+                       FontSize="14"
+                       Margin="0,0,0,10"
+                       IsVisible="{Binding HasError}"/>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto">
+                <Button Grid.Column="1"
+                        Classes="ModernButton"
+                        Content="OK"
+                        Command="{Binding OKCommand}"
+                        Margin="0,0,10,0"/>
+                <Button Grid.Column="2"
+                        Classes="ModernButton"
+                        Content="Cancel"
+                        Command="{Binding CancelCommand}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

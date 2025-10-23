@@ -1,0 +1,96 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AgValoniaGPS.ViewModels.Dialogs.Guidance;assembly=AgValoniaGPS.ViewModels"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Guidance.FormABDraw"
+        x:DataType="vm:ABDrawViewModel"
+        Title="Draw AB Line"
+        Width="600" Height="650"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="Draw AB Line" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <!-- Instructions -->
+        <Border Grid.Row="1" BorderBrush="#0066CC" BorderThickness="2" Padding="12" CornerRadius="4" Background="#E6F2FF" Margin="0,0,0,16">
+            <TextBlock Text="{Binding Instructions}"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="#0066CC"
+                       TextAlignment="Center"/>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" RowDefinitions="Auto,*">
+            <!-- Interactive Canvas Area -->
+            <Border Grid.Row="1" BorderBrush="#000" BorderThickness="2" CornerRadius="4" Margin="0,8,0,0">
+                <Canvas Name="DrawCanvas" Background="#F0F0F0" Width="550" Height="350">
+                    <!-- Canvas content will be drawn programmatically or via custom control -->
+                    <!-- Point A indicator -->
+                    <Ellipse IsVisible="{Binding IsPointASet}"
+                             Fill="Red"
+                             Width="20" Height="20"
+                             Canvas.Left="100" Canvas.Top="175"/>
+
+                    <!-- Point B indicator -->
+                    <Ellipse IsVisible="{Binding IsPointBSet}"
+                             Fill="Blue"
+                             Width="20" Height="20"
+                             Canvas.Left="450" Canvas.Top="175"/>
+
+                    <!-- Line preview (placeholder) -->
+                    <Line IsVisible="{Binding IsPointBSet}"
+                          StartPoint="110,185"
+                          EndPoint="460,185"
+                          Stroke="Green"
+                          StrokeThickness="3"/>
+
+                    <TextBlock Canvas.Left="10" Canvas.Top="10"
+                               Text="Click on canvas to set points"
+                               FontSize="12"
+                               Foreground="#666"/>
+                </Canvas>
+            </Border>
+
+            <!-- Point Info -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,*" ColumnSpacing="16">
+                <Border Grid.Column="0" BorderBrush="#FF0000" BorderThickness="2" Padding="8" CornerRadius="4">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Point A" FontWeight="Bold" Foreground="#FF0000"/>
+                        <TextBlock Text="{Binding PointAFormatted}" FontSize="12" FontFamily="Consolas"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" BorderBrush="#0000FF" BorderThickness="2" Padding="8" CornerRadius="4">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Point B" FontWeight="Bold" Foreground="#0000FF"/>
+                        <TextBlock Text="{Binding PointBFormatted}" FontSize="12" FontFamily="Consolas"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Bottom Section -->
+        <Grid Grid.Row="3" RowDefinitions="Auto,Auto" Margin="0,16,0,0">
+            <!-- Line Info -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,*" ColumnSpacing="16" Margin="0,0,0,16">
+                <Border Grid.Column="0" BorderBrush="#CCC" BorderThickness="1" Padding="8" CornerRadius="4" Background="#F9F9F9">
+                    <StackPanel>
+                        <TextBlock Text="{Binding LineHeadingFormatted}" FontSize="14" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" BorderBrush="#CCC" BorderThickness="1" Padding="8" CornerRadius="4" Background="#F9F9F9">
+                    <StackPanel>
+                        <TextBlock Text="{Binding LineLengthFormatted}" FontSize="14" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Buttons -->
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto">
+                <Button Grid.Column="0" Content="Clear" Command="{Binding ClearCommand}" MinWidth="80" MinHeight="36" Margin="0,0,8,0"/>
+                <TextBlock Grid.Column="1" Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" Foreground="Red" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <Button Grid.Column="2" Content="Create AB Line" Command="{Binding CreateABLineCommand}" MinWidth="120" MinHeight="36" Margin="0,0,8,0"/>
+                <Button Grid.Column="3" Content="Cancel" Command="{Binding CancelCommand}" MinWidth="80" MinHeight="36"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

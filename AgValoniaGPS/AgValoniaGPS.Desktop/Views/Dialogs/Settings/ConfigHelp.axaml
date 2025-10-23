@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Settings"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Settings.ConfigHelp"
+        x:DataType="vm:ConfigHelpViewModel"
+        Title="Help Configuration"
+        Width="400" Height="300"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:ConfigHelpViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Content -->
+        <StackPanel Grid.Row="0" Margin="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <TextBlock Text="Coming Soon"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,16" />
+            <TextBlock Text="{Binding PlaceholderMessage}"
+                       FontSize="14"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       MaxWidth="300" />
+        </StackPanel>
+
+        <!-- Button bar -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="16,8">
+            <Button Content="OK"
+                    Command="{Binding OKCommand}"
+                    Width="80" Height="36" />
+        </StackPanel>
+    </Grid>
+</Window>

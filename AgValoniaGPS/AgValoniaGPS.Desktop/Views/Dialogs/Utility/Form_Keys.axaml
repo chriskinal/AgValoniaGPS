@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.Form_Keys"
+        x:DataType="vm:KeysViewModel"
+        Title="Keyboard Shortcuts"
+        Width="900" Height="700"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBlock Grid.Row="0" Text="Keyboard Shortcuts Reference" FontSize="20" FontWeight="Bold" Margin="16,16,16,8"/>
+        
+        <Grid Grid.Row="1" ColumnDefinitions="*,200" Margin="16,0,16,8">
+            <TextBox Grid.Column="0" Text="{Binding SearchText}" Watermark="Search shortcuts..." Margin="0,0,8,0"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" PlaceholderText="All Categories">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </Grid>
+
+        <ScrollViewer Grid.Row="2" Margin="16,0,16,8">
+            <ItemsControl ItemsSource="{Binding FilteredShortcuts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="200,*" Margin="0,4">
+                            <TextBlock Grid.Column="0" Text="{Binding Key}" FontFamily="Consolas" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Description}" TextWrapping="Wrap"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

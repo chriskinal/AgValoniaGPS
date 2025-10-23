@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormBoundaryPlayer"
+        x:DataType="vm:BoundaryPlayerViewModel"
+        Title="Boundary Playback"
+        Width="500" Height="300"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="Boundary Recording Playback" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+        <StackPanel Grid.Row="1" Spacing="12">
+            <ProgressBar Value="{Binding Progress}" Maximum="100" Height="20"/>
+
+            <Grid ColumnDefinitions="*,*">
+                <TextBlock Grid.Column="0" Text="{Binding CurrentTime, StringFormat='Current: {0:mm\\:ss}'}" />
+                <TextBlock Grid.Column="1" Text="{Binding TotalDuration, StringFormat='Total: {0:mm\\:ss}'}" HorizontalAlignment="Right"/>
+            </Grid>
+
+            <TextBlock Text="{Binding CurrentPointIndex, StringFormat='Point {0}'}" FontSize="18" HorizontalAlignment="Center"/>
+
+            <ComboBox SelectedItem="{Binding PlaybackSpeed}" Width="150" HorizontalAlignment="Center">
+                <ComboBoxItem Content="0.5x" Tag="0.5"/>
+                <ComboBoxItem Content="1x" Tag="1.0" IsSelected="True"/>
+                <ComboBoxItem Content="2x" Tag="2.0"/>
+                <ComboBoxItem Content="4x" Tag="4.0"/>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12" Margin="0,16">
+            <Button Content="Play" Command="{Binding PlayCommand}" Width="80" Height="36"/>
+            <Button Content="Pause" Command="{Binding PauseCommand}" Width="80" Height="36"/>
+            <Button Content="Stop" Command="{Binding StopCommand}" Width="80" Height="36"/>
+        </StackPanel>
+
+        <Button Grid.Row="3" Content="Close" Command="{Binding OKCommand}" Width="100" Height="36" HorizontalAlignment="Right"/>
+    </Grid>
+</Window>

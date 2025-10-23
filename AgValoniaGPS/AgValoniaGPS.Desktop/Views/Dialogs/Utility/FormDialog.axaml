@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormDialog"
+        x:DataType="vm:GenericDialogViewModel"
+        Title="{Binding Title}"
+        Width="400" Height="200"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:GenericDialogViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto,Auto">
+        <!-- Message Content -->
+        <ScrollViewer Grid.Row="0" Margin="16">
+            <TextBlock Text="{Binding Message}"
+                       TextWrapping="Wrap"
+                       FontSize="14"/>
+        </ScrollViewer>
+
+        <!-- Error Message -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   FontSize="12"
+                   Margin="16,0,16,8"
+                   IsVisible="{Binding HasError}"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="16,0,16,16"
+                    Spacing="8">
+            <Button Content="{Binding OKButtonText}"
+                    Command="{Binding OKCommand}"
+                    Width="80" Height="36"/>
+            <Button Content="{Binding CancelButtonText}"
+                    Command="{Binding CancelCommand}"
+                    Width="80" Height="36"
+                    IsVisible="{Binding ShowCancelButton}"/>
+        </StackPanel>
+    </Grid>
+</Window>

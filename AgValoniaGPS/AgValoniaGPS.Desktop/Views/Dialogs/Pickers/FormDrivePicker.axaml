@@ -1,0 +1,160 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Pickers"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Pickers.FormDrivePicker"
+        x:DataType="vm:DrivePickerViewModel"
+        Title="Drive Picker"
+        Width="600" Height="500"
+        WindowStartupLocation="CenterOwner"
+        Background="#2C3E50"
+        CanResize="True">
+
+    <Window.Styles>
+        <Style Selector="Button.ModernButton">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.ModernButton:pointerover">
+            <Setter Property="Background" Value="#2980B9"/>
+        </Style>
+        <Style Selector="Button.ModernButton:pressed">
+            <Setter Property="Background" Value="#21618C"/>
+        </Style>
+
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Background" Value="#3498DB"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover">
+            <Setter Property="Background" Value="#34495E"/>
+        </Style>
+
+        <Style Selector="ProgressBar">
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Foreground" Value="#E74C3C"/>
+            <Setter Property="Background" Value="#2ECC71"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="20">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,15">
+            <TextBlock Text="Drive Picker" FontSize="24" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="Select a drive or volume from the available drives"
+                       Foreground="#BDC3C7" FontSize="14"/>
+        </StackPanel>
+
+        <!-- Search and Refresh -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+            <TextBox Grid.Column="0"
+                     Text="{Binding SearchText}"
+                     Watermark="Search drives..."
+                     Background="#34495E"
+                     Foreground="White"
+                     BorderBrush="#7F8C8D"
+                     CornerRadius="4"
+                     Padding="10"
+                     Margin="0,0,10,0"/>
+            <Button Grid.Column="1"
+                    Classes="ModernButton"
+                    Content="Refresh"
+                    Command="{Binding RefreshDrivesCommand}"/>
+        </Grid>
+
+        <!-- Drives List -->
+        <Border Grid.Row="2"
+                Background="#34495E"
+                CornerRadius="8"
+                Padding="1"
+                Margin="0,0,0,15">
+            <ScrollViewer>
+                <ListBox ItemsSource="{Binding FilteredItems}"
+                         SelectedItem="{Binding SelectedItem}"
+                         Background="Transparent"
+                         BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid RowDefinitions="Auto,Auto,Auto" Margin="5">
+                                <!-- Drive Name and Label -->
+                                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Column="0"
+                                               Text="💾"
+                                               FontSize="24"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,10,0"/>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="White"
+                                                   FontSize="18"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Label}"
+                                                   Foreground="#BDC3C7"
+                                                   FontSize="14"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding DriveType}"
+                                               Foreground="#95A5A6"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- Space Information -->
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,5,0,3">
+                                    <TextBlock Grid.Column="0"
+                                               Foreground="#BDC3C7"
+                                               FontSize="12">
+                                        <Run Text="{Binding FreeSpace}"/>
+                                        <Run Text=" free of "/>
+                                        <Run Text="{Binding TotalSize}"/>
+                                    </TextBlock>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding DriveFormat}"
+                                               Foreground="#95A5A6"
+                                               FontSize="12"/>
+                                </Grid>
+
+                                <!-- Space Bar -->
+                                <ProgressBar Grid.Row="2"
+                                             Value="{Binding UsedPercentage}"
+                                             Maximum="100"
+                                             ToolTip.Tip="{Binding DisplayText}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Error Message -->
+        <TextBlock Grid.Row="3"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="#E74C3C"
+                   FontSize="14"
+                   Margin="0,0,0,10"
+                   IsVisible="{Binding HasError}"/>
+
+        <!-- Action Buttons -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto,Auto">
+            <Button Grid.Column="1"
+                    Classes="ModernButton"
+                    Content="OK"
+                    Command="{Binding OKCommand}"
+                    Margin="0,0,10,0"/>
+            <Button Grid.Column="2"
+                    Classes="ModernButton"
+                    Content="Cancel"
+                    Command="{Binding CancelCommand}"/>
+        </Grid>
+    </Grid>
+</Window>

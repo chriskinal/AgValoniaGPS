@@ -1,0 +1,83 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormBndTool"
+        x:DataType="vm:BndToolViewModel"
+        Title="Boundary Tools"
+        Width="350" Height="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:BndToolViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <!-- Tool Selection -->
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="Select Tool" FontWeight="Bold" FontSize="16"/>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                <Button Grid.Row="0" Grid.Column="0"
+                        Content="Draw"
+                        Command="{Binding SetDrawModeCommand}"
+                        Height="60"/>
+                <Button Grid.Row="0" Grid.Column="1"
+                        Content="Erase"
+                        Command="{Binding SetEraseModeCommand}"
+                        Height="60"/>
+                <Button Grid.Row="1" Grid.Column="0"
+                        Content="Simplify"
+                        Command="{Binding SetSimplifyModeCommand}"
+                        Height="60"/>
+                <Button Grid.Row="1" Grid.Column="1"
+                        Content="Move"
+                        Command="{Binding SetMoveModeCommand}"
+                        Height="60"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Tool Settings -->
+        <StackPanel Grid.Row="1" Spacing="12" Margin="0,16">
+            <!-- Point Count -->
+            <StackPanel>
+                <TextBlock Text="Points Drawn" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding DrawingPointCount}"
+                           FontSize="20"
+                           Foreground="DarkBlue"/>
+            </StackPanel>
+
+            <!-- Simplify Tolerance (only visible in Simplify mode) -->
+            <StackPanel IsVisible="{Binding IsSimplifyMode}">
+                <TextBlock Text="Simplify Tolerance (meters)" FontWeight="SemiBold"/>
+                <Slider Value="{Binding SimplifyTolerance}"
+                        Minimum="0.1" Maximum="10"
+                        TickFrequency="0.5"
+                        Width="300"
+                        Height="36"/>
+                <TextBlock Text="{Binding SimplifyTolerance, StringFormat='{}{0:F1} m'}"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Action Buttons -->
+            <StackPanel Spacing="8" Margin="0,16,0,0">
+                <Button Content="Undo Last Point"
+                        Command="{Binding UndoCommand}"
+                        Width="200" Height="36"/>
+                <Button Content="Clear All"
+                        Command="{Binding ClearCommand}"
+                        Width="200" Height="36"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Close Button -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8">
+            <Button Content="Close"
+                    Command="{Binding OKCommand}"
+                    Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

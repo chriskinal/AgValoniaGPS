@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.Form_Help"
+        x:DataType="vm:HelpViewModel"
+        Title="Help"
+        Width="800" Height="600"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid ColumnDefinitions="250,*" RowDefinitions="Auto,*,Auto">
+        <!-- Search -->
+        <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding SearchText}" Watermark="Search..." Margin="8"/>
+
+        <!-- Topics List -->
+        <ListBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding HelpTopics}" SelectedItem="{Binding SelectedTopic}" Margin="8,0,8,8">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="0,8,8,8">
+            <TextBlock Text="{Binding TopicContent}" TextWrapping="Wrap" Margin="16"/>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8" Spacing="8">
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

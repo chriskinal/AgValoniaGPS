@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormPan"
+        x:DataType="vm:PanViewModel"
+        Title="Pan Control"
+        Width="350" Height="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <TextBlock Grid.Row="0" Text="Manual Pan Control" FontSize="18" FontWeight="Bold" Margin="16,16,16,8"/>
+
+        <!-- Directional Pad -->
+        <Grid Grid.Row="1" Margin="16" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,Auto,Auto">
+            <!-- Top row -->
+            <Button Grid.Row="0" Grid.Column="0" Content="↖" Command="{Binding PanUpLeftCommand}" Width="60" Height="60" Margin="4"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="↑" Command="{Binding PanUpCommand}" Width="60" Height="60" Margin="4"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="↗" Command="{Binding PanUpRightCommand}" Width="60" Height="60" Margin="4"/>
+
+            <!-- Middle row -->
+            <Button Grid.Row="1" Grid.Column="0" Content="←" Command="{Binding PanLeftCommand}" Width="60" Height="60" Margin="4"/>
+            <Button Grid.Row="1" Grid.Column="1" Content="⊙" Command="{Binding CenterCommand}" Width="60" Height="60" Margin="4"/>
+            <Button Grid.Row="1" Grid.Column="2" Content="→" Command="{Binding PanRightCommand}" Width="60" Height="60" Margin="4"/>
+
+            <!-- Bottom row -->
+            <Button Grid.Row="2" Grid.Column="0" Content="↙" Command="{Binding PanDownLeftCommand}" Width="60" Height="60" Margin="4"/>
+            <Button Grid.Row="2" Grid.Column="1" Content="↓" Command="{Binding PanDownCommand}" Width="60" Height="60" Margin="4"/>
+            <Button Grid.Row="2" Grid.Column="2" Content="↘" Command="{Binding PanDownRightCommand}" Width="60" Height="60" Margin="4"/>
+        </Grid>
+
+        <!-- Info Panel -->
+        <StackPanel Grid.Row="2" Margin="16,8" Spacing="4">
+            <TextBlock Text="{Binding PanOffsetX, StringFormat='X Offset: {0:F1} px'}"/>
+            <TextBlock Text="{Binding PanOffsetY, StringFormat='Y Offset: {0:F1} px'}"/>
+            <TextBlock Text="{Binding PanStep, StringFormat='Pan Step: {0:F0} px'}"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <Button Content="Reset" Command="{Binding ResetCommand}" Width="80" Height="36"/>
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

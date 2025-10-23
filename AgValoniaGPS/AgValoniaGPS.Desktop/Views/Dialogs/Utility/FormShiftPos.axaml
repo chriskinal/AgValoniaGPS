@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormShiftPos"
+        x:DataType="vm:ShiftPosViewModel"
+        Title="Shift Position"
+        Width="450" Height="350"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <TextBlock Grid.Row="0" Text="Position Shift Tool" FontSize="20" FontWeight="Bold" Margin="16,16,16,8"/>
+        
+        <StackPanel Grid.Row="1" Margin="16,0,16,8" Spacing="12">
+            <TextBlock Text="Adjust X/Y offsets to correct field position errors" TextWrapping="Wrap" Foreground="Gray"/>
+            
+            <Grid ColumnDefinitions="120,*,80" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Original X:" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding OriginalX, StringFormat='{}{0:F3} m'}" VerticalAlignment="Center"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Original Y:" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding OriginalY, StringFormat='{}{0:F3} m'}" VerticalAlignment="Center"/>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="X Offset:" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding OffsetX}" Minimum="-1000" Maximum="1000" Increment="0.1" FormatString="F3" Margin="0,8,8,0"/>
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="m" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Y Offset:" VerticalAlignment="Center"/>
+                <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding OffsetY}" Minimum="-1000" Maximum="1000" Increment="0.1" FormatString="F3" Margin="0,0,8,0"/>
+                <TextBlock Grid.Row="3" Grid.Column="2" Text="m" VerticalAlignment="Center"/>
+                
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="New X:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding NewX, StringFormat='{}{0:F3} m'}" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="New Y:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding NewY, StringFormat='{}{0:F3} m'}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </Grid>
+
+            <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,8,0,0">
+                <StackPanel>
+                    <TextBlock Text="{Binding TotalShift, StringFormat='Total Shift: {0:F3} m'}" FontSize="12"/>
+                    <TextBlock Text="{Binding ShiftAngle, StringFormat='Shift Angle: {0:F1}°'}" FontSize="12"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" Margin="16,0,16,8" IsVisible="{Binding HasError}"/>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <Button Content="Reset" Command="{Binding ResetOffsets}" Width="80" Height="36"/>
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

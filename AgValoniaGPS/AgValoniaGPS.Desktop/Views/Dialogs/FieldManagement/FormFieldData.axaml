@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormFieldData"
+        x:DataType="vm:FieldDataViewModel"
+        Title="Field Data"
+        Width="500" Height="450"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Design.DataContext>
+        <vm:FieldDataViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="0">
+            <StackPanel Spacing="12">
+                <!-- Field Name (Required) -->
+                <StackPanel>
+                    <TextBlock Text="Field Name *" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBox Text="{Binding FieldName}"
+                             Watermark="Enter field name"
+                             Width="450" Height="36"/>
+                </StackPanel>
+
+                <!-- Farm Name -->
+                <StackPanel>
+                    <TextBlock Text="Farm Name" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBox Text="{Binding FarmName}"
+                             Watermark="Enter farm name (optional)"
+                             Width="450" Height="36"/>
+                </StackPanel>
+
+                <!-- Client Name -->
+                <StackPanel>
+                    <TextBlock Text="Client/Owner Name" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBox Text="{Binding ClientName}"
+                             Watermark="Enter client name (optional)"
+                             Width="450" Height="36"/>
+                </StackPanel>
+
+                <!-- Field Area (Read-only) -->
+                <StackPanel>
+                    <TextBlock Text="Field Area" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Text="{Binding FieldArea, StringFormat='{}{0:F2} hectares'}"
+                               FontSize="16"
+                               Foreground="Gray"/>
+                </StackPanel>
+
+                <!-- Dates -->
+                <Grid ColumnDefinitions="*,16,*">
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Date Created" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="{Binding DateCreated, StringFormat='{}{0:yyyy-MM-dd}'}"
+                                   FontSize="14"
+                                   Foreground="Gray"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Last Modified" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="{Binding DateModified, StringFormat='{}{0:yyyy-MM-dd}'}"
+                                   FontSize="14"
+                                   Foreground="Gray"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Notes -->
+                <StackPanel>
+                    <TextBlock Text="Notes" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBox Text="{Binding Notes}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             Watermark="Enter notes or description (optional)"
+                             Width="450" Height="80"/>
+                </StackPanel>
+
+                <!-- Error Message -->
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="Red"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           IsVisible="{Binding HasError}"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,16,0,0"
+                    Spacing="8">
+            <Button Content="OK"
+                    Command="{Binding OKCommand}"
+                    Width="100" Height="36"
+                    IsDefault="True"/>
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Width="100" Height="36"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

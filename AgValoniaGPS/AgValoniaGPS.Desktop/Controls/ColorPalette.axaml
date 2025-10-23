@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="280"
+             x:Class="AgValoniaGPS.Desktop.Controls.ColorPalette">
+
+    <UserControl.Styles>
+        <Style Selector="Button.ColorButton">
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#555"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+        <Style Selector="Button.ColorButton:pointerover">
+            <Setter Property="BorderBrush" Value="White"/>
+        </Style>
+    </UserControl.Styles>
+
+    <!-- 10x6 grid of standard colors (60 colors total) -->
+    <UniformGrid Columns="10" Rows="6">
+        <!-- Row 1: Whites and Grays -->
+        <Button Classes="ColorButton" Background="White" Command="{Binding SelectColorCommand}" CommandParameter="White"/>
+        <Button Classes="ColorButton" Background="Gainsboro" Command="{Binding SelectColorCommand}" CommandParameter="Gainsboro"/>
+        <Button Classes="ColorButton" Background="LightGray" Command="{Binding SelectColorCommand}" CommandParameter="LightGray"/>
+        <Button Classes="ColorButton" Background="Silver" Command="{Binding SelectColorCommand}" CommandParameter="Silver"/>
+        <Button Classes="ColorButton" Background="DarkGray" Command="{Binding SelectColorCommand}" CommandParameter="DarkGray"/>
+        <Button Classes="ColorButton" Background="Gray" Command="{Binding SelectColorCommand}" CommandParameter="Gray"/>
+        <Button Classes="ColorButton" Background="DimGray" Command="{Binding SelectColorCommand}" CommandParameter="DimGray"/>
+        <Button Classes="ColorButton" Background="LightSlateGray" Command="{Binding SelectColorCommand}" CommandParameter="LightSlateGray"/>
+        <Button Classes="ColorButton" Background="SlateGray" Command="{Binding SelectColorCommand}" CommandParameter="SlateGray"/>
+        <Button Classes="ColorButton" Background="Black" Command="{Binding SelectColorCommand}" CommandParameter="Black"/>
+
+        <!-- Row 2: Reds and Pinks -->
+        <Button Classes="ColorButton" Background="MistyRose" Command="{Binding SelectColorCommand}" CommandParameter="MistyRose"/>
+        <Button Classes="ColorButton" Background="LightPink" Command="{Binding SelectColorCommand}" CommandParameter="LightPink"/>
+        <Button Classes="ColorButton" Background="Pink" Command="{Binding SelectColorCommand}" CommandParameter="Pink"/>
+        <Button Classes="ColorButton" Background="HotPink" Command="{Binding SelectColorCommand}" CommandParameter="HotPink"/>
+        <Button Classes="ColorButton" Background="DeepPink" Command="{Binding SelectColorCommand}" CommandParameter="DeepPink"/>
+        <Button Classes="ColorButton" Background="LightCoral" Command="{Binding SelectColorCommand}" CommandParameter="LightCoral"/>
+        <Button Classes="ColorButton" Background="IndianRed" Command="{Binding SelectColorCommand}" CommandParameter="IndianRed"/>
+        <Button Classes="ColorButton" Background="Red" Command="{Binding SelectColorCommand}" CommandParameter="Red"/>
+        <Button Classes="ColorButton" Background="FireBrick" Command="{Binding SelectColorCommand}" CommandParameter="FireBrick"/>
+        <Button Classes="ColorButton" Background="DarkRed" Command="{Binding SelectColorCommand}" CommandParameter="DarkRed"/>
+
+        <!-- Row 3: Oranges and Yellows -->
+        <Button Classes="ColorButton" Background="Orange" Command="{Binding SelectColorCommand}" CommandParameter="Orange"/>
+        <Button Classes="ColorButton" Background="DarkOrange" Command="{Binding SelectColorCommand}" CommandParameter="DarkOrange"/>
+        <Button Classes="ColorButton" Background="Coral" Command="{Binding SelectColorCommand}" CommandParameter="Coral"/>
+        <Button Classes="ColorButton" Background="Tomato" Command="{Binding SelectColorCommand}" CommandParameter="Tomato"/>
+        <Button Classes="ColorButton" Background="OrangeRed" Command="{Binding SelectColorCommand}" CommandParameter="OrangeRed"/>
+        <Button Classes="ColorButton" Background="Gold" Command="{Binding SelectColorCommand}" CommandParameter="Gold"/>
+        <Button Classes="ColorButton" Background="Yellow" Command="{Binding SelectColorCommand}" CommandParameter="Yellow"/>
+        <Button Classes="ColorButton" Background="LightYellow" Command="{Binding SelectColorCommand}" CommandParameter="LightYellow"/>
+        <Button Classes="ColorButton" Background="Khaki" Command="{Binding SelectColorCommand}" CommandParameter="Khaki"/>
+        <Button Classes="ColorButton" Background="DarkKhaki" Command="{Binding SelectColorCommand}" CommandParameter="DarkKhaki"/>
+
+        <!-- Row 4: Greens -->
+        <Button Classes="ColorButton" Background="GreenYellow" Command="{Binding SelectColorCommand}" CommandParameter="GreenYellow"/>
+        <Button Classes="ColorButton" Background="LightGreen" Command="{Binding SelectColorCommand}" CommandParameter="LightGreen"/>
+        <Button Classes="ColorButton" Background="LimeGreen" Command="{Binding SelectColorCommand}" CommandParameter="LimeGreen"/>
+        <Button Classes="ColorButton" Background="Lime" Command="{Binding SelectColorCommand}" CommandParameter="Lime"/>
+        <Button Classes="ColorButton" Background="ForestGreen" Command="{Binding SelectColorCommand}" CommandParameter="ForestGreen"/>
+        <Button Classes="ColorButton" Background="Green" Command="{Binding SelectColorCommand}" CommandParameter="Green"/>
+        <Button Classes="ColorButton" Background="DarkGreen" Command="{Binding SelectColorCommand}" CommandParameter="DarkGreen"/>
+        <Button Classes="ColorButton" Background="OliveDrab" Command="{Binding SelectColorCommand}" CommandParameter="OliveDrab"/>
+        <Button Classes="ColorButton" Background="Olive" Command="{Binding SelectColorCommand}" CommandParameter="Olive"/>
+        <Button Classes="ColorButton" Background="DarkOliveGreen" Command="{Binding SelectColorCommand}" CommandParameter="DarkOliveGreen"/>
+
+        <!-- Row 5: Cyans and Blues -->
+        <Button Classes="ColorButton" Background="Aqua" Command="{Binding SelectColorCommand}" CommandParameter="Aqua"/>
+        <Button Classes="ColorButton" Background="Cyan" Command="{Binding SelectColorCommand}" CommandParameter="Cyan"/>
+        <Button Classes="ColorButton" Background="LightCyan" Command="{Binding SelectColorCommand}" CommandParameter="LightCyan"/>
+        <Button Classes="ColorButton" Background="PaleTurquoise" Command="{Binding SelectColorCommand}" CommandParameter="PaleTurquoise"/>
+        <Button Classes="ColorButton" Background="Turquoise" Command="{Binding SelectColorCommand}" CommandParameter="Turquoise"/>
+        <Button Classes="ColorButton" Background="DarkTurquoise" Command="{Binding SelectColorCommand}" CommandParameter="DarkTurquoise"/>
+        <Button Classes="ColorButton" Background="CadetBlue" Command="{Binding SelectColorCommand}" CommandParameter="CadetBlue"/>
+        <Button Classes="ColorButton" Background="SteelBlue" Command="{Binding SelectColorCommand}" CommandParameter="SteelBlue"/>
+        <Button Classes="ColorButton" Background="LightSteelBlue" Command="{Binding SelectColorCommand}" CommandParameter="LightSteelBlue"/>
+        <Button Classes="ColorButton" Background="LightBlue" Command="{Binding SelectColorCommand}" CommandParameter="LightBlue"/>
+
+        <!-- Row 6: Blues and Purples -->
+        <Button Classes="ColorButton" Background="SkyBlue" Command="{Binding SelectColorCommand}" CommandParameter="SkyBlue"/>
+        <Button Classes="ColorButton" Background="DeepSkyBlue" Command="{Binding SelectColorCommand}" CommandParameter="DeepSkyBlue"/>
+        <Button Classes="ColorButton" Background="DodgerBlue" Command="{Binding SelectColorCommand}" CommandParameter="DodgerBlue"/>
+        <Button Classes="ColorButton" Background="Blue" Command="{Binding SelectColorCommand}" CommandParameter="Blue"/>
+        <Button Classes="ColorButton" Background="MediumBlue" Command="{Binding SelectColorCommand}" CommandParameter="MediumBlue"/>
+        <Button Classes="ColorButton" Background="DarkBlue" Command="{Binding SelectColorCommand}" CommandParameter="DarkBlue"/>
+        <Button Classes="ColorButton" Background="BlueViolet" Command="{Binding SelectColorCommand}" CommandParameter="BlueViolet"/>
+        <Button Classes="ColorButton" Background="DarkViolet" Command="{Binding SelectColorCommand}" CommandParameter="DarkViolet"/>
+        <Button Classes="ColorButton" Background="Purple" Command="{Binding SelectColorCommand}" CommandParameter="Purple"/>
+        <Button Classes="ColorButton" Background="Magenta" Command="{Binding SelectColorCommand}" CommandParameter="Magenta"/>
+    </UniformGrid>
+</UserControl>

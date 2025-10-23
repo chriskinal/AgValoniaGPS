@@ -1,0 +1,176 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="350"
+             x:Class="AgValoniaGPS.Desktop.Controls.VirtualKeyboard">
+
+    <UserControl.Styles>
+        <!-- Key Button Base Style -->
+        <Style Selector="Button.Key">
+            <Setter Property="Background" Value="#34495E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="MinHeight" Value="50"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <!-- Key Button Hover -->
+        <Style Selector="Button.Key:pointerover">
+            <Setter Property="Background" Value="#3498DB"/>
+        </Style>
+
+        <!-- Key Button Pressed -->
+        <Style Selector="Button.Key:pressed">
+            <Setter Property="Background" Value="#2980B9"/>
+            <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        </Style>
+
+        <!-- Function Key Style (Shift, Caps, Enter, Backspace) -->
+        <Style Selector="Button.FunctionKey">
+            <Setter Property="Background" Value="#7F8C8D"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="MinWidth" Value="70"/>
+            <Setter Property="MinHeight" Value="50"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Function Key Hover -->
+        <Style Selector="Button.FunctionKey:pointerover">
+            <Setter Property="Background" Value="#95A5A6"/>
+        </Style>
+
+        <!-- Function Key Pressed -->
+        <Style Selector="Button.FunctionKey:pressed">
+            <Setter Property="Background" Value="#626D6E"/>
+            <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        </Style>
+
+        <!-- Active Function Key (Shift/Caps pressed) -->
+        <Style Selector="Button.FunctionKey.Active">
+            <Setter Property="Background" Value="#E67E22"/>
+        </Style>
+
+        <!-- Spacebar Style -->
+        <Style Selector="Button.Spacebar">
+            <Setter Property="Background" Value="#34495E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinHeight" Value="50"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Spacebar Hover -->
+        <Style Selector="Button.Spacebar:pointerover">
+            <Setter Property="Background" Value="#3498DB"/>
+        </Style>
+
+        <!-- Spacebar Pressed -->
+        <Style Selector="Button.Spacebar:pressed">
+            <Setter Property="Background" Value="#2980B9"/>
+            <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel>
+        <!-- Row 1: Numbers and symbols -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key0}" Click="OnKeyClick" Tag="1|`|~"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key1}" Click="OnKeyClick" Tag="1|1|!"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key2}" Click="OnKeyClick" Tag="1|2|@"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key3}" Click="OnKeyClick" Tag="1|3|#"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key4}" Click="OnKeyClick" Tag="1|4|$"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key5}" Click="OnKeyClick" Tag="1|5|%"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key6}" Click="OnKeyClick" Tag="1|6|^"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key7}" Click="OnKeyClick" Tag="1|7|&amp;"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key8}" Click="OnKeyClick" Tag="1|8|*"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key9}" Click="OnKeyClick" Tag="1|9|("/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key10}" Click="OnKeyClick" Tag="1|0|)"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key11}" Click="OnKeyClick" Tag="1|-|_"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].Row1Key12}" Click="OnKeyClick" Tag="1|=|+"/>
+            <Button Classes="FunctionKey" Content="←" Click="OnBackspaceClick" ToolTip.Tip="Backspace"/>
+        </StackPanel>
+
+        <!-- Row 2: QWERTYUIOP -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Classes="Key" Content="{Binding $parent[UserControl].QKey}" Click="OnKeyClick" Tag="Q"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].WKey}" Click="OnKeyClick" Tag="W"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].EKey}" Click="OnKeyClick" Tag="E"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].RKey}" Click="OnKeyClick" Tag="R"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].TKey}" Click="OnKeyClick" Tag="T"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].YKey}" Click="OnKeyClick" Tag="Y"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].UKey}" Click="OnKeyClick" Tag="U"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].IKey}" Click="OnKeyClick" Tag="I"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].OKey}" Click="OnKeyClick" Tag="O"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].PKey}" Click="OnKeyClick" Tag="P"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].BracketLeftKey}" Click="OnKeyClick" Tag="1|[|{"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].BracketRightKey}" Click="OnKeyClick" Tag="1|}|]"/>
+        </StackPanel>
+
+        <!-- Row 3: ASDFGHJKL -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Classes="FunctionKey"
+                    x:Name="ShiftButton"
+                    Content="Shift"
+                    Click="OnShiftClick"
+                    ToolTip.Tip="Toggle Shift"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].AKey}" Click="OnKeyClick" Tag="A"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].SKey}" Click="OnKeyClick" Tag="S"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].DKey}" Click="OnKeyClick" Tag="D"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].FKey}" Click="OnKeyClick" Tag="F"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].GKey}" Click="OnKeyClick" Tag="G"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].HKey}" Click="OnKeyClick" Tag="H"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].JKey}" Click="OnKeyClick" Tag="J"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].KKey}" Click="OnKeyClick" Tag="K"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].LKey}" Click="OnKeyClick" Tag="L"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].SemicolonKey}" Click="OnKeyClick" Tag="1|;|:"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].QuoteKey}" Click="OnKeyClick" Tag="1|'|&quot;"/>
+            <Button Classes="FunctionKey" Content="Enter" Click="OnEnterClick" ToolTip.Tip="Enter"/>
+        </StackPanel>
+
+        <!-- Row 4: ZXCVBNM -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Classes="FunctionKey"
+                    x:Name="CapsButton"
+                    Content="Caps"
+                    Click="OnCapsClick"
+                    ToolTip.Tip="Toggle Caps Lock"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].ZKey}" Click="OnKeyClick" Tag="Z"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].XKey}" Click="OnKeyClick" Tag="X"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].CKey}" Click="OnKeyClick" Tag="C"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].VKey}" Click="OnKeyClick" Tag="V"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].BKey}" Click="OnKeyClick" Tag="B"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].NKey}" Click="OnKeyClick" Tag="N"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].MKey}" Click="OnKeyClick" Tag="M"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].CommaKey}" Click="OnKeyClick" Tag="1|,|&lt;"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].PeriodKey}" Click="OnKeyClick" Tag="1|.|&gt;"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].SlashKey}" Click="OnKeyClick" Tag="1|/|?"/>
+            <Button Classes="Key" Content="{Binding $parent[UserControl].BackslashKey}" Click="OnKeyClick" Tag="1|\|\\|"/>
+        </StackPanel>
+
+        <!-- Row 5: Spacebar -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Classes="Spacebar"
+                    Content="Space"
+                    MinWidth="600"
+                    Click="OnSpaceClick"
+                    ToolTip.Tip="Spacebar"/>
+        </StackPanel>
+    </StackPanel>
+
+</UserControl>

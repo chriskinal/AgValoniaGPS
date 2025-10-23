@@ -1,0 +1,151 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Input"
+        xmlns:controls="using:AgValoniaGPS.Desktop.Controls"
+        mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="550"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Input.FormKeyboard"
+        x:DataType="vm:KeyboardInputViewModel"
+        Title="{Binding PromptMessage}"
+        Width="850"
+        Height="550"
+        Background="#2C3E50"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Window.Styles>
+        <!-- Panel Style -->
+        <Style Selector="Border.Panel">
+            <Setter Property="Background" Value="#34495E"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="15,10"/>
+        </Style>
+
+        <!-- Label Style -->
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Foreground" Value="#BDC3C7"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Value Style -->
+        <Style Selector="TextBlock.Value">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style Selector="TextBox.InputBox">
+            <Setter Property="Background" Value="#2C3E50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#3498DB"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="MinHeight" Value="50"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Error Style -->
+        <Style Selector="TextBlock.Error">
+            <Setter Property="Foreground" Value="#E74C3C"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,5,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Button Style -->
+        <Style Selector="Button.DialogButton">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="100"/>
+        </Style>
+
+        <Style Selector="Button.DialogButton:pointerover">
+            <Setter Property="Background" Value="#2980B9"/>
+        </Style>
+
+        <Style Selector="Button.DialogButton:pressed">
+            <Setter Property="Background" Value="#21618C"/>
+        </Style>
+
+        <!-- Cancel Button -->
+        <Style Selector="Button.CancelButton">
+            <Setter Property="Background" Value="#95A5A6"/>
+        </Style>
+
+        <Style Selector="Button.CancelButton:pointerover">
+            <Setter Property="Background" Value="#7F8C8D"/>
+        </Style>
+    </Window.Styles>
+
+    <StackPanel>
+        <!-- Input Display Section -->
+        <Border Classes="Panel">
+            <StackPanel>
+                <!-- Prompt Message -->
+                <TextBlock Classes="Label"
+                           Text="{Binding PromptMessage}"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#3498DB"
+                           Margin="0,0,0,10"
+                           HorizontalAlignment="Left"/>
+
+                <!-- Text Input Display -->
+                <TextBox Classes="InputBox"
+                         Text="{Binding Text, Mode=TwoWay}"
+                         Watermark="{Binding PlaceholderText}"
+                         MaxLength="{Binding MaxLength}"
+                         AcceptsReturn="False"/>
+
+                <!-- Character Count -->
+                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+                    <TextBlock Grid.Column="0"
+                               Classes="Error"
+                               Text="{Binding ValidationError}"
+                               IsVisible="{Binding HasValidationError}"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Classes="Label" Text="Characters:"/>
+                        <TextBlock Classes="Value" Text="{Binding CharacterCount}"/>
+                        <TextBlock Classes="Label" Text="/"/>
+                        <TextBlock Classes="Value" Text="{Binding MaxLength}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Virtual Keyboard Control -->
+        <Border Classes="Panel" Padding="10">
+            <controls:VirtualKeyboard
+                Text="{Binding Text, Mode=TwoWay}"
+                EnterPressed="OnVirtualKeyboardEnter"/>
+        </Border>
+
+        <!-- Action Buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+            <Button Classes="DialogButton"
+                    Content="OK"
+                    Command="{Binding AcceptCommand}"
+                    IsDefault="True"/>
+            <Button Classes="DialogButton CancelButton"
+                    Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    IsCancel="True"/>
+        </StackPanel>
+    </StackPanel>
+
+</Window>

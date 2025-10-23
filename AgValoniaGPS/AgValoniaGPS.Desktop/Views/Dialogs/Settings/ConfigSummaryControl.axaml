@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Settings"
+             x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Settings.ConfigSummaryControl"
+             x:DataType="vm:ConfigSummaryViewModel">
+
+    <Design.DataContext>
+        <vm:ConfigSummaryViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="16" Spacing="16">
+            <!-- Title -->
+            <TextBlock Text="Configuration Summary"
+                       FontSize="20"
+                       FontWeight="Bold" />
+
+            <!-- Vehicle Section -->
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Vehicle Configuration"
+                               FontSize="16"
+                               FontWeight="SemiBold" />
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                        <!-- Vehicle Name -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Vehicle Name:" Margin="0,4" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding VehicleName}" Margin="0,4" />
+
+                        <!-- Vehicle Type -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Type:" Margin="0,4" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VehicleType}" Margin="0,4" />
+
+                        <!-- Wheelbase -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Wheelbase (cm):" Margin="0,4" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding VehicleWheelbase, StringFormat={}{0:F1}}" Margin="0,4" />
+
+                        <!-- Track Width -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Track Width (cm):" Margin="0,4" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding VehicleTrack, StringFormat={}{0:F1}}" Margin="0,4" />
+
+                        <!-- Max Steer Angle -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Max Steer Angle (°):" Margin="0,4" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MaxSteerAngle, StringFormat={}{0:F1}}" Margin="0,4" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- GPS Section -->
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="GPS Antenna"
+                               FontSize="16"
+                               FontWeight="SemiBold" />
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto">
+                        <!-- Antenna Offset -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Antenna Offset (cm):" Margin="0,4" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AntennaOffset, StringFormat={}{0:F1}}" Margin="0,4" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- User Section -->
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="User Preferences"
+                               FontSize="16"
+                               FontWeight="SemiBold" />
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
+                        <!-- User Name -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="User Name:" Margin="0,4" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding UserName}" Margin="0,4" />
+
+                        <!-- Units -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Units:" Margin="0,4" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Units}" Margin="0,4" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Application Settings Section -->
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Application Settings"
+                               FontSize="16"
+                               FontWeight="SemiBold" />
+
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
+                        <!-- Auto Save -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Auto-Save:" Margin="0,4" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AutoSave}" Margin="0,4" />
+
+                        <!-- Auto Save Interval -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Save Interval (sec):" Margin="0,4" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding AutoSaveInterval}" Margin="0,4" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Edit Vehicle"
+                        Command="{Binding EditVehicleCommand}"
+                        Width="120" Height="36" />
+                <Button Content="Edit User"
+                        Command="{Binding EditUserCommand}"
+                        Width="120" Height="36" />
+                <Button Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Width="120" Height="36" />
+            </StackPanel>
+
+            <!-- Error Message -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Red"
+                       FontSize="12"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasError}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

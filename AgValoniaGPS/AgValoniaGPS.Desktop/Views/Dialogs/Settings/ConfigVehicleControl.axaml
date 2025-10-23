@@ -1,0 +1,373 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Settings"
+             x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Settings.ConfigVehicleControl"
+             x:DataType="vm:ConfigVehicleControlViewModel">
+
+    <Design.DataContext>
+        <vm:ConfigVehicleControlViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto,Auto">
+        <!-- TabControl -->
+        <TabControl Grid.Row="0">
+            <!-- Vehicle Tab -->
+            <TabItem Header="Vehicle" Height="40">
+                <ScrollViewer>
+                    <StackPanel Margin="16" Spacing="12">
+                        <TextBlock Text="Vehicle Dimensions"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+
+                        <!-- Vehicle Name -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Vehicle Name *" />
+                            <TextBox Text="{Binding VehicleName}"
+                                     Watermark="Enter vehicle name"
+                                     Width="300"
+                                     HorizontalAlignment="Left" />
+                        </StackPanel>
+
+                        <!-- Vehicle Type -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Vehicle Type" />
+                            <ComboBox ItemsSource="{Binding VehicleTypes}"
+                                      SelectedItem="{Binding VehicleType}"
+                                      Width="200"
+                                      HorizontalAlignment="Left" />
+                        </StackPanel>
+
+                        <!-- Wheelbase -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Wheelbase (cm) *" />
+                            <NumericUpDown Value="{Binding VehicleWheelbase}"
+                                           Minimum="50"
+                                           Maximum="500"
+                                           Increment="5"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Distance between front and rear axles"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Track Width -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Track Width (cm)" />
+                            <NumericUpDown Value="{Binding VehicleTrackWidth}"
+                                           Minimum="10"
+                                           Maximum="400"
+                                           Increment="5"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Distance between wheels on same axle"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Vehicle Width -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Total Width (cm)" />
+                            <NumericUpDown Value="{Binding VehicleWidth}"
+                                           Minimum="50"
+                                           Maximum="3000"
+                                           Increment="10"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Total width including implement"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Steering Tab -->
+            <TabItem Header="Steering" Height="40">
+                <ScrollViewer>
+                    <StackPanel Margin="16" Spacing="12">
+                        <TextBlock Text="Steering Parameters"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+
+                        <!-- Max Steer Angle -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Maximum Steering Angle (degrees) *" />
+                            <NumericUpDown Value="{Binding MaxSteerAngle}"
+                                           Minimum="5"
+                                           Maximum="60"
+                                           Increment="1"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Maximum angle the wheels can turn (5-60°)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Min Steer Angle -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Minimum Steering Angle (degrees) *" />
+                            <NumericUpDown Value="{Binding MinSteerAngle}"
+                                           Minimum="-60"
+                                           Maximum="-5"
+                                           Increment="1"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Minimum angle (opposite direction, -60 to -5°)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Ackermann Percentage -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Ackermann Percentage (%)" />
+                            <NumericUpDown Value="{Binding AckermannPercentage}"
+                                           Minimum="0"
+                                           Maximum="100"
+                                           Increment="5"
+                                           FormatString="F0"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Ackermann steering geometry (0-100%)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Steering Deadband -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Steering Deadband (degrees)" />
+                            <NumericUpDown Value="{Binding SteeringDeadband}"
+                                           Minimum="0"
+                                           Maximum="5"
+                                           Increment="0.1"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Zone where small corrections are ignored (0-5°)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- GPS Tab -->
+            <TabItem Header="GPS" Height="40">
+                <ScrollViewer>
+                    <StackPanel Margin="16" Spacing="12">
+                        <TextBlock Text="GPS Antenna Position"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+
+                        <!-- Antenna Height -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Antenna Height (cm)" />
+                            <NumericUpDown Value="{Binding AntennaHeight}"
+                                           Minimum="5"
+                                           Maximum="500"
+                                           Increment="5"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Height of antenna above ground (0.5-5m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Lateral Offset -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Lateral Offset (cm)" />
+                            <NumericUpDown Value="{Binding AntennaOffset}"
+                                           Minimum="-500"
+                                           Maximum="500"
+                                           Increment="1"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Distance from vehicle centerline (-5 to 5m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Forward Offset -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Forward Offset (cm)" />
+                            <NumericUpDown Value="{Binding AntennaForwardOffset}"
+                                           Minimum="0"
+                                           Maximum="1000"
+                                           Increment="5"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Distance forward from rear axle (0-10m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Implement Tab -->
+            <TabItem Header="Implement" Height="40">
+                <ScrollViewer>
+                    <StackPanel Margin="16" Spacing="12">
+                        <TextBlock Text="Implement Configuration"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+
+                        <!-- Implement Width -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Working Width (cm) *" />
+                            <NumericUpDown Value="{Binding ImplementWidth}"
+                                           Minimum="50"
+                                           Maximum="3000"
+                                           Increment="10"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Width of implement working area (0.5-30m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Implement Offset -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Lateral Offset (cm)" />
+                            <NumericUpDown Value="{Binding ImplementOffset}"
+                                           Minimum="-1000"
+                                           Maximum="1000"
+                                           Increment="5"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Offset from vehicle centerline (-10 to 10m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Number of Sections -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Number of Sections" />
+                            <NumericUpDown Value="{Binding NumberOfSections}"
+                                           Minimum="1"
+                                           Maximum="16"
+                                           Increment="1"
+                                           FormatString="F0"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Section control zones (1-16)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Is Trailing -->
+                        <StackPanel Spacing="4">
+                            <CheckBox Content="Trailing Implement"
+                                      IsChecked="{Binding IsTrailing}" />
+                            <TextBlock Text="Check if implement is towed behind vehicle"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                       Margin="30,0,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Advanced Tab -->
+            <TabItem Header="Advanced" Height="40">
+                <ScrollViewer>
+                    <StackPanel Margin="16" Spacing="12">
+                        <TextBlock Text="Look-Ahead Settings"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+
+                        <!-- Min Look-Ahead -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Minimum Look-Ahead (m)" />
+                            <NumericUpDown Value="{Binding MinLookAhead}"
+                                           Minimum="1"
+                                           Maximum="20"
+                                           Increment="0.5"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Minimum distance ahead to track line (1-20m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Max Look-Ahead -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Maximum Look-Ahead (m)" />
+                            <NumericUpDown Value="{Binding MaxLookAhead}"
+                                           Minimum="5"
+                                           Maximum="50"
+                                           Increment="1"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Maximum distance ahead to track line (5-50m)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+
+                        <!-- Look-Ahead Speed Gain -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Speed Gain Factor" />
+                            <NumericUpDown Value="{Binding LookAheadSpeedGain}"
+                                           Minimum="0.5"
+                                           Maximum="5"
+                                           Increment="0.1"
+                                           FormatString="F1"
+                                           Width="150"
+                                           HorizontalAlignment="Left" />
+                            <TextBlock Text="Multiplier for speed-based look-ahead (0.5-5.0)"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Error Message -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   FontSize="12"
+                   Margin="16,8"
+                   TextWrapping="Wrap"
+                   IsVisible="{Binding HasError}" />
+
+        <!-- Button Bar -->
+        <Border Grid.Row="2"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button Content="Load Preset"
+                        Command="{Binding LoadPresetCommand}"
+                        Width="120" Height="36" />
+                <Button Content="Reset"
+                        Command="{Binding ResetCommand}"
+                        Width="100" Height="36" />
+                <Button Content="Save"
+                        Command="{Binding SaveConfigCommand}"
+                        Width="100" Height="36"
+                        IsEnabled="{Binding !IsBusy}" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

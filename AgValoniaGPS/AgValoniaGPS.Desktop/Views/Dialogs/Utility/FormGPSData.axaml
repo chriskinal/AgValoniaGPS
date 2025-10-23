@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormGPSData"
+        x:DataType="vm:GPSDataViewModel"
+        Title="GPS Data"
+        Width="500" Height="500"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <TextBlock Grid.Row="0" Text="Real-Time GPS Data" FontSize="20" FontWeight="Bold" Margin="16,16,16,8"/>
+        
+        <ScrollViewer Grid.Row="1" Margin="16,0,16,8">
+            <StackPanel Spacing="12">
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="4" Padding="12">
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Latitude:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LatitudeFormatted}"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Longitude:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LongitudeFormatted}"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Altitude:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding AltitudeFormatted}"/>
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Speed:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SpeedFormatted}"/>
+                        
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Heading:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding HeadingFormatted}"/>
+                    </Grid>
+                </Border>
+
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="4" Padding="12">
+                    <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Fix Quality:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FixQuality}"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Satellites:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SatelliteCount}"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="HDOP:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HDOPFormatted}"/>
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Age of Correction:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding AgeOfCorrectionFormatted}"/>
+                    </Grid>
+                </Border>
+
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="4" Padding="12">
+                    <Grid ColumnDefinitions="150,*">
+                        <TextBlock Grid.Column="0" Text="Connection Status:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1" Text="{Binding ConnectionStatus}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Last Update:" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LastUpdateFormatted}"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <Button Content="Refresh" Command="{Binding RefreshCommand}" Width="80" Height="36"/>
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

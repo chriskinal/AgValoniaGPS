@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.Utility"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Utility.FormEventViewer"
+        x:DataType="vm:EventViewerViewModel"
+        Title="Event Viewer"
+        Width="900" Height="600"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBlock Grid.Row="0" Text="Event Log" FontSize="20" FontWeight="Bold" Margin="16,16,16,8"/>
+        
+        <Grid Grid.Row="1" ColumnDefinitions="*,150,Auto,Auto" Margin="16,0,16,8">
+            <TextBox Grid.Column="0" Text="{Binding SearchText}" Watermark="Search events..." Margin="0,0,8,0"/>
+            <ComboBox Grid.Column="1" SelectedItem="{Binding FilterLevel}" Margin="0,0,8,0">
+                <ComboBoxItem Content="All" Tag="All"/>
+                <ComboBoxItem Content="Info" Tag="Info"/>
+                <ComboBoxItem Content="Warning" Tag="Warning"/>
+                <ComboBoxItem Content="Error" Tag="Error"/>
+            </ComboBox>
+            <Button Grid.Column="2" Content="Refresh" Command="{Binding RefreshCommand}" Width="80" Height="36" Margin="0,0,8,0"/>
+            <Button Grid.Column="3" Content="Clear" Command="{Binding ClearCommand}" Width="80" Height="36"/>
+        </Grid>
+
+        <ListBox Grid.Row="2" ItemsSource="{Binding FilteredEvents}" Margin="16,0,16,8">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="150,80,120,*" Margin="0,2">
+                        <TextBlock Grid.Column="0" Text="{Binding FormattedTimestamp}" FontFamily="Consolas" FontSize="11"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Level}" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="2" Text="{Binding Source}"/>
+                        <TextBlock Grid.Column="3" Text="{Binding Message}" TextWrapping="Wrap"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16" Spacing="8">
+            <TextBlock Text="{Binding FilteredEventCount, StringFormat='Showing {0} events'}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+            <Button Content="OK" Command="{Binding OKCommand}" Width="80" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>

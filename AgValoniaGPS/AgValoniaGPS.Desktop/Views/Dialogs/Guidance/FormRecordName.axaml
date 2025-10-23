@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:AgValoniaGPS.ViewModels.Dialogs.Guidance;assembly=AgValoniaGPS.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Guidance.FormRecordName"
+        x:DataType="vm:RecordNameViewModel"
+        Title="Name Recording"
+        Width="500" Height="400"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,16">
+            <TextBlock Text="Name and Save Recording"
+                       FontSize="18"
+                       FontWeight="Bold"/>
+            <TextBlock Text="Provide a name for the recorded guidance path"
+                       FontSize="14"
+                       Foreground="#666666"/>
+        </StackPanel>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="16">
+                <!-- Recording Name -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Recording Name *"
+                               FontSize="14"
+                               FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding RecordingName}"
+                             Watermark="Enter recording name"
+                             MinHeight="36"
+                             FontSize="14"/>
+                    <TextBlock Text="1-50 characters, letters, numbers, spaces, hyphens, underscores only"
+                               FontSize="12"
+                               Foreground="#888888"/>
+                </StackPanel>
+
+                <!-- Description -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Description (Optional)"
+                               FontSize="14"
+                               FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Description}"
+                             Watermark="Enter optional description"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="80"
+                             FontSize="14"/>
+                </StackPanel>
+
+                <!-- Recording Info -->
+                <Border BorderBrush="#CCCCCC"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12"
+                        Background="#F9F9F9">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" RowSpacing="8">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Recorded Date:" FontWeight="SemiBold" Margin="0,0,12,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding RecordedDateFormatted}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Point Count:" FontWeight="SemiBold" Margin="0,0,12,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding PointCountDisplay}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Total Distance:" FontWeight="SemiBold" Margin="0,0,12,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding TotalDistanceFormatted}"/>
+                    </Grid>
+                </Border>
+
+                <!-- Error Message -->
+                <TextBlock Text="{Binding ErrorMessage}"
+                           IsVisible="{Binding HasError}"
+                           Foreground="Red"
+                           FontSize="14"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" Margin="0,16,0,0">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <Button Content="Save"
+                        Command="{Binding SaveRecordingCommand}"
+                        MinWidth="100"
+                        MinHeight="36"
+                        FontSize="14"/>
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        MinWidth="100"
+                        MinHeight="36"
+                        FontSize="14"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormFieldDir"
+        x:DataType="vm:FieldDirViewModel"
+        Title="Field Directory"
+        Width="600" Height="500"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:FieldDirViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16">
+        <!-- Directory Selection -->
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="Field Directory" FontWeight="Bold" FontSize="16"/>
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBox Grid.Column="0" Text="{Binding SelectedDirectory}" Watermark="Select field directory" Height="36"/>
+                <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseCommand}" Width="80" Height="36" Margin="8,0,0,0"/>
+                <Button Grid.Column="2" Content="Refresh" Command="{Binding RefreshCommand}" Width="80" Height="36" Margin="8,0,0,0"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="16" Margin="0,16">
+            <!-- Subdirectories -->
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Subdirectories" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                <ListBox Items="{Binding Directories}" Height="320"/>
+            </StackPanel>
+
+            <!-- Fields -->
+            <StackPanel Grid.Column="1">
+                <TextBlock FontWeight="SemiBold" Margin="0,0,0,8">
+                    <Run Text="Fields ("/>
+                    <Run Text="{Binding FieldCount}"/>
+                    <Run Text=")"/>
+                </TextBlock>
+                <ListBox Items="{Binding FieldsInDirectory}" Height="320">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="OK" Command="{Binding OKCommand}" Width="100" Height="36"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Width="100" Height="36"/>
+        </StackPanel>
+    </Grid>
+</Window>
