@@ -3,6 +3,7 @@ using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Section;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.ViewModels.Base;
+using Avalonia.Threading;
 using ReactiveUI;
 using System;
 using System.Linq;
@@ -143,12 +144,14 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
 
     private void OnSessionChanged(object? sender, EventArgs e)
     {
-        UpdateFieldData();
+        // Marshal to UI thread to prevent cross-thread exceptions
+        Dispatcher.UIThread.Post(() => UpdateFieldData());
     }
 
     private void OnSectionStateChanged(object? sender, EventArgs e)
     {
-        UpdateSectionData();
+        // Marshal to UI thread to prevent cross-thread exceptions
+        Dispatcher.UIThread.Post(() => UpdateSectionData());
     }
 
     private void UpdateFieldData()

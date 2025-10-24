@@ -17,8 +17,9 @@ public abstract class DialogViewModelBase : ViewModelBase
     /// </summary>
     protected DialogViewModelBase()
     {
-        OKCommand = ReactiveCommand.Create(OnOK);
-        CancelCommand = ReactiveCommand.Create(OnCancel);
+        // Create commands on UI thread to prevent threading exceptions
+        OKCommand = ReactiveCommand.Create(OnOK, outputScheduler: RxApp.MainThreadScheduler);
+        CancelCommand = ReactiveCommand.Create(OnCancel, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     /// <summary>

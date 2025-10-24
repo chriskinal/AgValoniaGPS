@@ -1,6 +1,5 @@
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.UI;
-using FluentAssertions;
 using Xunit;
 
 namespace AgValoniaGPS.Services.Tests.UI;

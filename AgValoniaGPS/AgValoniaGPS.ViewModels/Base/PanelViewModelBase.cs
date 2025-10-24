@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using ReactiveUI;
 using System;
 using System.Windows.Input;
@@ -61,7 +62,8 @@ public abstract class PanelViewModelBase : ViewModelBase
     /// </summary>
     protected PanelViewModelBase()
     {
-        CloseCommand = ReactiveCommand.Create(OnClose);
+        // Create commands on UI thread to prevent threading exceptions
+        CloseCommand = ReactiveCommand.Create(OnClose, outputScheduler: RxApp.MainThreadScheduler);
     }
 
     /// <summary>
