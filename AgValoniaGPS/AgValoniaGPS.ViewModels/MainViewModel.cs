@@ -42,6 +42,22 @@ public class MainViewModel : ObservableObject
     // Wave 9 UI Services
     private readonly IDialogService _dialogService;
 
+    // Wave 10 Panel ViewModels
+    public FormFieldDataViewModel FieldDataVM { get; }
+    public FormGPSDataViewModel GPSDataVM { get; }
+    public FormTramLineViewModel TramLineVM { get; }
+    public FormQuickABViewModel QuickABVM { get; }
+    public FormSteerViewModel SteerVM { get; }
+    public FormConfigViewModel ConfigVM { get; }
+    public FormDiagnosticsViewModel DiagnosticsVM { get; }
+    public FormRollCorrectionViewModel RollCorrectionVM { get; }
+    public FormVehicleConfigViewModel VehicleConfigVM { get; }
+    public FormFlagsViewModel FlagsVM { get; }
+    public FormCameraViewModel CameraVM { get; }
+    public FormBoundaryEditorViewModel BoundaryEditorVM { get; }
+    public FormFieldToolsViewModel FieldToolsVM { get; }
+    public FormFieldFileManagerViewModel FieldFileManagerVM { get; }
+
     private string _statusMessage = "Starting...";
     private double _latitude;
     private double _longitude;
@@ -114,6 +130,22 @@ public class MainViewModel : ObservableObject
         _profileService = profileService;
         _dialogService = dialogService;
         _nmeaParser = new NmeaParserService(gpsService);
+
+        // Store panel ViewModels
+        FieldDataVM = fieldDataVM;
+        GPSDataVM = gpsDataVM;
+        TramLineVM = tramLineVM;
+        QuickABVM = quickABVM;
+        SteerVM = steerVM;
+        ConfigVM = configVM;
+        DiagnosticsVM = diagnosticsVM;
+        RollCorrectionVM = rollCorrectionVM;
+        VehicleConfigVM = vehicleConfigVM;
+        FlagsVM = flagsVM;
+        CameraVM = cameraVM;
+        BoundaryEditorVM = boundaryEditorVM;
+        FieldToolsVM = fieldToolsVM;
+        FieldFileManagerVM = fieldFileManagerVM;
 
         // Subscribe to GPS and UDP events
         _gpsService.GpsDataUpdated += OnGpsDataUpdated;

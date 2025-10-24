@@ -346,6 +346,7 @@
 
         <!-- Task Group 1: Core Operations Panels -->
         <panelsFieldMgmt:FormFieldData
+            DataContext="{Binding FieldDataVM}"
             IsVisible="{Binding IsFieldDataPanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
@@ -353,6 +354,7 @@
             ZIndex="15" />
 
         <panelsDisplay:FormGPSData
+            DataContext="{Binding GPSDataVM}"
             IsVisible="{Binding IsGPSDataPanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
@@ -360,6 +362,7 @@
             ZIndex="15" />
 
         <panelsFieldOps:FormTramLine
+            DataContext="{Binding TramLineVM}"
             IsVisible="{Binding IsTramLinePanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
@@ -367,6 +370,7 @@
             ZIndex="15" />
 
         <panelsGuidance:FormQuickAB
+            DataContext="{Binding QuickABVM}"
             IsVisible="{Binding IsQuickABPanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
@@ -375,30 +379,35 @@
 
         <!-- Task Group 2: Configuration Panels -->
         <panelsConfig:FormSteer
+            DataContext="{Binding SteerVM}"
             IsVisible="{Binding IsSteerConfigPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormConfig
+            DataContext="{Binding ConfigVM}"
             IsVisible="{Binding IsGeneralConfigPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormDiagnostics
+            DataContext="{Binding DiagnosticsVM}"
             IsVisible="{Binding IsDiagnosticsPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormRollCorrection
+            DataContext="{Binding RollCorrectionVM}"
             IsVisible="{Binding IsRollCorrectionPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormVehicleConfig
+            DataContext="{Binding VehicleConfigVM}"
             IsVisible="{Binding IsVehicleConfigPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -406,6 +415,7 @@
 
         <!-- Task Group 3: Field Management Panels -->
         <panelsFieldMgmt:FormFlags
+            DataContext="{Binding FlagsVM}"
             IsVisible="{Binding IsFlagsPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -413,6 +423,7 @@
             ZIndex="15" />
 
         <panelsFieldMgmt:FormCamera
+            DataContext="{Binding CameraVM}"
             IsVisible="{Binding IsCameraPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -420,6 +431,7 @@
             ZIndex="15" />
 
         <panelsFieldMgmt:FormBoundaryEditor
+            DataContext="{Binding BoundaryEditorVM}"
             IsVisible="{Binding IsBoundaryEditorPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -427,6 +439,7 @@
             ZIndex="15" />
 
         <panelsFieldMgmt:FormFieldTools
+            DataContext="{Binding FieldToolsVM}"
             IsVisible="{Binding IsFieldToolsPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
@@ -434,6 +447,7 @@
             ZIndex="15" />
 
         <panelsFieldMgmt:FormFieldFileManager
+            DataContext="{Binding FieldFileManagerVM}"
             IsVisible="{Binding IsFieldFileManagerPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
