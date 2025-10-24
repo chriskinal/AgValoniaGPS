@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Display"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Display.FormGPS"
+             x:DataType="vm:FormGPSViewModel">
+
+    <!-- Main GPS View Overlay Controls -->
+    <Grid>
+        <!-- Left Panel: Section Control -->
+        <Border Classes="FloatingPanel"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="20"
+                MaxHeight="600">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Section Control"
+                           FontWeight="Bold"
+                           FontSize="14"
+                           Foreground="White"
+                           Margin="0,0,0,8"/>
+
+                <!-- Section Buttons (8 sections shown, can expand to 16) -->
+                <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto">
+                    <ToggleButton Grid.Row="0" Grid.Column="0"
+                                  IsChecked="{Binding Section1Enabled}"
+                                  Command="{Binding ToggleSection1Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="1"/>
+                    <ToggleButton Grid.Row="0" Grid.Column="1"
+                                  IsChecked="{Binding Section2Enabled}"
+                                  Command="{Binding ToggleSection2Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="2"/>
+                    <ToggleButton Grid.Row="0" Grid.Column="2"
+                                  IsChecked="{Binding Section3Enabled}"
+                                  Command="{Binding ToggleSection3Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="3"/>
+                    <ToggleButton Grid.Row="0" Grid.Column="3"
+                                  IsChecked="{Binding Section4Enabled}"
+                                  Command="{Binding ToggleSection4Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="4"/>
+
+                    <ToggleButton Grid.Row="1" Grid.Column="0"
+                                  IsChecked="{Binding Section5Enabled}"
+                                  Command="{Binding ToggleSection5Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="5"/>
+                    <ToggleButton Grid.Row="1" Grid.Column="1"
+                                  IsChecked="{Binding Section6Enabled}"
+                                  Command="{Binding ToggleSection6Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="6"/>
+                    <ToggleButton Grid.Row="1" Grid.Column="2"
+                                  IsChecked="{Binding Section7Enabled}"
+                                  Command="{Binding ToggleSection7Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="7"/>
+                    <ToggleButton Grid.Row="1" Grid.Column="3"
+                                  IsChecked="{Binding Section8Enabled}"
+                                  Command="{Binding ToggleSection8Command}"
+                                  Width="48" Height="48" Margin="2"
+                                  Content="8"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Bottom Panel: Vehicle Status -->
+        <Border Classes="FloatingPanel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="20">
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <!-- Speed -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Speed" FontSize="12" Foreground="#888" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentSpeed, StringFormat='{}{0:F1} km/h'}"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Heading -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Heading" FontSize="12" Foreground="#888" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentHeading, StringFormat='{}{0:F0}°'}"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Cross Track Error -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="XTE" FontSize="12" Foreground="#888" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding CrossTrackError, StringFormat='{}{0:F2} m'}"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Guidance Status -->
+                <ToggleButton IsChecked="{Binding IsGuidanceActive}"
+                              Command="{Binding ToggleGuidanceCommand}"
+                              Width="120" Height="48">
+                    <TextBlock Text="{Binding IsGuidanceActive, StringFormat='Guidance {0}'}"/>
+                </ToggleButton>
+            </StackPanel>
+        </Border>
+
+        <!-- Right Panel: Camera Controls -->
+        <Border Classes="FloatingPanel"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="20">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Camera"
+                           FontWeight="Bold"
+                           FontSize="14"
+                           Foreground="White"
+                           Margin="0,0,0,8"/>
+
+                <Button Classes="IconButton" Command="{Binding ZoomInCommand}" Content="+" ToolTip.Tip="Zoom In"/>
+                <Button Classes="IconButton" Command="{Binding ZoomOutCommand}" Content="-" ToolTip.Tip="Zoom Out"/>
+                <Button Classes="IconButton" Command="{Binding Toggle3DModeCommand}" Content="3D" ToolTip.Tip="Toggle 2D/3D"/>
+                <Button Classes="IconButton" Command="{Binding ToggleGridCommand}" Content="⊞" ToolTip.Tip="Toggle Grid"/>
+                <Button Classes="IconButton" Command="{Binding ResetCameraCommand}" Content="⊙" ToolTip.Tip="Reset Camera"/>
+                <Button Classes="IconButton" Command="{Binding ToggleDayNightModeCommand}" Content="☀" ToolTip.Tip="Toggle Day/Night"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

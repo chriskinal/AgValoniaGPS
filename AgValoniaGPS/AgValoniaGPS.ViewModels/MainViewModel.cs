@@ -43,6 +43,7 @@ public class MainViewModel : ObservableObject
     private readonly IDialogService _dialogService;
 
     // Wave 10 Panel ViewModels
+    public FormGPSViewModel GPSVM { get; } // Main GPS view overlay
     public FormFieldDataViewModel FieldDataVM { get; }
     public FormGPSDataViewModel GPSDataVM { get; }
     public FormTramLineViewModel TramLineVM { get; }
@@ -101,6 +102,7 @@ public class MainViewModel : ObservableObject
         ISessionManagementService sessionService,
         IProfileManagementService profileService,
         IDialogService dialogService,
+        FormGPSViewModel gpsVM,
         FormFieldDataViewModel fieldDataVM,
         FormGPSDataViewModel gpsDataVM,
         FormTramLineViewModel tramLineVM,
@@ -132,6 +134,7 @@ public class MainViewModel : ObservableObject
         _nmeaParser = new NmeaParserService(gpsService);
 
         // Store panel ViewModels
+        GPSVM = gpsVM;
         FieldDataVM = fieldDataVM;
         GPSDataVM = gpsDataVM;
         TramLineVM = tramLineVM;

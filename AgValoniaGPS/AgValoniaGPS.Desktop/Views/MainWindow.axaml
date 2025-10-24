@@ -79,6 +79,12 @@
                PointerReleased="MapOverlay_PointerReleased"
                PointerWheelChanged="MapOverlay_PointerWheelChanged" />
 
+        <!-- FormGPS: Main GPS View Overlay Controls (Section Control, Vehicle Status, Camera Controls) -->
+        <panelsDisplay:FormGPS x:Name="GPSOverlay"
+                               ZIndex="2"
+                               DataContext="{Binding GPSVM}"
+                               IsHitTestVisible="False" />
+
         <!-- TOP STATUS BAR: RTK Status -->
         <Border Classes="FloatingPanel"
                 ZIndex="10"

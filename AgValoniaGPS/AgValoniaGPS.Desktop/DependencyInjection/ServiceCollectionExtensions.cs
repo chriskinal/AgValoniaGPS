@@ -105,6 +105,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainViewModel>();
 
         // ViewModels - Wave 10 Task Group 1: Field Operations Panels
+        services.AddSingleton<FormGPSViewModel>(); // Main GPS view with overlay controls
         services.AddSingleton<FormFieldDataViewModel>();
         services.AddSingleton<FormGPSDataViewModel>();
         services.AddSingleton<FormTramLineViewModel>();
