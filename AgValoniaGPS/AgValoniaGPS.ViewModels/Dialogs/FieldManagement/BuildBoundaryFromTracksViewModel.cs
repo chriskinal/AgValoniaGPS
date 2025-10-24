@@ -1,12 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -43,11 +41,9 @@ public class BuildBoundaryFromTracksViewModel : DialogViewModelBase
 
         Tracks = new ObservableCollection<GPSTrack>();
 
-        SelectTrackCommand = ReactiveCommand.Create<GPSTrack>(OnSelectTrack);
-        GenerateCommand = ReactiveCommand.Create(OnGenerate,
-            this.WhenAnyValue(x => x.SelectedTrack).Select(track => track != null));
-        PreviewCommand = ReactiveCommand.Create(OnPreview,
-            this.WhenAnyValue(x => x.SelectedTrack).Select(track => track != null));
+        SelectTrackCommand = new RelayCommand<GPSTrack>(OnSelectTrack);
+        GenerateCommand = new RelayCommand(OnGenerate);
+        PreviewCommand = new RelayCommand(OnPreview);
     }
 
     /// <summary>
@@ -63,7 +59,7 @@ public class BuildBoundaryFromTracksViewModel : DialogViewModelBase
         get => _selectedTrack;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedTrack, value);
+            SetProperty(ref _selectedTrack, value);
             HasPreview = false;
         }
     }
@@ -78,7 +74,7 @@ public class BuildBoundaryFromTracksViewModel : DialogViewModelBase
         {
             if (value >= 0.5 && value <= 50.0)
             {
-                this.RaiseAndSetIfChanged(ref _bufferDistance, value);
+                SetProperty(ref _bufferDistance, value);
                 HasPreview = false; // Invalidate preview
             }
         }
@@ -94,7 +90,7 @@ public class BuildBoundaryFromTracksViewModel : DialogViewModelBase
         {
             if (value >= 0.1 && value <= 10.0)
             {
-                this.RaiseAndSetIfChanged(ref _simplifyTolerance, value);
+                SetProperty(ref _simplifyTolerance, value);
                 HasPreview = false; // Invalidate preview
             }
         }
@@ -106,7 +102,7 @@ public class BuildBoundaryFromTracksViewModel : DialogViewModelBase
     public int ResultPointCount
     {
         get => _resultPointCount;
-        set => this.RaiseAndSetIfChanged(ref _resultPointCount, value);
+        set => SetProperty(ref _resultPointCount, value);
     }
 
     /// <summary>
@@ -115,7 +111,7 @@ public class BuildBoundaryFromTracksViewModel : DialogViewModelBase
     public bool HasPreview
     {
         get => _hasPreview;
-        set => this.RaiseAndSetIfChanged(ref _hasPreview, value);
+        set => SetProperty(ref _hasPreview, value);
     }
 
     /// <summary>

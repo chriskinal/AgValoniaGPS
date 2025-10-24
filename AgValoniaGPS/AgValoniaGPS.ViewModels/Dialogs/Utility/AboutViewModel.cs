@@ -1,8 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 using System;
-using System.Reactive;
 using System.Reflection;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -24,7 +24,7 @@ public class AboutViewModel : DialogViewModelBase
     /// </summary>
     public AboutViewModel()
     {
-        OpenWebsiteCommand = ReactiveCommand.Create(OnOpenWebsite);
+        OpenWebsiteCommand = new RelayCommand(OnOpenWebsite);
 
         // Try to load version from assembly
         LoadVersionInfo();
@@ -36,7 +36,7 @@ public class AboutViewModel : DialogViewModelBase
     public string ApplicationName
     {
         get => _applicationName;
-        set => this.RaiseAndSetIfChanged(ref _applicationName, value);
+        set => SetProperty(ref _applicationName, value);
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class AboutViewModel : DialogViewModelBase
     public string Version
     {
         get => _version;
-        set => this.RaiseAndSetIfChanged(ref _version, value);
+        set => SetProperty(ref _version, value);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class AboutViewModel : DialogViewModelBase
     public string Copyright
     {
         get => _copyright;
-        set => this.RaiseAndSetIfChanged(ref _copyright, value);
+        set => SetProperty(ref _copyright, value);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public class AboutViewModel : DialogViewModelBase
     public string Description
     {
         get => _description;
-        set => this.RaiseAndSetIfChanged(ref _description, value);
+        set => SetProperty(ref _description, value);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public class AboutViewModel : DialogViewModelBase
     public string License
     {
         get => _license;
-        set => this.RaiseAndSetIfChanged(ref _license, value);
+        set => SetProperty(ref _license, value);
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public class AboutViewModel : DialogViewModelBase
     public string Website
     {
         get => _website;
-        set => this.RaiseAndSetIfChanged(ref _website, value);
+        set => SetProperty(ref _website, value);
     }
 
     /// <summary>
@@ -90,13 +90,13 @@ public class AboutViewModel : DialogViewModelBase
     public string Credits
     {
         get => _credits;
-        set => this.RaiseAndSetIfChanged(ref _credits, value);
+        set => SetProperty(ref _credits, value);
     }
 
     /// <summary>
     /// Gets the command to open the website.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> OpenWebsiteCommand { get; }
+    public ICommand OpenWebsiteCommand { get; }
 
     /// <summary>
     /// Gets the full version string including build information.

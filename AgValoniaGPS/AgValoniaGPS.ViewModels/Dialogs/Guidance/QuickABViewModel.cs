@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -27,10 +26,9 @@ public class QuickABViewModel : DialogViewModelBase
         // TODO: Inject IPositionUpdateService and IABLineService
         // Subscribe to position updates
 
-        UseCurrentHeadingCommand = ReactiveCommand.Create(OnUseCurrentHeading);
-        AdjustHeadingCommand = ReactiveCommand.Create<double>(OnAdjustHeading);
-        CreateABLineCommand = ReactiveCommand.Create(OnCreateABLine,
-            this.WhenAnyValue(x => x.CurrentPosition).Select(pos => pos != null));
+        UseCurrentHeadingCommand = new RelayCommand(OnUseCurrentHeading);
+        AdjustHeadingCommand = new RelayCommand<double>(OnAdjustHeading);
+        CreateABLineCommand = new RelayCommand(OnCreateABLine);
 
         // Initialize with sample data
         UpdateSampleData();
@@ -44,10 +42,10 @@ public class QuickABViewModel : DialogViewModelBase
         get => _currentPosition;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentPosition, value);
-            this.RaisePropertyChanged(nameof(CurrentPositionFormatted));
-            this.RaisePropertyChanged(nameof(LatitudeFormatted));
-            this.RaisePropertyChanged(nameof(LongitudeFormatted));
+            SetProperty(ref _currentPosition, value);
+            OnPropertyChanged(nameof(CurrentPositionFormatted));
+            OnPropertyChanged(nameof(LatitudeFormatted));
+            OnPropertyChanged(nameof(LongitudeFormatted));
         }
     }
 
@@ -76,8 +74,8 @@ public class QuickABViewModel : DialogViewModelBase
         get => _currentHeading;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentHeading, NormalizeAngle(value));
-            this.RaisePropertyChanged(nameof(CurrentHeadingFormatted));
+            SetProperty(ref _currentHeading, NormalizeAngle(value));
+            OnPropertyChanged(nameof(CurrentHeadingFormatted));
 
             if (UseCurrentHeading)
             {
@@ -99,8 +97,8 @@ public class QuickABViewModel : DialogViewModelBase
         get => _abLineHeading;
         set
         {
-            this.RaiseAndSetIfChanged(ref _abLineHeading, NormalizeAngle(value));
-            this.RaisePropertyChanged(nameof(ABLineHeadingFormatted));
+            SetProperty(ref _abLineHeading, NormalizeAngle(value));
+            OnPropertyChanged(nameof(ABLineHeadingFormatted));
             UpdateHeadingOffset();
         }
     }
@@ -123,8 +121,8 @@ public class QuickABViewModel : DialogViewModelBase
             while (clamped > 180) clamped -= 360;
             while (clamped < -180) clamped += 360;
 
-            this.RaiseAndSetIfChanged(ref _headingOffset, clamped);
-            this.RaisePropertyChanged(nameof(HeadingOffsetFormatted));
+            SetProperty(ref _headingOffset, clamped);
+            OnPropertyChanged(nameof(HeadingOffsetFormatted));
 
             // Update AB line heading when offset changes
             if (!UseCurrentHeading)
@@ -148,7 +146,7 @@ public class QuickABViewModel : DialogViewModelBase
         get => _useCurrentHeading;
         set
         {
-            this.RaiseAndSetIfChanged(ref _useCurrentHeading, value);
+            SetProperty(ref _useCurrentHeading, value);
 
             if (value)
             {
@@ -232,8 +230,8 @@ public class QuickABViewModel : DialogViewModelBase
         while (offset < -180) offset += 360;
 
         _headingOffset = offset;
-        this.RaisePropertyChanged(nameof(HeadingOffset));
-        this.RaisePropertyChanged(nameof(HeadingOffsetFormatted));
+        OnPropertyChanged(nameof(HeadingOffset));
+        OnPropertyChanged(nameof(HeadingOffsetFormatted));
     }
 
     /// <summary>

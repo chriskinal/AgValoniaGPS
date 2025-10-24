@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -99,11 +98,10 @@ public class TramViewModel : DialogViewModelBase
 
         _selectedPattern = Patterns[0];
 
-        SelectModeCommand = ReactiveCommand.Create<TramLineMode>(OnSelectMode);
-        SetSpacingCommand = ReactiveCommand.Create<double>(OnSetSpacing);
-        GenerateTramLinesCommand = ReactiveCommand.Create(OnGenerateTramLines,
-            this.WhenAnyValue(x => x.TramSpacing).Select(spacing => spacing > 0));
-        ClearTramLinesCommand = ReactiveCommand.Create(OnClearTramLines);
+        SelectModeCommand = new RelayCommand<TramLineMode>(OnSelectMode);
+        SetSpacingCommand = new RelayCommand<double>(OnSetSpacing);
+        GenerateTramLinesCommand = new RelayCommand(OnGenerateTramLines);
+        ClearTramLinesCommand = new RelayCommand(OnClearTramLines);
     }
 
     /// <summary>
@@ -119,7 +117,7 @@ public class TramViewModel : DialogViewModelBase
         get => _selectedPattern;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedPattern, value);
+            SetProperty(ref _selectedPattern, value);
             if (value != null)
             {
                 TramMode = value.Mode;
@@ -133,7 +131,7 @@ public class TramViewModel : DialogViewModelBase
     public TramLineMode TramMode
     {
         get => _tramMode;
-        set => this.RaiseAndSetIfChanged(ref _tramMode, value);
+        set => SetProperty(ref _tramMode, value);
     }
 
     /// <summary>
@@ -145,10 +143,10 @@ public class TramViewModel : DialogViewModelBase
         get => _tramSpacing;
         set
         {
-            this.RaiseAndSetIfChanged(ref _tramSpacing, Math.Clamp(value, 1.0, 12.0));
-            this.RaisePropertyChanged(nameof(TramSpacingFormatted));
-            this.RaisePropertyChanged(nameof(ActualSpacing));
-            this.RaisePropertyChanged(nameof(ActualSpacingFormatted));
+            SetProperty(ref _tramSpacing, Math.Clamp(value, 1.0, 12.0));
+            OnPropertyChanged(nameof(TramSpacingFormatted));
+            OnPropertyChanged(nameof(ActualSpacing));
+            OnPropertyChanged(nameof(ActualSpacingFormatted));
         }
     }
 
@@ -181,8 +179,8 @@ public class TramViewModel : DialogViewModelBase
         get => _implementPasses;
         set
         {
-            this.RaiseAndSetIfChanged(ref _implementPasses, Math.Clamp(value, 1, 12));
-            this.RaisePropertyChanged(nameof(ImplementPassesDisplay));
+            SetProperty(ref _implementPasses, Math.Clamp(value, 1, 12));
+            OnPropertyChanged(nameof(ImplementPassesDisplay));
         }
     }
 
@@ -197,7 +195,7 @@ public class TramViewModel : DialogViewModelBase
     public bool ShowTramLines
     {
         get => _showTramLines;
-        set => this.RaiseAndSetIfChanged(ref _showTramLines, value);
+        set => SetProperty(ref _showTramLines, value);
     }
 
     /// <summary>

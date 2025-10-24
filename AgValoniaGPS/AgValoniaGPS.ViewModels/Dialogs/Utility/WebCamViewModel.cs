@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
+using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -20,8 +20,8 @@ public class WebCamViewModel : DialogViewModelBase
     /// </summary>
     public WebCamViewModel()
     {
-        StartCommand = ReactiveCommand.Create(OnStart, this.WhenAnyValue(x => x.IsStreaming, streaming => !streaming));
-        StopCommand = ReactiveCommand.Create(OnStop, this.WhenAnyValue(x => x.IsStreaming));
+        StartCommand = new RelayCommand(OnStart);
+        StopCommand = new RelayCommand(OnStop);
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ public class WebCamViewModel : DialogViewModelBase
         get => _isStreaming;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isStreaming, value);
-            this.RaisePropertyChanged(nameof(StatusText));
+            SetProperty(ref _isStreaming, value);
+            OnPropertyChanged(nameof(StatusText));
         }
     }
 
@@ -43,7 +43,7 @@ public class WebCamViewModel : DialogViewModelBase
     public string CameraStatus
     {
         get => _cameraStatus;
-        set => this.RaiseAndSetIfChanged(ref _cameraStatus, value);
+        set => SetProperty(ref _cameraStatus, value);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public class WebCamViewModel : DialogViewModelBase
     public string SelectedCamera
     {
         get => _selectedCamera;
-        set => this.RaiseAndSetIfChanged(ref _selectedCamera, value);
+        set => SetProperty(ref _selectedCamera, value);
     }
 
     /// <summary>
@@ -63,12 +63,12 @@ public class WebCamViewModel : DialogViewModelBase
     /// <summary>
     /// Gets the command to start camera streaming.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> StartCommand { get; }
+    public ICommand StartCommand { get; }
 
     /// <summary>
     /// Gets the command to stop camera streaming.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> StopCommand { get; }
+    public ICommand StopCommand { get; }
 
     /// <summary>
     /// Gets the placeholder message.

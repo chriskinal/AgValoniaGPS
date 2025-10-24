@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -35,10 +35,10 @@ public class FormConfigViewModel : PanelViewModelBase
         Title = "General Configuration";
 
         // Commands
-        SaveConfigCommand = ReactiveCommand.Create(OnSaveConfig);
-        LoadConfigCommand = ReactiveCommand.Create(OnLoadConfig);
-        ExportConfigCommand = ReactiveCommand.Create(OnExportConfig);
-        ImportConfigCommand = ReactiveCommand.Create(OnImportConfig);
+        SaveConfigCommand = new RelayCommand(OnSaveConfig);
+        LoadConfigCommand = new RelayCommand(OnLoadConfig);
+        ExportConfigCommand = new RelayCommand(OnExportConfig);
+        ImportConfigCommand = new RelayCommand(OnImportConfig);
 
         // Load current settings
         LoadCurrentSettings();
@@ -52,7 +52,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public string DisplayUnits
     {
         get => _displayUnits;
-        set => this.RaiseAndSetIfChanged(ref _displayUnits, value);
+        set => SetProperty(ref _displayUnits, value);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public int FixUpdateRate
     {
         get => _fixUpdateRate;
-        set => this.RaiseAndSetIfChanged(ref _fixUpdateRate, value);
+        set => SetProperty(ref _fixUpdateRate, value);
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public int SimulatedRollingAverage
     {
         get => _simulatedRollingAverage;
-        set => this.RaiseAndSetIfChanged(ref _simulatedRollingAverage, Math.Clamp(value, 1, 10));
+        set => SetProperty(ref _simulatedRollingAverage, Math.Clamp(value, 1, 10));
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public bool ShowRtkAge
     {
         get => _showRtkAge;
-        set => this.RaiseAndSetIfChanged(ref _showRtkAge, value);
+        set => SetProperty(ref _showRtkAge, value);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public bool ShowSatelliteCount
     {
         get => _showSatelliteCount;
-        set => this.RaiseAndSetIfChanged(ref _showSatelliteCount, value);
+        set => SetProperty(ref _showSatelliteCount, value);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public int AutoSaveInterval
     {
         get => _autoSaveInterval;
-        set => this.RaiseAndSetIfChanged(ref _autoSaveInterval, Math.Clamp(value, 1, 60));
+        set => SetProperty(ref _autoSaveInterval, Math.Clamp(value, 1, 60));
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public bool KeepAwakeWhileRunning
     {
         get => _keepAwakeWhileRunning;
-        set => this.RaiseAndSetIfChanged(ref _keepAwakeWhileRunning, value);
+        set => SetProperty(ref _keepAwakeWhileRunning, value);
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class FormConfigViewModel : PanelViewModelBase
     public string Language
     {
         get => _language;
-        set => this.RaiseAndSetIfChanged(ref _language, value);
+        set => SetProperty(ref _language, value);
     }
 
     public ICommand SaveConfigCommand { get; }

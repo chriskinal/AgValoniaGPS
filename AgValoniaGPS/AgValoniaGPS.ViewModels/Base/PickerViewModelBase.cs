@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Base;
 
@@ -21,9 +21,7 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
     /// </summary>
     protected PickerViewModelBase()
     {
-        // Subscribe to search text changes to automatically update filtered items
-        this.WhenAnyValue(x => x.SearchText)
-            .Subscribe(_ => UpdateFilteredItems());
+        // FilteredItems will be updated automatically when SearchText changes via property setter
     }
 
     /// <summary>
@@ -34,7 +32,7 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
         get => _items;
         set
         {
-            this.RaiseAndSetIfChanged(ref _items, value);
+            SetProperty(ref _items, value);
             UpdateFilteredItems();
         }
     }
@@ -46,7 +44,7 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
     public ObservableCollection<T> FilteredItems
     {
         get => _filteredItems;
-        private set => this.RaiseAndSetIfChanged(ref _filteredItems, value);
+        private set => SetProperty(ref _filteredItems, value);
     }
 
     /// <summary>
@@ -55,7 +53,7 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
     public T? SelectedItem
     {
         get => _selectedItem;
-        set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
+        set => SetProperty(ref _selectedItem, value);
     }
 
     /// <summary>
@@ -64,7 +62,11 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
     public string SearchText
     {
         get => _searchText;
-        set => this.RaiseAndSetIfChanged(ref _searchText, value);
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                UpdateFilteredItems();
+        }
     }
 
     /// <summary>
@@ -104,8 +106,8 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
         }
 
         // Raise property changed for computed properties
-        this.RaisePropertyChanged(nameof(HasItems));
-        this.RaisePropertyChanged(nameof(HasNoFilteredItems));
+        OnPropertyChanged(nameof(HasItems));
+        OnPropertyChanged(nameof(HasNoFilteredItems));
     }
 
     /// <summary>

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -26,17 +24,10 @@ public class FlagsViewModel : DialogViewModelBase
         Flags = new ObservableCollection<FieldFlag>();
         FilteredFlags = new ObservableCollection<FieldFlag>();
 
-        AddFlagCommand = ReactiveCommand.Create(OnAddFlag);
-        EditFlagCommand = ReactiveCommand.Create(OnEditFlag,
-            this.WhenAnyValue(x => x.SelectedFlag).Select(flag => flag != null));
-        DeleteFlagCommand = ReactiveCommand.Create(OnDeleteFlag,
-            this.WhenAnyValue(x => x.SelectedFlag).Select(flag => flag != null));
-        ClearAllCommand = ReactiveCommand.Create(OnClearAll,
-            this.WhenAnyValue(x => x.FlagCount).Select(count => count > 0));
-
-        // React to search text changes
-        this.WhenAnyValue(x => x.SearchText)
-            .Subscribe(_ => FilterFlags());
+        AddFlagCommand = new RelayCommand(OnAddFlag);
+        EditFlagCommand = new RelayCommand(OnEditFlag);
+        DeleteFlagCommand = new RelayCommand(OnDeleteFlag);
+        ClearAllCommand = new RelayCommand(OnClearAll);
     }
 
     /// <summary>
@@ -55,7 +46,7 @@ public class FlagsViewModel : DialogViewModelBase
     public FieldFlag? SelectedFlag
     {
         get => _selectedFlag;
-        set => this.RaiseAndSetIfChanged(ref _selectedFlag, value);
+        set => SetProperty(ref _selectedFlag, value);
     }
 
     /// <summary>
@@ -64,7 +55,11 @@ public class FlagsViewModel : DialogViewModelBase
     public string SearchText
     {
         get => _searchText;
-        set => this.RaiseAndSetIfChanged(ref _searchText, value);
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                FilterFlags();
+        }
     }
 
     /// <summary>
@@ -110,7 +105,7 @@ public class FlagsViewModel : DialogViewModelBase
     {
         Flags.Add(flag);
         FilterFlags();
-        this.RaisePropertyChanged(nameof(FlagCount));
+        OnPropertyChanged(nameof(FlagCount));
     }
 
     /// <summary>
@@ -157,7 +152,7 @@ public class FlagsViewModel : DialogViewModelBase
             // In a real implementation, would show confirmation dialog
             Flags.Remove(SelectedFlag);
             FilterFlags();
-            this.RaisePropertyChanged(nameof(FlagCount));
+            OnPropertyChanged(nameof(FlagCount));
             SelectedFlag = null;
         }
     }
@@ -170,7 +165,7 @@ public class FlagsViewModel : DialogViewModelBase
         // In a real implementation, would show confirmation dialog
         Flags.Clear();
         FilterFlags();
-        this.RaisePropertyChanged(nameof(FlagCount));
+        OnPropertyChanged(nameof(FlagCount));
     }
 
     /// <summary>

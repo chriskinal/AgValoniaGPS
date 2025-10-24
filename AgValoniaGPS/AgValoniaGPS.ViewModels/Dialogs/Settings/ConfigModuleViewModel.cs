@@ -1,5 +1,5 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Settings;
 
@@ -24,6 +24,6 @@ public class ConfigModuleViewModel : DialogViewModelBase
     public string PlaceholderMessage
     {
         get => _placeholderMessage;
-        set => this.RaiseAndSetIfChanged(ref _placeholderMessage, value);
+        set => SetProperty(ref _placeholderMessage, value);
     }
 }

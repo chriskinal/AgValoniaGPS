@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
+using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -24,12 +25,10 @@ public class EventViewerViewModel : DialogViewModelBase
         Events = new ObservableCollection<EventLogEntry>();
         FilteredEvents = new ObservableCollection<EventLogEntry>();
 
-        ClearCommand = ReactiveCommand.Create(OnClear);
-        RefreshCommand = ReactiveCommand.Create(OnRefresh);
+        ClearCommand = new RelayCommand(OnClear);
+        RefreshCommand = new RelayCommand(OnRefresh);
 
-        // Subscribe to filter changes
-        this.WhenAnyValue(x => x.FilterLevel, x => x.SearchText)
-            .Subscribe(_ => ApplyFilters());
+        // Subscribe to filter changes (handled via property setters)
 
         // Load initial events
         LoadEvents();
@@ -51,7 +50,11 @@ public class EventViewerViewModel : DialogViewModelBase
     public EventLevel FilterLevel
     {
         get => _filterLevel;
-        set => this.RaiseAndSetIfChanged(ref _filterLevel, value);
+        set
+        {
+            if (SetProperty(ref _filterLevel, value))
+                ApplyFilters();
+        }
     }
 
     /// <summary>
@@ -60,18 +63,22 @@ public class EventViewerViewModel : DialogViewModelBase
     public string SearchText
     {
         get => _searchText;
-        set => this.RaiseAndSetIfChanged(ref _searchText, value);
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                ApplyFilters();
+        }
     }
 
     /// <summary>
     /// Gets the command to clear all events.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> ClearCommand { get; }
+    public ICommand ClearCommand { get; }
 
     /// <summary>
     /// Gets the command to refresh the event list.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
+    public ICommand RefreshCommand { get; }
 
     /// <summary>
     /// Gets the total event count.
@@ -193,8 +200,8 @@ public class EventViewerViewModel : DialogViewModelBase
             FilteredEvents.Add(evt);
         }
 
-        this.RaisePropertyChanged(nameof(TotalEventCount));
-        this.RaisePropertyChanged(nameof(FilteredEventCount));
+        OnPropertyChanged(nameof(TotalEventCount));
+        OnPropertyChanged(nameof(FilteredEventCount));
     }
 
     /// <summary>
@@ -237,7 +244,7 @@ public class EventViewerViewModel : DialogViewModelBase
 /// <summary>
 /// Represents an entry in the event log.
 /// </summary>
-public class EventLogEntry : ReactiveObject
+public class EventLogEntry : ObservableObject
 {
     private DateTime _timestamp;
     private EventLevel _level;
@@ -252,8 +259,8 @@ public class EventLogEntry : ReactiveObject
         get => _timestamp;
         set
         {
-            this.RaiseAndSetIfChanged(ref _timestamp, value);
-            this.RaisePropertyChanged(nameof(FormattedTimestamp));
+            SetProperty(ref _timestamp, value);
+            OnPropertyChanged(nameof(FormattedTimestamp));
         }
     }
 
@@ -268,7 +275,7 @@ public class EventLogEntry : ReactiveObject
     public EventLevel Level
     {
         get => _level;
-        set => this.RaiseAndSetIfChanged(ref _level, value);
+        set => SetProperty(ref _level, value);
     }
 
     /// <summary>
@@ -277,7 +284,7 @@ public class EventLogEntry : ReactiveObject
     public string Source
     {
         get => _source;
-        set => this.RaiseAndSetIfChanged(ref _source, value);
+        set => SetProperty(ref _source, value);
     }
 
     /// <summary>
@@ -286,7 +293,7 @@ public class EventLogEntry : ReactiveObject
     public string Message
     {
         get => _message;
-        set => this.RaiseAndSetIfChanged(ref _message, value);
+        set => SetProperty(ref _message, value);
     }
 }
 

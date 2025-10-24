@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
 using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Settings;
 
@@ -34,9 +33,9 @@ public class ConfigSummaryViewModel : DialogViewModelBase
         _configService = configService;
 
         // Initialize commands
-        EditVehicleCommand = ReactiveCommand.Create(OnEditVehicle);
-        EditUserCommand = ReactiveCommand.Create(OnEditUser);
-        RefreshCommand = ReactiveCommand.Create(OnRefresh);
+        EditVehicleCommand = new RelayCommand(OnEditVehicle);
+        EditUserCommand = new RelayCommand(OnEditUser);
+        RefreshCommand = new RelayCommand(OnRefresh);
 
         // Load initial configuration
         LoadConfiguration();
@@ -48,7 +47,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public string VehicleName
     {
         get => _vehicleName;
-        set => this.RaiseAndSetIfChanged(ref _vehicleName, value);
+        set => SetProperty(ref _vehicleName, value);
     }
 
     /// <summary>
@@ -57,7 +56,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public double VehicleWheelbase
     {
         get => _vehicleWheelbase;
-        set => this.RaiseAndSetIfChanged(ref _vehicleWheelbase, value);
+        set => SetProperty(ref _vehicleWheelbase, value);
     }
 
     /// <summary>
@@ -66,7 +65,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public double VehicleTrack
     {
         get => _vehicleTrack;
-        set => this.RaiseAndSetIfChanged(ref _vehicleTrack, value);
+        set => SetProperty(ref _vehicleTrack, value);
     }
 
     /// <summary>
@@ -75,7 +74,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public double MaxSteerAngle
     {
         get => _maxSteerAngle;
-        set => this.RaiseAndSetIfChanged(ref _maxSteerAngle, value);
+        set => SetProperty(ref _maxSteerAngle, value);
     }
 
     /// <summary>
@@ -84,7 +83,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public double AntennaOffset
     {
         get => _antennaOffset;
-        set => this.RaiseAndSetIfChanged(ref _antennaOffset, value);
+        set => SetProperty(ref _antennaOffset, value);
     }
 
     /// <summary>
@@ -93,7 +92,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public string VehicleType
     {
         get => _vehicleType;
-        set => this.RaiseAndSetIfChanged(ref _vehicleType, value);
+        set => SetProperty(ref _vehicleType, value);
     }
 
     /// <summary>
@@ -102,7 +101,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public string UserName
     {
         get => _userName;
-        set => this.RaiseAndSetIfChanged(ref _userName, value);
+        set => SetProperty(ref _userName, value);
     }
 
     /// <summary>
@@ -111,7 +110,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public string Units
     {
         get => _units;
-        set => this.RaiseAndSetIfChanged(ref _units, value);
+        set => SetProperty(ref _units, value);
     }
 
     /// <summary>
@@ -120,7 +119,7 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public bool AutoSave
     {
         get => _autoSave;
-        set => this.RaiseAndSetIfChanged(ref _autoSave, value);
+        set => SetProperty(ref _autoSave, value);
     }
 
     /// <summary>
@@ -129,23 +128,23 @@ public class ConfigSummaryViewModel : DialogViewModelBase
     public int AutoSaveInterval
     {
         get => _autoSaveInterval;
-        set => this.RaiseAndSetIfChanged(ref _autoSaveInterval, value);
+        set => SetProperty(ref _autoSaveInterval, value);
     }
 
     /// <summary>
     /// Gets the command to edit vehicle settings.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> EditVehicleCommand { get; }
+    public ICommand EditVehicleCommand { get; }
 
     /// <summary>
     /// Gets the command to edit user settings.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> EditUserCommand { get; }
+    public ICommand EditUserCommand { get; }
 
     /// <summary>
     /// Gets the command to refresh all values.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
+    public ICommand RefreshCommand { get; }
 
     /// <summary>
     /// Loads configuration from the configuration service or uses defaults.

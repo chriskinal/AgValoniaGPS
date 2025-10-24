@@ -1,10 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models.Section;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Section;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.ViewModels.Base;
 using Avalonia.Threading;
-using ReactiveUI;
 using System;
 using System.Linq;
 
@@ -58,7 +58,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public string FieldName
     {
         get => _fieldName;
-        set => this.RaiseAndSetIfChanged(ref _fieldName, value);
+        set => SetProperty(ref _fieldName, value);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public double FieldAreaHectares
     {
         get => _fieldAreaHectares;
-        set => this.RaiseAndSetIfChanged(ref _fieldAreaHectares, value);
+        set => SetProperty(ref _fieldAreaHectares, value);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public double WorkAreaHectares
     {
         get => _workAreaHectares;
-        set => this.RaiseAndSetIfChanged(ref _workAreaHectares, value);
+        set => SetProperty(ref _workAreaHectares, value);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public double CoveragePercent
     {
         get => _coveragePercent;
-        set => this.RaiseAndSetIfChanged(ref _coveragePercent, value);
+        set => SetProperty(ref _coveragePercent, value);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public double DistanceTraveledKm
     {
         get => _distanceTraveledKm;
-        set => this.RaiseAndSetIfChanged(ref _distanceTraveledKm, value);
+        set => SetProperty(ref _distanceTraveledKm, value);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public TimeSpan TimeElapsed
     {
         get => _timeElapsed;
-        set => this.RaiseAndSetIfChanged(ref _timeElapsed, value);
+        set => SetProperty(ref _timeElapsed, value);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public double AverageSpeedKmh
     {
         get => _averageSpeedKmh;
-        set => this.RaiseAndSetIfChanged(ref _averageSpeedKmh, value);
+        set => SetProperty(ref _averageSpeedKmh, value);
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public int SectionsAppliedCount
     {
         get => _sectionsAppliedCount;
-        set => this.RaiseAndSetIfChanged(ref _sectionsAppliedCount, value);
+        set => SetProperty(ref _sectionsAppliedCount, value);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public double ApplicationRate
     {
         get => _applicationRate;
-        set => this.RaiseAndSetIfChanged(ref _applicationRate, value);
+        set => SetProperty(ref _applicationRate, value);
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ public partial class FormFieldDataViewModel : PanelViewModelBase
     public bool WorkSwitchOn
     {
         get => _workSwitchOn;
-        set => this.RaiseAndSetIfChanged(ref _workSwitchOn, value);
+        set => SetProperty(ref _workSwitchOn, value);
     }
 
     private void OnSessionChanged(object? sender, EventArgs e)

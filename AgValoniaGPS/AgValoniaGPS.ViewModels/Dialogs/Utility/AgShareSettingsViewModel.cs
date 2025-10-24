@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 using System;
-using System.Reactive;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -31,14 +31,10 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     /// </summary>
     public AgShareSettingsViewModel()
     {
-        TestConnectionCommand = ReactiveCommand.Create(OnTestConnection);
-        SyncNowCommand = ReactiveCommand.Create(OnSyncNow, this.WhenAnyValue(x => x.EnableAgShare, x => x.IsConnected, (enabled, connected) => enabled && connected));
+        TestConnectionCommand = new RelayCommand(OnTestConnection);
+        SyncNowCommand = new RelayCommand(OnSyncNow);
 
         // TODO: Inject IConfigurationService to load/save settings
-
-        // Subscribe to enable changes
-        this.WhenAnyValue(x => x.EnableAgShare)
-            .Subscribe(enabled => OnEnableChanged(enabled));
     }
 
     /// <summary>
@@ -47,7 +43,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool EnableAgShare
     {
         get => _enableAgShare;
-        set => this.RaiseAndSetIfChanged(ref _enableAgShare, value);
+        set => SetProperty(ref _enableAgShare, value);
     }
 
     /// <summary>
@@ -56,7 +52,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public string ServerUrl
     {
         get => _serverUrl;
-        set => this.RaiseAndSetIfChanged(ref _serverUrl, value);
+        set => SetProperty(ref _serverUrl, value);
     }
 
     /// <summary>
@@ -65,7 +61,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public string Username
     {
         get => _username;
-        set => this.RaiseAndSetIfChanged(ref _username, value);
+        set => SetProperty(ref _username, value);
     }
 
     /// <summary>
@@ -74,7 +70,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public string Password
     {
         get => _password;
-        set => this.RaiseAndSetIfChanged(ref _password, value);
+        set => SetProperty(ref _password, value);
     }
 
     /// <summary>
@@ -83,7 +79,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool AutoSync
     {
         get => _autoSync;
-        set => this.RaiseAndSetIfChanged(ref _autoSync, value);
+        set => SetProperty(ref _autoSync, value);
     }
 
     /// <summary>
@@ -92,7 +88,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool SyncFields
     {
         get => _syncFields;
-        set => this.RaiseAndSetIfChanged(ref _syncFields, value);
+        set => SetProperty(ref _syncFields, value);
     }
 
     /// <summary>
@@ -101,7 +97,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool SyncBoundaries
     {
         get => _syncBoundaries;
-        set => this.RaiseAndSetIfChanged(ref _syncBoundaries, value);
+        set => SetProperty(ref _syncBoundaries, value);
     }
 
     /// <summary>
@@ -110,7 +106,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool SyncGuidanceLines
     {
         get => _syncGuidanceLines;
-        set => this.RaiseAndSetIfChanged(ref _syncGuidanceLines, value);
+        set => SetProperty(ref _syncGuidanceLines, value);
     }
 
     /// <summary>
@@ -119,7 +115,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool SyncFlags
     {
         get => _syncFlags;
-        set => this.RaiseAndSetIfChanged(ref _syncFlags, value);
+        set => SetProperty(ref _syncFlags, value);
     }
 
     /// <summary>
@@ -128,7 +124,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public int SyncIntervalMinutes
     {
         get => _syncIntervalMinutes;
-        set => this.RaiseAndSetIfChanged(ref _syncIntervalMinutes, value);
+        set => SetProperty(ref _syncIntervalMinutes, value);
     }
 
     /// <summary>
@@ -139,8 +135,8 @@ public class AgShareSettingsViewModel : DialogViewModelBase
         get => _isConnected;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isConnected, value);
-            this.RaisePropertyChanged(nameof(ConnectionStatusText));
+            SetProperty(ref _isConnected, value);
+            OnPropertyChanged(nameof(ConnectionStatusText));
         }
     }
 
@@ -157,8 +153,8 @@ public class AgShareSettingsViewModel : DialogViewModelBase
         get => _lastSyncTime;
         set
         {
-            this.RaiseAndSetIfChanged(ref _lastSyncTime, value);
-            this.RaisePropertyChanged(nameof(LastSyncText));
+            SetProperty(ref _lastSyncTime, value);
+            OnPropertyChanged(nameof(LastSyncText));
         }
     }
 
@@ -175,7 +171,7 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public bool UseSSL
     {
         get => _useSSL;
-        set => this.RaiseAndSetIfChanged(ref _useSSL, value);
+        set => SetProperty(ref _useSSL, value);
     }
 
     /// <summary>
@@ -184,18 +180,18 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     public int Port
     {
         get => _port;
-        set => this.RaiseAndSetIfChanged(ref _port, value);
+        set => SetProperty(ref _port, value);
     }
 
     /// <summary>
     /// Gets the command to test the connection.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> TestConnectionCommand { get; }
+    public ICommand TestConnectionCommand { get; }
 
     /// <summary>
     /// Gets the command to sync now.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> SyncNowCommand { get; }
+    public ICommand SyncNowCommand { get; }
 
     /// <summary>
     /// Tests the connection to AgShare server.

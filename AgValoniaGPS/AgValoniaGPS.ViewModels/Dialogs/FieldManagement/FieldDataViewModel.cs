@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Text.RegularExpressions;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -63,7 +63,7 @@ public class FieldDataViewModel : DialogViewModelBase
         get => _fieldName;
         set
         {
-            this.RaiseAndSetIfChanged(ref _fieldName, value);
+            SetProperty(ref _fieldName, value);
             ClearError();
         }
     }
@@ -74,7 +74,7 @@ public class FieldDataViewModel : DialogViewModelBase
     public string FarmName
     {
         get => _farmName;
-        set => this.RaiseAndSetIfChanged(ref _farmName, value);
+        set => SetProperty(ref _farmName, value);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class FieldDataViewModel : DialogViewModelBase
     public string ClientName
     {
         get => _clientName;
-        set => this.RaiseAndSetIfChanged(ref _clientName, value);
+        set => SetProperty(ref _clientName, value);
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public class FieldDataViewModel : DialogViewModelBase
     public double FieldArea
     {
         get => _fieldArea;
-        set => this.RaiseAndSetIfChanged(ref _fieldArea, value);
+        set => SetProperty(ref _fieldArea, value);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public class FieldDataViewModel : DialogViewModelBase
     public DateTime DateCreated
     {
         get => _dateCreated;
-        set => this.RaiseAndSetIfChanged(ref _dateCreated, value);
+        set => SetProperty(ref _dateCreated, value);
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public class FieldDataViewModel : DialogViewModelBase
     public DateTime DateModified
     {
         get => _dateModified;
-        set => this.RaiseAndSetIfChanged(ref _dateModified, value);
+        set => SetProperty(ref _dateModified, value);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class FieldDataViewModel : DialogViewModelBase
     public string Notes
     {
         get => _notes;
-        set => this.RaiseAndSetIfChanged(ref _notes, value);
+        set => SetProperty(ref _notes, value);
     }
 
     /// <summary>

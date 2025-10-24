@@ -1,8 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Input;
 
@@ -18,7 +17,7 @@ public class NumericInputViewModel : DialogViewModelBase
 
     public NumericInputViewModel()
     {
-        AcceptCommand = ReactiveCommand.Create(OnAccept);
+        AcceptCommand = new RelayCommand(OnAccept);
     }
 
     /// <summary>
@@ -27,7 +26,7 @@ public class NumericInputViewModel : DialogViewModelBase
     public double Value
     {
         get => _value;
-        set => this.RaiseAndSetIfChanged(ref _value, value);
+        set => SetProperty(ref _value, value);
     }
 
     /// <summary>
@@ -36,7 +35,7 @@ public class NumericInputViewModel : DialogViewModelBase
     public string Prompt
     {
         get => _prompt;
-        set => this.RaiseAndSetIfChanged(ref _prompt, value);
+        set => SetProperty(ref _prompt, value);
     }
 
     /// <summary>
@@ -45,7 +44,7 @@ public class NumericInputViewModel : DialogViewModelBase
     public double Minimum
     {
         get => _minimum;
-        set => this.RaiseAndSetIfChanged(ref _minimum, value);
+        set => SetProperty(ref _minimum, value);
     }
 
     /// <summary>
@@ -54,7 +53,7 @@ public class NumericInputViewModel : DialogViewModelBase
     public double Maximum
     {
         get => _maximum;
-        set => this.RaiseAndSetIfChanged(ref _maximum, value);
+        set => SetProperty(ref _maximum, value);
     }
 
     /// <summary>

@@ -1,11 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Linq;
 using AgValoniaGPS.Models.Configuration;
 using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Settings;
 
@@ -58,19 +57,9 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
         VehicleTypes = new ObservableCollection<VehicleType>(Enum.GetValues<VehicleType>());
 
         // Initialize commands
-        SaveConfigCommand = ReactiveCommand.Create(OnSaveConfig, this.WhenAnyValue(
-            x => x.VehicleName,
-            x => x.VehicleWheelbase,
-            x => x.MaxSteerAngle,
-            x => x.MinSteerAngle,
-            (name, wheelbase, maxSteer, minSteer) =>
-                !string.IsNullOrWhiteSpace(name) &&
-                wheelbase > 0 &&
-                maxSteer > minSteer
-        ));
-
-        ResetCommand = ReactiveCommand.Create(OnReset);
-        LoadPresetCommand = ReactiveCommand.Create(OnLoadPreset);
+        SaveConfigCommand = new RelayCommand(OnSaveConfig);
+        ResetCommand = new RelayCommand(OnReset);
+        LoadPresetCommand = new RelayCommand(OnLoadPreset);
 
         // Load current configuration
         LoadConfiguration();
@@ -84,7 +73,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public string VehicleName
     {
         get => _vehicleName;
-        set => this.RaiseAndSetIfChanged(ref _vehicleName, value);
+        set => SetProperty(ref _vehicleName, value);
     }
 
     /// <summary>
@@ -93,7 +82,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double VehicleWidth
     {
         get => _vehicleWidth;
-        set => this.RaiseAndSetIfChanged(ref _vehicleWidth, value);
+        set => SetProperty(ref _vehicleWidth, value);
     }
 
     /// <summary>
@@ -102,7 +91,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double VehicleWheelbase
     {
         get => _vehicleWheelbase;
-        set => this.RaiseAndSetIfChanged(ref _vehicleWheelbase, value);
+        set => SetProperty(ref _vehicleWheelbase, value);
     }
 
     /// <summary>
@@ -111,7 +100,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double VehicleTrackWidth
     {
         get => _vehicleTrackWidth;
-        set => this.RaiseAndSetIfChanged(ref _vehicleTrackWidth, value);
+        set => SetProperty(ref _vehicleTrackWidth, value);
     }
 
     /// <summary>
@@ -120,7 +109,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public VehicleType VehicleType
     {
         get => _vehicleType;
-        set => this.RaiseAndSetIfChanged(ref _vehicleType, value);
+        set => SetProperty(ref _vehicleType, value);
     }
 
     /// <summary>
@@ -138,7 +127,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double MaxSteerAngle
     {
         get => _maxSteerAngle;
-        set => this.RaiseAndSetIfChanged(ref _maxSteerAngle, value);
+        set => SetProperty(ref _maxSteerAngle, value);
     }
 
     /// <summary>
@@ -147,7 +136,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double MinSteerAngle
     {
         get => _minSteerAngle;
-        set => this.RaiseAndSetIfChanged(ref _minSteerAngle, value);
+        set => SetProperty(ref _minSteerAngle, value);
     }
 
     /// <summary>
@@ -156,7 +145,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double AckermannPercentage
     {
         get => _ackermannPercentage;
-        set => this.RaiseAndSetIfChanged(ref _ackermannPercentage, value);
+        set => SetProperty(ref _ackermannPercentage, value);
     }
 
     /// <summary>
@@ -165,7 +154,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double SteeringDeadband
     {
         get => _steeringDeadband;
-        set => this.RaiseAndSetIfChanged(ref _steeringDeadband, value);
+        set => SetProperty(ref _steeringDeadband, value);
     }
 
     #endregion
@@ -178,7 +167,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double AntennaHeight
     {
         get => _antennaHeight;
-        set => this.RaiseAndSetIfChanged(ref _antennaHeight, value);
+        set => SetProperty(ref _antennaHeight, value);
     }
 
     /// <summary>
@@ -187,7 +176,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double AntennaOffset
     {
         get => _antennaOffset;
-        set => this.RaiseAndSetIfChanged(ref _antennaOffset, value);
+        set => SetProperty(ref _antennaOffset, value);
     }
 
     /// <summary>
@@ -196,7 +185,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double AntennaForwardOffset
     {
         get => _antennaForwardOffset;
-        set => this.RaiseAndSetIfChanged(ref _antennaForwardOffset, value);
+        set => SetProperty(ref _antennaForwardOffset, value);
     }
 
     #endregion
@@ -209,7 +198,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double ImplementWidth
     {
         get => _implementWidth;
-        set => this.RaiseAndSetIfChanged(ref _implementWidth, value);
+        set => SetProperty(ref _implementWidth, value);
     }
 
     /// <summary>
@@ -218,7 +207,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double ImplementOffset
     {
         get => _implementOffset;
-        set => this.RaiseAndSetIfChanged(ref _implementOffset, value);
+        set => SetProperty(ref _implementOffset, value);
     }
 
     /// <summary>
@@ -227,7 +216,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public int NumberOfSections
     {
         get => _numberOfSections;
-        set => this.RaiseAndSetIfChanged(ref _numberOfSections, value);
+        set => SetProperty(ref _numberOfSections, value);
     }
 
     /// <summary>
@@ -236,7 +225,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public bool IsTrailing
     {
         get => _isTrailing;
-        set => this.RaiseAndSetIfChanged(ref _isTrailing, value);
+        set => SetProperty(ref _isTrailing, value);
     }
 
     #endregion
@@ -249,7 +238,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double MinLookAhead
     {
         get => _minLookAhead;
-        set => this.RaiseAndSetIfChanged(ref _minLookAhead, value);
+        set => SetProperty(ref _minLookAhead, value);
     }
 
     /// <summary>
@@ -258,7 +247,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double MaxLookAhead
     {
         get => _maxLookAhead;
-        set => this.RaiseAndSetIfChanged(ref _maxLookAhead, value);
+        set => SetProperty(ref _maxLookAhead, value);
     }
 
     /// <summary>
@@ -267,7 +256,7 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     public double LookAheadSpeedGain
     {
         get => _lookAheadSpeedGain;
-        set => this.RaiseAndSetIfChanged(ref _lookAheadSpeedGain, value);
+        set => SetProperty(ref _lookAheadSpeedGain, value);
     }
 
     #endregion
@@ -277,17 +266,17 @@ public class ConfigVehicleControlViewModel : DialogViewModelBase
     /// <summary>
     /// Gets the command to save all vehicle parameters.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> SaveConfigCommand { get; }
+    public ICommand SaveConfigCommand { get; }
 
     /// <summary>
     /// Gets the command to reset to defaults.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> ResetCommand { get; }
+    public ICommand ResetCommand { get; }
 
     /// <summary>
     /// Gets the command to load a preset configuration.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> LoadPresetCommand { get; }
+    public ICommand LoadPresetCommand { get; }
 
     #endregion
 

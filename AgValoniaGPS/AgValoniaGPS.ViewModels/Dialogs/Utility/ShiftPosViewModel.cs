@@ -1,6 +1,6 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -42,8 +42,8 @@ public class ShiftPosViewModel : DialogViewModelBase
         get => _offsetX;
         set
         {
-            this.RaiseAndSetIfChanged(ref _offsetX, value);
-            this.RaisePropertyChanged(nameof(NewX));
+            SetProperty(ref _offsetX, value);
+            OnPropertyChanged(nameof(NewX));
         }
     }
 
@@ -55,8 +55,8 @@ public class ShiftPosViewModel : DialogViewModelBase
         get => _offsetY;
         set
         {
-            this.RaiseAndSetIfChanged(ref _offsetY, value);
-            this.RaisePropertyChanged(nameof(NewY));
+            SetProperty(ref _offsetY, value);
+            OnPropertyChanged(nameof(NewY));
         }
     }
 
@@ -68,8 +68,8 @@ public class ShiftPosViewModel : DialogViewModelBase
         get => _originalX;
         set
         {
-            this.RaiseAndSetIfChanged(ref _originalX, value);
-            this.RaisePropertyChanged(nameof(NewX));
+            SetProperty(ref _originalX, value);
+            OnPropertyChanged(nameof(NewX));
         }
     }
 
@@ -81,8 +81,8 @@ public class ShiftPosViewModel : DialogViewModelBase
         get => _originalY;
         set
         {
-            this.RaiseAndSetIfChanged(ref _originalY, value);
-            this.RaisePropertyChanged(nameof(NewY));
+            SetProperty(ref _originalY, value);
+            OnPropertyChanged(nameof(NewY));
         }
     }
 
@@ -92,7 +92,7 @@ public class ShiftPosViewModel : DialogViewModelBase
     public string Units
     {
         get => _units;
-        set => this.RaiseAndSetIfChanged(ref _units, value);
+        set => SetProperty(ref _units, value);
     }
 
     /// <summary>

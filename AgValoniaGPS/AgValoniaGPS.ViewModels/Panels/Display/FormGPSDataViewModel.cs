@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Interfaces;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 
 namespace AgValoniaGPS.ViewModels.Panels.Display;
@@ -54,7 +54,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public string FixQualityText
     {
         get => _fixQualityText;
-        set => this.RaiseAndSetIfChanged(ref _fixQualityText, value);
+        set => SetProperty(ref _fixQualityText, value);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double Latitude
     {
         get => _latitude;
-        set => this.RaiseAndSetIfChanged(ref _latitude, value);
+        set => SetProperty(ref _latitude, value);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double Longitude
     {
         get => _longitude;
-        set => this.RaiseAndSetIfChanged(ref _longitude, value);
+        set => SetProperty(ref _longitude, value);
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double Altitude
     {
         get => _altitude;
-        set => this.RaiseAndSetIfChanged(ref _altitude, value);
+        set => SetProperty(ref _altitude, value);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double SpeedKmh
     {
         get => _speedKmh;
-        set => this.RaiseAndSetIfChanged(ref _speedKmh, value);
+        set => SetProperty(ref _speedKmh, value);
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double HeadingDegrees
     {
         get => _headingDegrees;
-        set => this.RaiseAndSetIfChanged(ref _headingDegrees, value);
+        set => SetProperty(ref _headingDegrees, value);
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double RollAngleDegrees
     {
         get => _rollAngleDegrees;
-        set => this.RaiseAndSetIfChanged(ref _rollAngleDegrees, value);
+        set => SetProperty(ref _rollAngleDegrees, value);
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public int SatelliteCount
     {
         get => _satelliteCount;
-        set => this.RaiseAndSetIfChanged(ref _satelliteCount, value);
+        set => SetProperty(ref _satelliteCount, value);
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double HDOP
     {
         get => _hdop;
-        set => this.RaiseAndSetIfChanged(ref _hdop, value);
+        set => SetProperty(ref _hdop, value);
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public double AgeOfCorrection
     {
         get => _ageOfCorrection;
-        set => this.RaiseAndSetIfChanged(ref _ageOfCorrection, value);
+        set => SetProperty(ref _ageOfCorrection, value);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public partial class FormGPSDataViewModel : PanelViewModelBase
     public bool NTRIPConnected
     {
         get => _ntripConnected;
-        set => this.RaiseAndSetIfChanged(ref _ntripConnected, value);
+        set => SetProperty(ref _ntripConnected, value);
     }
 
     private void OnPositionUpdated(object? sender, PositionUpdateEventArgs e)

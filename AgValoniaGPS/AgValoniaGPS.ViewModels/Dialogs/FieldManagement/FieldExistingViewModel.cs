@@ -1,13 +1,11 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -33,9 +31,9 @@ public class FieldExistingViewModel : DialogViewModelBase
 
         Fields = new ObservableCollection<FieldInfo>();
 
-        LoadCommand = ReactiveCommand.Create(OnLoad);
-        DeleteCommand = ReactiveCommand.Create(OnDelete, this.WhenAnyValue(x => x.SelectedField).Select(field => field != null));
-        RefreshCommand = ReactiveCommand.Create(OnRefresh);
+        LoadCommand = new RelayCommand(OnLoad);
+        DeleteCommand = new RelayCommand(OnDelete);
+        RefreshCommand = new RelayCommand(OnRefresh);
 
         // Load fields on initialization if directory is provided
         if (!string.IsNullOrEmpty(fieldsDirectory))
@@ -57,7 +55,7 @@ public class FieldExistingViewModel : DialogViewModelBase
         get => _selectedField;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedField, value);
+            SetProperty(ref _selectedField, value);
             UpdateFieldPreview();
         }
     }
@@ -68,7 +66,7 @@ public class FieldExistingViewModel : DialogViewModelBase
     public string FieldPreview
     {
         get => _fieldPreview;
-        set => this.RaiseAndSetIfChanged(ref _fieldPreview, value);
+        set => SetProperty(ref _fieldPreview, value);
     }
 
     /// <summary>
@@ -79,7 +77,7 @@ public class FieldExistingViewModel : DialogViewModelBase
         get => _fieldsDirectory;
         set
         {
-            this.RaiseAndSetIfChanged(ref _fieldsDirectory, value);
+            SetProperty(ref _fieldsDirectory, value);
             OnRefresh();
         }
     }

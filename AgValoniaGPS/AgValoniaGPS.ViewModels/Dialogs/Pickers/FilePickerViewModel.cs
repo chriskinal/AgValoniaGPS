@@ -1,10 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Pickers;
 
@@ -24,9 +24,9 @@ public class FilePickerViewModel : DialogViewModelBase
     /// </summary>
     public FilePickerViewModel()
     {
-        NavigateUpCommand = ReactiveCommand.Create(NavigateUp, this.WhenAnyValue(x => x.CanNavigateUp));
-        NavigateToCommand = ReactiveCommand.Create<string>(NavigateTo);
-        SelectFileCommand = ReactiveCommand.Create<FileItem>(SelectFile);
+        NavigateUpCommand = new RelayCommand(NavigateUp);
+        NavigateToCommand = new RelayCommand<string>(NavigateTo);
+        SelectFileCommand = new RelayCommand<FileItem>(SelectFile);
 
         LoadCurrentDirectory();
     }
@@ -48,9 +48,9 @@ public class FilePickerViewModel : DialogViewModelBase
         get => _currentPath;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentPath, value ?? string.Empty);
+            SetProperty(ref _currentPath, value ?? string.Empty);
             LoadCurrentDirectory();
-            this.RaisePropertyChanged(nameof(CanNavigateUp));
+            OnPropertyChanged(nameof(CanNavigateUp));
         }
     }
 
@@ -60,7 +60,7 @@ public class FilePickerViewModel : DialogViewModelBase
     public ObservableCollection<FileItem> Files
     {
         get => _files;
-        private set => this.RaiseAndSetIfChanged(ref _files, value);
+        private set => SetProperty(ref _files, value);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class FilePickerViewModel : DialogViewModelBase
         get => _selectedFile;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedFile, value);
+            SetProperty(ref _selectedFile, value);
             if (value != null)
             {
                 SelectedFilePath = value.FullPath;
@@ -87,7 +87,7 @@ public class FilePickerViewModel : DialogViewModelBase
         get => _filterExtension;
         set
         {
-            this.RaiseAndSetIfChanged(ref _filterExtension, value ?? "*");
+            SetProperty(ref _filterExtension, value ?? "*");
             LoadCurrentDirectory();
         }
     }
@@ -98,7 +98,7 @@ public class FilePickerViewModel : DialogViewModelBase
     public string SelectedFilePath
     {
         get => _selectedFilePath;
-        set => this.RaiseAndSetIfChanged(ref _selectedFilePath, value ?? string.Empty);
+        set => SetProperty(ref _selectedFilePath, value ?? string.Empty);
     }
 
     /// <summary>

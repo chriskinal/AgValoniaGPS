@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -28,12 +27,10 @@ public class ABDrawViewModel : DialogViewModelBase
     {
         // TODO: Inject IABLineService for AB line creation
 
-        SetPointACommand = ReactiveCommand.Create<Position>(OnSetPointA);
-        SetPointBCommand = ReactiveCommand.Create<Position>(OnSetPointB);
-        ClearCommand = ReactiveCommand.Create(OnClear);
-        CreateABLineCommand = ReactiveCommand.Create(OnCreateABLine,
-            this.WhenAnyValue(x => x.IsPointASet, x => x.IsPointBSet)
-                .Select(tuple => tuple.Item1 && tuple.Item2));
+        SetPointACommand = new RelayCommand<Position>(OnSetPointA);
+        SetPointBCommand = new RelayCommand<Position>(OnSetPointB);
+        ClearCommand = new RelayCommand(OnClear);
+        CreateABLineCommand = new RelayCommand(OnCreateABLine);
     }
 
     /// <summary>
@@ -44,8 +41,8 @@ public class ABDrawViewModel : DialogViewModelBase
         get => _pointA;
         set
         {
-            this.RaiseAndSetIfChanged(ref _pointA, value);
-            this.RaisePropertyChanged(nameof(PointAFormatted));
+            SetProperty(ref _pointA, value);
+            OnPropertyChanged(nameof(PointAFormatted));
             UpdateLineCalculations();
         }
     }
@@ -66,8 +63,8 @@ public class ABDrawViewModel : DialogViewModelBase
         get => _pointB;
         set
         {
-            this.RaiseAndSetIfChanged(ref _pointB, value);
-            this.RaisePropertyChanged(nameof(PointBFormatted));
+            SetProperty(ref _pointB, value);
+            OnPropertyChanged(nameof(PointBFormatted));
             UpdateLineCalculations();
         }
     }
@@ -88,8 +85,8 @@ public class ABDrawViewModel : DialogViewModelBase
         get => _lineHeading;
         set
         {
-            this.RaiseAndSetIfChanged(ref _lineHeading, value);
-            this.RaisePropertyChanged(nameof(LineHeadingFormatted));
+            SetProperty(ref _lineHeading, value);
+            OnPropertyChanged(nameof(LineHeadingFormatted));
         }
     }
 
@@ -106,8 +103,8 @@ public class ABDrawViewModel : DialogViewModelBase
         get => _lineLength;
         set
         {
-            this.RaiseAndSetIfChanged(ref _lineLength, value);
-            this.RaisePropertyChanged(nameof(LineLengthFormatted));
+            SetProperty(ref _lineLength, value);
+            OnPropertyChanged(nameof(LineLengthFormatted));
         }
     }
 
@@ -122,7 +119,7 @@ public class ABDrawViewModel : DialogViewModelBase
     public bool IsPointASet
     {
         get => _isPointASet;
-        private set => this.RaiseAndSetIfChanged(ref _isPointASet, value);
+        private set => SetProperty(ref _isPointASet, value);
     }
 
     /// <summary>
@@ -131,7 +128,7 @@ public class ABDrawViewModel : DialogViewModelBase
     public bool IsPointBSet
     {
         get => _isPointBSet;
-        private set => this.RaiseAndSetIfChanged(ref _isPointBSet, value);
+        private set => SetProperty(ref _isPointBSet, value);
     }
 
     /// <summary>
@@ -140,7 +137,7 @@ public class ABDrawViewModel : DialogViewModelBase
     public string Instructions
     {
         get => _instructions;
-        set => this.RaiseAndSetIfChanged(ref _instructions, value);
+        set => SetProperty(ref _instructions, value);
     }
 
     /// <summary>

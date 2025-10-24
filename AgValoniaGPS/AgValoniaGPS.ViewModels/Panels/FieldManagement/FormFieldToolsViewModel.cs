@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -34,10 +34,10 @@ public partial class FormFieldToolsViewModel : PanelViewModelBase
         Title = "Field Tools";
 
         // Commands
-        GenerateHeadlandCommand = ReactiveCommand.Create(OnGenerateHeadland);
-        ClearHeadlandCommand = ReactiveCommand.Create(OnClearHeadland);
-        CalculateFieldAreaCommand = ReactiveCommand.Create(OnCalculateFieldArea);
-        ExportFieldDataCommand = ReactiveCommand.Create(OnExportFieldData);
+        GenerateHeadlandCommand = new RelayCommand(OnGenerateHeadland);
+        ClearHeadlandCommand = new RelayCommand(OnClearHeadland);
+        CalculateFieldAreaCommand = new RelayCommand(OnCalculateFieldArea);
+        ExportFieldDataCommand = new RelayCommand(OnExportFieldData);
 
         // Initialize values
         UpdateAreaCalculations();
@@ -54,7 +54,7 @@ public partial class FormFieldToolsViewModel : PanelViewModelBase
         set
         {
             var clampedValue = Math.Clamp(value, 1, 10);
-            this.RaiseAndSetIfChanged(ref _headlandPasses, clampedValue);
+            SetProperty(ref _headlandPasses, clampedValue);
             UpdateAreaCalculations();
         }
     }
@@ -68,7 +68,7 @@ public partial class FormFieldToolsViewModel : PanelViewModelBase
         set
         {
             var clampedValue = Math.Max(1.0, value);
-            this.RaiseAndSetIfChanged(ref _headlandSpacing, clampedValue);
+            SetProperty(ref _headlandSpacing, clampedValue);
             UpdateAreaCalculations();
         }
     }
@@ -79,7 +79,7 @@ public partial class FormFieldToolsViewModel : PanelViewModelBase
     public double HeadlandAreaHectares
     {
         get => _headlandAreaHectares;
-        set => this.RaiseAndSetIfChanged(ref _headlandAreaHectares, value);
+        set => SetProperty(ref _headlandAreaHectares, value);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public partial class FormFieldToolsViewModel : PanelViewModelBase
     public double InnerBoundaryAreaHectares
     {
         get => _innerBoundaryAreaHectares;
-        set => this.RaiseAndSetIfChanged(ref _innerBoundaryAreaHectares, value);
+        set => SetProperty(ref _innerBoundaryAreaHectares, value);
     }
 
     public ICommand GenerateHeadlandCommand { get; }

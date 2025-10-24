@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
+using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -19,8 +19,8 @@ public class SaveOrNotViewModel : DialogViewModelBase
     /// </summary>
     public SaveOrNotViewModel()
     {
-        SaveCommand = ReactiveCommand.Create(OnSave);
-        DontSaveCommand = ReactiveCommand.Create(OnDontSave);
+        SaveCommand = new RelayCommand(OnSave);
+        DontSaveCommand = new RelayCommand(OnDontSave);
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ public class SaveOrNotViewModel : DialogViewModelBase
     public string Title
     {
         get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
+        set => SetProperty(ref _title, value);
     }
 
     /// <summary>
@@ -58,18 +58,18 @@ public class SaveOrNotViewModel : DialogViewModelBase
     public string Message
     {
         get => _message;
-        set => this.RaiseAndSetIfChanged(ref _message, value);
+        set => SetProperty(ref _message, value);
     }
 
     /// <summary>
     /// Gets the command to save changes and close.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+    public ICommand SaveCommand { get; }
 
     /// <summary>
     /// Gets the command to discard changes and close.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> DontSaveCommand { get; }
+    public ICommand DontSaveCommand { get; }
 
     /// <summary>
     /// Called when Save button is clicked.

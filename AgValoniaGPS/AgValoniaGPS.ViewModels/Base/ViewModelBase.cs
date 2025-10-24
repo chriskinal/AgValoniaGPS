@@ -1,14 +1,15 @@
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Runtime.CompilerServices;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Base;
 
 /// <summary>
 /// Base class for all ViewModels providing common functionality for property change notification
-/// and state management using ReactiveUI.
+/// and state management using CommunityToolkit.Mvvm.
 /// </summary>
-public abstract class ViewModelBase : ReactiveObject
+public abstract class ViewModelBase : ObservableObject
 {
     private bool _isBusy;
     private string _errorMessage = string.Empty;
@@ -20,7 +21,7 @@ public abstract class ViewModelBase : ReactiveObject
     public bool IsBusy
     {
         get => _isBusy;
-        set => this.RaiseAndSetIfChanged(ref _isBusy, value);
+        set => SetProperty(ref _isBusy, value);
     }
 
     /// <summary>
@@ -30,7 +31,7 @@ public abstract class ViewModelBase : ReactiveObject
     public string ErrorMessage
     {
         get => _errorMessage;
-        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
+        set => SetProperty(ref _errorMessage, value);
     }
 
     /// <summary>
@@ -40,24 +41,14 @@ public abstract class ViewModelBase : ReactiveObject
 
     /// <summary>
     /// Helper method to set a property value and raise property changed notification.
-    /// This is a convenience wrapper around ReactiveUI's RaiseAndSetIfChanged.
+    /// This uses CommunityToolkit.Mvvm's SetProperty from ObservableObject base class.
+    /// Note: This method is inherited from ObservableObject and doesn't need to be redefined,
+    /// but we keep this documentation for clarity about its availability.
     /// </summary>
-    /// <typeparam name="T">The type of the property.</typeparam>
-    /// <param name="field">Reference to the backing field.</param>
-    /// <param name="value">The new value to set.</param>
-    /// <param name="propertyName">The name of the property (automatically captured via CallerMemberName).</param>
-    /// <returns>True if the value changed, false otherwise.</returns>
-    protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value))
-        {
-            return false;
-        }
-
-        field = value;
-        this.RaisePropertyChanged(propertyName);
-        return true;
-    }
+    /// <remarks>
+    /// SetProperty is provided by ObservableObject base class.
+    /// Usage: SetProperty(ref _field, value);
+    /// </remarks>
 
     /// <summary>
     /// Clears any error message.

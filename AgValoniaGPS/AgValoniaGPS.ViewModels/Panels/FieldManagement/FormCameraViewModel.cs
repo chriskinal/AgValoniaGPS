@@ -1,5 +1,5 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -22,11 +22,11 @@ public partial class FormCameraViewModel : PanelViewModelBase
         Title = "Camera Controls";
 
         // Commands
-        ZoomInCommand = ReactiveCommand.Create(OnZoomIn);
-        ZoomOutCommand = ReactiveCommand.Create(OnZoomOut);
-        ZoomToFitCommand = ReactiveCommand.Create(OnZoomToFit);
-        ResetCameraCommand = ReactiveCommand.Create(OnResetCamera);
-        ToggleFollowCommand = ReactiveCommand.Create(OnToggleFollow);
+        ZoomInCommand = new RelayCommand(OnZoomIn);
+        ZoomOutCommand = new RelayCommand(OnZoomOut);
+        ZoomToFitCommand = new RelayCommand(OnZoomToFit);
+        ResetCameraCommand = new RelayCommand(OnResetCamera);
+        ToggleFollowCommand = new RelayCommand(OnToggleFollow);
     }
 
     public string Title { get; } = "Camera Controls";
@@ -40,7 +40,7 @@ public partial class FormCameraViewModel : PanelViewModelBase
         set
         {
             var clampedValue = Math.Clamp(value, 1.0, 20.0);
-            this.RaiseAndSetIfChanged(ref _zoomLevel, clampedValue);
+            SetProperty(ref _zoomLevel, clampedValue);
         }
     }
 
@@ -50,7 +50,7 @@ public partial class FormCameraViewModel : PanelViewModelBase
     public string CameraMode
     {
         get => _cameraMode;
-        set => this.RaiseAndSetIfChanged(ref _cameraMode, value);
+        set => SetProperty(ref _cameraMode, value);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public partial class FormCameraViewModel : PanelViewModelBase
     public double PanOffsetX
     {
         get => _panOffsetX;
-        set => this.RaiseAndSetIfChanged(ref _panOffsetX, value);
+        set => SetProperty(ref _panOffsetX, value);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public partial class FormCameraViewModel : PanelViewModelBase
     public double PanOffsetY
     {
         get => _panOffsetY;
-        set => this.RaiseAndSetIfChanged(ref _panOffsetY, value);
+        set => SetProperty(ref _panOffsetY, value);
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public partial class FormCameraViewModel : PanelViewModelBase
         get => _isFollowingVehicle;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isFollowingVehicle, value);
+            SetProperty(ref _isFollowingVehicle, value);
             if (value)
             {
                 CameraMode = "Auto";

@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Services.Interfaces;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -34,9 +34,9 @@ public partial class FormTramLineViewModel : PanelViewModelBase
         Title = "Tram Lines";
 
         // Commands
-        GenerateCommand = ReactiveCommand.Create(OnGenerate, this.WhenAnyValue(x => x.CanGenerate));
-        ClearCommand = ReactiveCommand.Create(OnClear);
-        ToggleEnabledCommand = ReactiveCommand.Create(OnToggleEnabled);
+        GenerateCommand = new RelayCommand(OnGenerate);
+        ClearCommand = new RelayCommand(OnClear);
+        ToggleEnabledCommand = new RelayCommand(OnToggleEnabled);
 
         // Subscribe to service events
         _tramLineService.TramLineProximity += OnTramLineProximity;
@@ -57,7 +57,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
         {
             if (value >= 1.0 && value <= 100.0)
             {
-                this.RaiseAndSetIfChanged(ref _spacing, value);
+                SetProperty(ref _spacing, value);
                 _tramLineService.SetSpacing(value);
             }
         }
@@ -73,7 +73,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
         {
             if (value >= 1 && value <= 20)
             {
-                this.RaiseAndSetIfChanged(ref _passesBeforeTram, value);
+                SetProperty(ref _passesBeforeTram, value);
             }
         }
     }
@@ -88,7 +88,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
         {
             if (value >= 0 && value <= 10)
             {
-                this.RaiseAndSetIfChanged(ref _skipLines, value);
+                SetProperty(ref _skipLines, value);
             }
         }
     }
@@ -99,7 +99,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
     public bool TramEnabled
     {
         get => _tramEnabled;
-        set => this.RaiseAndSetIfChanged(ref _tramEnabled, value);
+        set => SetProperty(ref _tramEnabled, value);
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
     public string Mode
     {
         get => _mode;
-        set => this.RaiseAndSetIfChanged(ref _mode, value);
+        set => SetProperty(ref _mode, value);
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
     public bool CanGenerate
     {
         get => _canGenerate;
-        set => this.RaiseAndSetIfChanged(ref _canGenerate, value);
+        set => SetProperty(ref _canGenerate, value);
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
     public int TramLineCount
     {
         get => _tramLineCount;
-        set => this.RaiseAndSetIfChanged(ref _tramLineCount, value);
+        set => SetProperty(ref _tramLineCount, value);
     }
 
     public ICommand GenerateCommand { get; }
@@ -198,7 +198,7 @@ public partial class FormTramLineViewModel : PanelViewModelBase
 
         // Update spacing from service
         _spacing = _tramLineService.GetSpacing();
-        this.RaisePropertyChanged(nameof(Spacing));
+        OnPropertyChanged(nameof(Spacing));
     }
 
     private void UpdateTramLineCount()

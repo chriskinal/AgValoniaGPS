@@ -1,10 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Pickers;
 
@@ -18,7 +18,7 @@ public class DrivePickerViewModel : PickerViewModelBase<DriveInfoItem>
     /// </summary>
     public DrivePickerViewModel()
     {
-        RefreshDrivesCommand = ReactiveCommand.Create(LoadDrives);
+        RefreshDrivesCommand = new RelayCommand(LoadDrives);
         LoadDrives();
     }
 

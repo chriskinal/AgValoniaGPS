@@ -1,13 +1,11 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
-using System.Reactive.Linq;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -30,14 +28,10 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
     {
         RecordedPoints = new ObservableCollection<Position>();
 
-        PlayCommand = ReactiveCommand.Create(OnPlay,
-            this.WhenAnyValue(x => x.IsPlaying, x => x.RecordedPoints.Count,
-                (playing, count) => !playing && count > 0));
-        PauseCommand = ReactiveCommand.Create(OnPause,
-            this.WhenAnyValue(x => x.IsPlaying).Select(playing => playing));
-        StopCommand = ReactiveCommand.Create(OnStop,
-            this.WhenAnyValue(x => x.IsPlaying).Select(playing => playing));
-        SeekCommand = ReactiveCommand.Create<int>(OnSeek);
+        PlayCommand = new RelayCommand(OnPlay);
+        PauseCommand = new RelayCommand(OnPause);
+        StopCommand = new RelayCommand(OnStop);
+        SeekCommand = new RelayCommand<int>(OnSeek);
     }
 
     /// <summary>
@@ -53,7 +47,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
         get => _currentPointIndex;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentPointIndex, value);
+            SetProperty(ref _currentPointIndex, value);
             UpdateCurrentTime();
         }
     }
@@ -68,7 +62,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
         {
             if (value >= 0.5 && value <= 4.0)
             {
-                this.RaiseAndSetIfChanged(ref _playbackSpeed, value);
+                SetProperty(ref _playbackSpeed, value);
             }
         }
     }
@@ -79,7 +73,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
     public bool IsPlaying
     {
         get => _isPlaying;
-        set => this.RaiseAndSetIfChanged(ref _isPlaying, value);
+        set => SetProperty(ref _isPlaying, value);
     }
 
     /// <summary>
@@ -88,7 +82,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
     public TimeSpan TotalDuration
     {
         get => _totalDuration;
-        set => this.RaiseAndSetIfChanged(ref _totalDuration, value);
+        set => SetProperty(ref _totalDuration, value);
     }
 
     /// <summary>
@@ -97,7 +91,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
     public TimeSpan CurrentTime
     {
         get => _currentTime;
-        set => this.RaiseAndSetIfChanged(ref _currentTime, value);
+        set => SetProperty(ref _currentTime, value);
     }
 
     /// <summary>
@@ -146,7 +140,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
         TotalDuration = duration;
         CurrentPointIndex = 0;
         UpdateCurrentTime();
-        this.RaisePropertyChanged(nameof(TotalPoints));
+        OnPropertyChanged(nameof(TotalPoints));
     }
 
     /// <summary>
@@ -215,7 +209,7 @@ public class BoundaryPlayerViewModel : DialogViewModelBase
             await Task.Delay(delay, cancellationToken);
 
             CurrentPointIndex++;
-            this.RaisePropertyChanged(nameof(Progress));
+            OnPropertyChanged(nameof(Progress));
         }
 
         // Reached end

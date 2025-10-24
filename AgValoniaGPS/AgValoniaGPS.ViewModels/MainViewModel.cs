@@ -1,6 +1,7 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
-using ReactiveUI;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.Interfaces;
@@ -13,7 +14,7 @@ using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
 
-public class MainViewModel : ReactiveObject
+public class MainViewModel : ObservableObject
 {
     private readonly IUdpCommunicationService _udpService;
     private readonly IGpsService _gpsService;
@@ -107,7 +108,7 @@ public class MainViewModel : ReactiveObject
         _positionService.PositionUpdated += OnPositionUpdated;
         _headingService.HeadingChanged += OnHeadingChanged;
 
-        // Initialize panel toggle commands on UI thread (fixes ReactiveCommand threading issues)
+        // Initialize panel toggle commands
         InitializePanelToggleCommands();
 
         // Start UDP communication
@@ -203,89 +204,89 @@ public class MainViewModel : ReactiveObject
     public string StatusMessage
     {
         get => _statusMessage;
-        set => this.RaiseAndSetIfChanged(ref _statusMessage, value);
+        set => SetProperty(ref _statusMessage, value);
     }
 
     public double Latitude
     {
         get => _latitude;
-        set => this.RaiseAndSetIfChanged(ref _latitude, value);
+        set => SetProperty(ref _latitude, value);
     }
 
     public double Longitude
     {
         get => _longitude;
-        set => this.RaiseAndSetIfChanged(ref _longitude, value);
+        set => SetProperty(ref _longitude, value);
     }
 
     public double Speed
     {
         get => _speed;
-        set => this.RaiseAndSetIfChanged(ref _speed, value);
+        set => SetProperty(ref _speed, value);
     }
 
     public int SatelliteCount
     {
         get => _satelliteCount;
-        set => this.RaiseAndSetIfChanged(ref _satelliteCount, value);
+        set => SetProperty(ref _satelliteCount, value);
     }
 
     public string FixQuality
     {
         get => _fixQuality;
-        set => this.RaiseAndSetIfChanged(ref _fixQuality, value);
+        set => SetProperty(ref _fixQuality, value);
     }
 
     public string NetworkStatus
     {
         get => _networkStatus;
-        set => this.RaiseAndSetIfChanged(ref _networkStatus, value);
+        set => SetProperty(ref _networkStatus, value);
     }
 
     // AutoSteer Hello and Data properties
     public bool IsAutoSteerHelloOk
     {
         get => _isAutoSteerHelloOk;
-        set => this.RaiseAndSetIfChanged(ref _isAutoSteerHelloOk, value);
+        set => SetProperty(ref _isAutoSteerHelloOk, value);
     }
 
     public bool IsAutoSteerDataOk
     {
         get => _isAutoSteerDataOk;
-        set => this.RaiseAndSetIfChanged(ref _isAutoSteerDataOk, value);
+        set => SetProperty(ref _isAutoSteerDataOk, value);
     }
 
     // Machine Hello and Data properties
     public bool IsMachineHelloOk
     {
         get => _isMachineHelloOk;
-        set => this.RaiseAndSetIfChanged(ref _isMachineHelloOk, value);
+        set => SetProperty(ref _isMachineHelloOk, value);
     }
 
     public bool IsMachineDataOk
     {
         get => _isMachineDataOk;
-        set => this.RaiseAndSetIfChanged(ref _isMachineDataOk, value);
+        set => SetProperty(ref _isMachineDataOk, value);
     }
 
     // IMU Hello and Data properties
     public bool IsImuHelloOk
     {
         get => _isImuHelloOk;
-        set => this.RaiseAndSetIfChanged(ref _isImuHelloOk, value);
+        set => SetProperty(ref _isImuHelloOk, value);
     }
 
     public bool IsImuDataOk
     {
         get => _isImuDataOk;
-        set => this.RaiseAndSetIfChanged(ref _isImuDataOk, value);
+        set => SetProperty(ref _isImuDataOk, value);
     }
 
     // GPS Hello and Data properties (GPS doesn't have hello, just data from NMEA)
     public bool IsGpsDataOk
     {
         get => _isGpsDataOk;
-        set => this.RaiseAndSetIfChanged(ref _isGpsDataOk, value);
+        set => SetProperty(ref _isGpsDataOk, value);
     }
 
     // NTRIP properties
@@ -301,13 +302,13 @@ public class MainViewModel : ReactiveObject
     public bool IsNtripConnected
     {
         get => _isNtripConnected;
-        set => this.RaiseAndSetIfChanged(ref _isNtripConnected, value);
+        set => SetProperty(ref _isNtripConnected, value);
     }
 
     public string NtripStatus
     {
         get => _ntripStatus;
-        set => this.RaiseAndSetIfChanged(ref _ntripStatus, value);
+        set => SetProperty(ref _ntripStatus, value);
     }
 
     public string NtripBytesReceived
@@ -318,67 +319,67 @@ public class MainViewModel : ReactiveObject
     public string NtripCasterAddress
     {
         get => _ntripCasterAddress;
-        set => this.RaiseAndSetIfChanged(ref _ntripCasterAddress, value);
+        set => SetProperty(ref _ntripCasterAddress, value);
     }
 
     public int NtripCasterPort
     {
         get => _ntripCasterPort;
-        set => this.RaiseAndSetIfChanged(ref _ntripCasterPort, value);
+        set => SetProperty(ref _ntripCasterPort, value);
     }
 
     public string NtripMountPoint
     {
         get => _ntripMountPoint;
-        set => this.RaiseAndSetIfChanged(ref _ntripMountPoint, value);
+        set => SetProperty(ref _ntripMountPoint, value);
     }
 
     public string NtripUsername
     {
         get => _ntripUsername;
-        set => this.RaiseAndSetIfChanged(ref _ntripUsername, value);
+        set => SetProperty(ref _ntripUsername, value);
     }
 
     public string NtripPassword
     {
         get => _ntripPassword;
-        set => this.RaiseAndSetIfChanged(ref _ntripPassword, value);
+        set => SetProperty(ref _ntripPassword, value);
     }
 
     public string DebugLog
     {
         get => _debugLog;
-        set => this.RaiseAndSetIfChanged(ref _debugLog, value);
+        set => SetProperty(ref _debugLog, value);
     }
 
     public double Easting
     {
         get => _easting;
-        set => this.RaiseAndSetIfChanged(ref _easting, value);
+        set => SetProperty(ref _easting, value);
     }
 
     public double Northing
     {
         get => _northing;
-        set => this.RaiseAndSetIfChanged(ref _northing, value);
+        set => SetProperty(ref _northing, value);
     }
 
     public double Heading
     {
         get => _heading;
-        set => this.RaiseAndSetIfChanged(ref _heading, value);
+        set => SetProperty(ref _heading, value);
     }
 
     public string HeadingSource
     {
         get => _headingSource;
-        set => this.RaiseAndSetIfChanged(ref _headingSource, value);
+        set => SetProperty(ref _headingSource, value);
     }
 
     public bool IsReversing
     {
         get => _isReversing;
-        set => this.RaiseAndSetIfChanged(ref _isReversing, value);
+        set => SetProperty(ref _isReversing, value);
     }
 
     /// <summary>
@@ -570,7 +571,7 @@ public class MainViewModel : ReactiveObject
     private void UpdateNtripDataProperties()
     {
         _ntripBytesReceived = _ntripService.TotalBytesReceived;
-        this.RaisePropertyChanged(nameof(NtripBytesReceived));
+        OnPropertyChanged(nameof(NtripBytesReceived));
     }
 
     private void UpdateStatusMessage()
@@ -599,13 +600,13 @@ public class MainViewModel : ReactiveObject
     public Field? ActiveField
     {
         get => _activeField;
-        set => this.RaiseAndSetIfChanged(ref _activeField, value);
+        set => SetProperty(ref _activeField, value);
     }
 
     public string FieldsRootDirectory
     {
         get => _fieldsRootDirectory;
-        set => this.RaiseAndSetIfChanged(ref _fieldsRootDirectory, value);
+        set => SetProperty(ref _fieldsRootDirectory, value);
     }
 
     public string? ActiveFieldName => ActiveField?.Name;
@@ -636,16 +637,16 @@ public class MainViewModel : ReactiveObject
     private void UpdateActiveField(Field? field)
     {
         ActiveField = field;
-        this.RaisePropertyChanged(nameof(ActiveFieldName));
-        this.RaisePropertyChanged(nameof(ActiveFieldArea));
+        OnPropertyChanged(nameof(ActiveFieldName));
+        OnPropertyChanged(nameof(ActiveFieldArea));
 
         // Update field statistics service with new boundary
         if (field?.Boundary != null)
         {
             _fieldStatistics.UpdateBoundaryArea(field.Boundary);
-            this.RaisePropertyChanged(nameof(BoundaryAreaDisplay));
-            this.RaisePropertyChanged(nameof(WorkedAreaDisplay));
-            this.RaisePropertyChanged(nameof(RemainingPercent));
+            OnPropertyChanged(nameof(BoundaryAreaDisplay));
+            OnPropertyChanged(nameof(WorkedAreaDisplay));
+            OnPropertyChanged(nameof(RemainingPercent));
         }
 
         // Update session management with new field
@@ -664,19 +665,19 @@ public class MainViewModel : ReactiveObject
     public string CurrentVehicleProfile
     {
         get => _currentVehicleProfile;
-        set => this.RaiseAndSetIfChanged(ref _currentVehicleProfile, value);
+        set => SetProperty(ref _currentVehicleProfile, value);
     }
 
     public string CurrentUserProfile
     {
         get => _currentUserProfile;
-        set => this.RaiseAndSetIfChanged(ref _currentUserProfile, value);
+        set => SetProperty(ref _currentUserProfile, value);
     }
 
     public string SessionStateInfo
     {
         get => _sessionStateInfo;
-        set => this.RaiseAndSetIfChanged(ref _sessionStateInfo, value);
+        set => SetProperty(ref _sessionStateInfo, value);
     }
 
     /// <summary>
@@ -859,85 +860,85 @@ public class MainViewModel : ReactiveObject
     public bool IsFieldDataPanelVisible
     {
         get => _isFieldDataPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isFieldDataPanelVisible, value);
+        set => SetProperty(ref _isFieldDataPanelVisible, value);
     }
 
     public bool IsGPSDataPanelVisible
     {
         get => _isGPSDataPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isGPSDataPanelVisible, value);
+        set => SetProperty(ref _isGPSDataPanelVisible, value);
     }
 
     public bool IsTramLinePanelVisible
     {
         get => _isTramLinePanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isTramLinePanelVisible, value);
+        set => SetProperty(ref _isTramLinePanelVisible, value);
     }
 
     public bool IsQuickABPanelVisible
     {
         get => _isQuickABPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isQuickABPanelVisible, value);
+        set => SetProperty(ref _isQuickABPanelVisible, value);
     }
 
     public bool IsSteerConfigPanelVisible
     {
         get => _isSteerConfigPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isSteerConfigPanelVisible, value);
+        set => SetProperty(ref _isSteerConfigPanelVisible, value);
     }
 
     public bool IsGeneralConfigPanelVisible
     {
         get => _isGeneralConfigPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isGeneralConfigPanelVisible, value);
+        set => SetProperty(ref _isGeneralConfigPanelVisible, value);
     }
 
     public bool IsDiagnosticsPanelVisible
     {
         get => _isDiagnosticsPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isDiagnosticsPanelVisible, value);
+        set => SetProperty(ref _isDiagnosticsPanelVisible, value);
     }
 
     public bool IsRollCorrectionPanelVisible
     {
         get => _isRollCorrectionPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isRollCorrectionPanelVisible, value);
+        set => SetProperty(ref _isRollCorrectionPanelVisible, value);
     }
 
     public bool IsVehicleConfigPanelVisible
     {
         get => _isVehicleConfigPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isVehicleConfigPanelVisible, value);
+        set => SetProperty(ref _isVehicleConfigPanelVisible, value);
     }
 
     public bool IsFlagsPanelVisible
     {
         get => _isFlagsPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isFlagsPanelVisible, value);
+        set => SetProperty(ref _isFlagsPanelVisible, value);
     }
 
     public bool IsCameraPanelVisible
     {
         get => _isCameraPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isCameraPanelVisible, value);
+        set => SetProperty(ref _isCameraPanelVisible, value);
     }
 
     public bool IsBoundaryEditorPanelVisible
     {
         get => _isBoundaryEditorPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isBoundaryEditorPanelVisible, value);
+        set => SetProperty(ref _isBoundaryEditorPanelVisible, value);
     }
 
     public bool IsFieldToolsPanelVisible
     {
         get => _isFieldToolsPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isFieldToolsPanelVisible, value);
+        set => SetProperty(ref _isFieldToolsPanelVisible, value);
     }
 
     public bool IsFieldFileManagerPanelVisible
     {
         get => _isFieldFileManagerPanelVisible;
-        set => this.RaiseAndSetIfChanged(ref _isFieldFileManagerPanelVisible, value);
+        set => SetProperty(ref _isFieldFileManagerPanelVisible, value);
     }
 
     // Panel Toggle Commands (initialized in constructor to fix threading issues)
@@ -957,26 +958,26 @@ public class MainViewModel : ReactiveObject
     public ICommand ToggleFieldFileManagerPanelCommand { get; private set; } = null!;
 
     /// <summary>
-    /// Initialize panel toggle commands on the UI thread.
-    /// Must be called from constructor to avoid ReactiveCommand threading issues.
+    /// Initialize panel toggle commands.
+    /// Uses CommunityToolkit.Mvvm RelayCommand which has no threading issues.
     /// </summary>
     private void InitializePanelToggleCommands()
     {
-        // Create commands on UI thread with proper scheduling
-        ToggleFieldDataPanelCommand = ReactiveCommand.Create(() => IsFieldDataPanelVisible = !IsFieldDataPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleGPSDataPanelCommand = ReactiveCommand.Create(() => IsGPSDataPanelVisible = !IsGPSDataPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleTramLinePanelCommand = ReactiveCommand.Create(() => IsTramLinePanelVisible = !IsTramLinePanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleQuickABPanelCommand = ReactiveCommand.Create(() => IsQuickABPanelVisible = !IsQuickABPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleSteerConfigPanelCommand = ReactiveCommand.Create(() => IsSteerConfigPanelVisible = !IsSteerConfigPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleGeneralConfigPanelCommand = ReactiveCommand.Create(() => IsGeneralConfigPanelVisible = !IsGeneralConfigPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleDiagnosticsPanelCommand = ReactiveCommand.Create(() => IsDiagnosticsPanelVisible = !IsDiagnosticsPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleRollCorrectionPanelCommand = ReactiveCommand.Create(() => IsRollCorrectionPanelVisible = !IsRollCorrectionPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleVehicleConfigPanelCommand = ReactiveCommand.Create(() => IsVehicleConfigPanelVisible = !IsVehicleConfigPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleFlagsPanelCommand = ReactiveCommand.Create(() => IsFlagsPanelVisible = !IsFlagsPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleCameraPanelCommand = ReactiveCommand.Create(() => IsCameraPanelVisible = !IsCameraPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleBoundaryEditorPanelCommand = ReactiveCommand.Create(() => IsBoundaryEditorPanelVisible = !IsBoundaryEditorPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleFieldToolsPanelCommand = ReactiveCommand.Create(() => IsFieldToolsPanelVisible = !IsFieldToolsPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
-        ToggleFieldFileManagerPanelCommand = ReactiveCommand.Create(() => IsFieldFileManagerPanelVisible = !IsFieldFileManagerPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        // Create commands using RelayCommand (no UI thread dependency)
+        ToggleFieldDataPanelCommand = new RelayCommand(() => IsFieldDataPanelVisible = !IsFieldDataPanelVisible);
+        ToggleGPSDataPanelCommand = new RelayCommand(() => IsGPSDataPanelVisible = !IsGPSDataPanelVisible);
+        ToggleTramLinePanelCommand = new RelayCommand(() => IsTramLinePanelVisible = !IsTramLinePanelVisible);
+        ToggleQuickABPanelCommand = new RelayCommand(() => IsQuickABPanelVisible = !IsQuickABPanelVisible);
+        ToggleSteerConfigPanelCommand = new RelayCommand(() => IsSteerConfigPanelVisible = !IsSteerConfigPanelVisible);
+        ToggleGeneralConfigPanelCommand = new RelayCommand(() => IsGeneralConfigPanelVisible = !IsGeneralConfigPanelVisible);
+        ToggleDiagnosticsPanelCommand = new RelayCommand(() => IsDiagnosticsPanelVisible = !IsDiagnosticsPanelVisible);
+        ToggleRollCorrectionPanelCommand = new RelayCommand(() => IsRollCorrectionPanelVisible = !IsRollCorrectionPanelVisible);
+        ToggleVehicleConfigPanelCommand = new RelayCommand(() => IsVehicleConfigPanelVisible = !IsVehicleConfigPanelVisible);
+        ToggleFlagsPanelCommand = new RelayCommand(() => IsFlagsPanelVisible = !IsFlagsPanelVisible);
+        ToggleCameraPanelCommand = new RelayCommand(() => IsCameraPanelVisible = !IsCameraPanelVisible);
+        ToggleBoundaryEditorPanelCommand = new RelayCommand(() => IsBoundaryEditorPanelVisible = !IsBoundaryEditorPanelVisible);
+        ToggleFieldToolsPanelCommand = new RelayCommand(() => IsFieldToolsPanelVisible = !IsFieldToolsPanelVisible);
+        ToggleFieldFileManagerPanelCommand = new RelayCommand(() => IsFieldFileManagerPanelVisible = !IsFieldFileManagerPanelVisible);
     }
 
     // ========== Wave 9 Task 8.1: Dialog Launching Methods ==========

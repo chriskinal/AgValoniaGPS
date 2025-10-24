@@ -1,6 +1,6 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -20,9 +20,6 @@ public class FirstViewModel : DialogViewModelBase
     /// </summary>
     public FirstViewModel()
     {
-        // Subscribe to property changes to validate
-        this.WhenAnyValue(x => x.AcceptedTerms, x => x.AcceptedLicense)
-            .Subscribe(_ => ValidateAcceptance());
     }
 
     /// <summary>
@@ -31,7 +28,11 @@ public class FirstViewModel : DialogViewModelBase
     public bool AcceptedTerms
     {
         get => _acceptedTerms;
-        set => this.RaiseAndSetIfChanged(ref _acceptedTerms, value);
+        set
+        {
+            if (SetProperty(ref _acceptedTerms, value))
+                ValidateAcceptance();
+        }
     }
 
     /// <summary>
@@ -40,7 +41,11 @@ public class FirstViewModel : DialogViewModelBase
     public bool AcceptedLicense
     {
         get => _acceptedLicense;
-        set => this.RaiseAndSetIfChanged(ref _acceptedLicense, value);
+        set
+        {
+            if (SetProperty(ref _acceptedLicense, value))
+                ValidateAcceptance();
+        }
     }
 
     /// <summary>
@@ -51,12 +56,12 @@ public class FirstViewModel : DialogViewModelBase
         get => _currentPage;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentPage, value);
-            this.RaisePropertyChanged(nameof(IsWelcomePage));
-            this.RaisePropertyChanged(nameof(IsLicensePage));
-            this.RaisePropertyChanged(nameof(IsTermsPage));
-            this.RaisePropertyChanged(nameof(CanGoBack));
-            this.RaisePropertyChanged(nameof(CanGoForward));
+            SetProperty(ref _currentPage, value);
+            OnPropertyChanged(nameof(IsWelcomePage));
+            OnPropertyChanged(nameof(IsLicensePage));
+            OnPropertyChanged(nameof(IsTermsPage));
+            OnPropertyChanged(nameof(CanGoBack));
+            OnPropertyChanged(nameof(CanGoForward));
         }
     }
 

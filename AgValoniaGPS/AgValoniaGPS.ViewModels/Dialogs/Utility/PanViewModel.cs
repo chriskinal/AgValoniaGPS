@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
+using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -20,16 +20,16 @@ public class PanViewModel : DialogViewModelBase
     /// </summary>
     public PanViewModel()
     {
-        PanUpCommand = ReactiveCommand.Create(PanUp);
-        PanDownCommand = ReactiveCommand.Create(PanDown);
-        PanLeftCommand = ReactiveCommand.Create(PanLeft);
-        PanRightCommand = ReactiveCommand.Create(PanRight);
-        PanUpLeftCommand = ReactiveCommand.Create(PanUpLeft);
-        PanUpRightCommand = ReactiveCommand.Create(PanUpRight);
-        PanDownLeftCommand = ReactiveCommand.Create(PanDownLeft);
-        PanDownRightCommand = ReactiveCommand.Create(PanDownRight);
-        CenterCommand = ReactiveCommand.Create(Center);
-        ResetCommand = ReactiveCommand.Create(Reset);
+        PanUpCommand = new RelayCommand(PanUp);
+        PanDownCommand = new RelayCommand(PanDown);
+        PanLeftCommand = new RelayCommand(PanLeft);
+        PanRightCommand = new RelayCommand(PanRight);
+        PanUpLeftCommand = new RelayCommand(PanUpLeft);
+        PanUpRightCommand = new RelayCommand(PanUpRight);
+        PanDownLeftCommand = new RelayCommand(PanDownLeft);
+        PanDownRightCommand = new RelayCommand(PanDownRight);
+        CenterCommand = new RelayCommand(Center);
+        ResetCommand = new RelayCommand(Reset);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class PanViewModel : DialogViewModelBase
     public double PanOffsetX
     {
         get => _panOffsetX;
-        set => this.RaiseAndSetIfChanged(ref _panOffsetX, value);
+        set => SetProperty(ref _panOffsetX, value);
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ public class PanViewModel : DialogViewModelBase
     public double PanOffsetY
     {
         get => _panOffsetY;
-        set => this.RaiseAndSetIfChanged(ref _panOffsetY, value);
+        set => SetProperty(ref _panOffsetY, value);
     }
 
     /// <summary>
@@ -56,58 +56,58 @@ public class PanViewModel : DialogViewModelBase
     public double PanStep
     {
         get => _panStep;
-        set => this.RaiseAndSetIfChanged(ref _panStep, value);
+        set => SetProperty(ref _panStep, value);
     }
 
     /// <summary>
     /// Gets the command to pan up.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanUpCommand { get; }
+    public ICommand PanUpCommand { get; }
 
     /// <summary>
     /// Gets the command to pan down.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanDownCommand { get; }
+    public ICommand PanDownCommand { get; }
 
     /// <summary>
     /// Gets the command to pan left.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanLeftCommand { get; }
+    public ICommand PanLeftCommand { get; }
 
     /// <summary>
     /// Gets the command to pan right.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanRightCommand { get; }
+    public ICommand PanRightCommand { get; }
 
     /// <summary>
     /// Gets the command to pan up-left diagonally.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanUpLeftCommand { get; }
+    public ICommand PanUpLeftCommand { get; }
 
     /// <summary>
     /// Gets the command to pan up-right diagonally.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanUpRightCommand { get; }
+    public ICommand PanUpRightCommand { get; }
 
     /// <summary>
     /// Gets the command to pan down-left diagonally.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanDownLeftCommand { get; }
+    public ICommand PanDownLeftCommand { get; }
 
     /// <summary>
     /// Gets the command to pan down-right diagonally.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> PanDownRightCommand { get; }
+    public ICommand PanDownRightCommand { get; }
 
     /// <summary>
     /// Gets the command to return to center.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> CenterCommand { get; }
+    public ICommand CenterCommand { get; }
 
     /// <summary>
     /// Gets the command to reset all settings.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> ResetCommand { get; }
+    public ICommand ResetCommand { get; }
 
     private void PanUp() => PanOffsetY -= PanStep;
     private void PanDown() => PanOffsetY += PanStep;

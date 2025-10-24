@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -33,9 +33,9 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
         Title = "Roll Correction";
 
         // Commands
-        ZeroRollCommand = ReactiveCommand.Create(OnZeroRoll);
-        ApplySettingsCommand = ReactiveCommand.Create(OnApplySettings);
-        ResetCommand = ReactiveCommand.Create(OnReset);
+        ZeroRollCommand = new RelayCommand(OnZeroRoll);
+        ApplySettingsCommand = new RelayCommand(OnApplySettings);
+        ResetCommand = new RelayCommand(OnReset);
 
         // Load current settings
         LoadCurrentSettings();
@@ -49,7 +49,7 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
     public bool RollCorrectionEnabled
     {
         get => _rollCorrectionEnabled;
-        set => this.RaiseAndSetIfChanged(ref _rollCorrectionEnabled, value);
+        set => SetProperty(ref _rollCorrectionEnabled, value);
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
     public double RollZeroOffset
     {
         get => _rollZeroOffset;
-        set => this.RaiseAndSetIfChanged(ref _rollZeroOffset, Math.Clamp(value, -10.0, 10.0));
+        set => SetProperty(ref _rollZeroOffset, Math.Clamp(value, -10.0, 10.0));
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
     public double RollFilterConstant
     {
         get => _rollFilterConstant;
-        set => this.RaiseAndSetIfChanged(ref _rollFilterConstant, Math.Clamp(value, 0.0, 1.0));
+        set => SetProperty(ref _rollFilterConstant, Math.Clamp(value, 0.0, 1.0));
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
     public double CurrentRollAngle
     {
         get => _currentRollAngle;
-        set => this.RaiseAndSetIfChanged(ref _currentRollAngle, value);
+        set => SetProperty(ref _currentRollAngle, value);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
     public double AntennaHeight
     {
         get => _antennaHeight;
-        set => this.RaiseAndSetIfChanged(ref _antennaHeight, value);
+        set => SetProperty(ref _antennaHeight, value);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class FormRollCorrectionViewModel : PanelViewModelBase
     public double AntennaOffset
     {
         get => _antennaOffset;
-        set => this.RaiseAndSetIfChanged(ref _antennaOffset, value);
+        set => SetProperty(ref _antennaOffset, value);
     }
 
     public ICommand ZeroRollCommand { get; }

@@ -1,8 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -27,9 +26,9 @@ public class TramLineViewModel : DialogViewModelBase
         _tramLineNumber = Math.Clamp(tramLineNumber, 1, 99);
         _offsetDistance = offsetDistance;
 
-        SetOffsetCommand = ReactiveCommand.Create<double>(OnSetOffset);
-        ToggleActiveCommand = ReactiveCommand.Create(OnToggleActive);
-        PickColorCommand = ReactiveCommand.Create(OnPickColor);
+        SetOffsetCommand = new RelayCommand<double>(OnSetOffset);
+        ToggleActiveCommand = new RelayCommand(OnToggleActive);
+        PickColorCommand = new RelayCommand(OnPickColor);
     }
 
     /// <summary>
@@ -40,8 +39,8 @@ public class TramLineViewModel : DialogViewModelBase
         get => _tramLineNumber;
         set
         {
-            this.RaiseAndSetIfChanged(ref _tramLineNumber, Math.Clamp(value, 1, 99));
-            this.RaisePropertyChanged(nameof(TramLineNumberDisplay));
+            SetProperty(ref _tramLineNumber, Math.Clamp(value, 1, 99));
+            OnPropertyChanged(nameof(TramLineNumberDisplay));
         }
     }
 
@@ -59,8 +58,8 @@ public class TramLineViewModel : DialogViewModelBase
         get => _offsetDistance;
         set
         {
-            this.RaiseAndSetIfChanged(ref _offsetDistance, value);
-            this.RaisePropertyChanged(nameof(OffsetDistanceFormatted));
+            SetProperty(ref _offsetDistance, value);
+            OnPropertyChanged(nameof(OffsetDistanceFormatted));
         }
     }
 
@@ -77,8 +76,8 @@ public class TramLineViewModel : DialogViewModelBase
         get => _isActive;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isActive, value);
-            this.RaisePropertyChanged(nameof(ActiveStatusText));
+            SetProperty(ref _isActive, value);
+            OnPropertyChanged(nameof(ActiveStatusText));
         }
     }
 
@@ -93,7 +92,7 @@ public class TramLineViewModel : DialogViewModelBase
     public string LineColor
     {
         get => _lineColor;
-        set => this.RaiseAndSetIfChanged(ref _lineColor, value);
+        set => SetProperty(ref _lineColor, value);
     }
 
     /// <summary>

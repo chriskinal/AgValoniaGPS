@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using AgValoniaGPS.ViewModels.Base;
 

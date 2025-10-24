@@ -1,10 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -35,8 +33,8 @@ public class FieldISOXMLViewModel : DialogViewModelBase
     {
         ISOFields = new ObservableCollection<ISOField>();
 
-        BrowseCommand = ReactiveCommand.Create(OnBrowse);
-        ImportCommand = ReactiveCommand.Create(OnImport, this.WhenAnyValue(x => x.SelectedField).Select(field => field != null));
+        BrowseCommand = new RelayCommand(OnBrowse);
+        ImportCommand = new RelayCommand(OnImport);
     }
 
     /// <summary>
@@ -52,7 +50,7 @@ public class FieldISOXMLViewModel : DialogViewModelBase
         get => _isoxmlFilePath;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isoxmlFilePath, value);
+            SetProperty(ref _isoxmlFilePath, value);
             ParseISOXMLFile();
         }
     }
@@ -65,7 +63,7 @@ public class FieldISOXMLViewModel : DialogViewModelBase
         get => _selectedField;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedField, value);
+            SetProperty(ref _selectedField, value);
             UpdatePreview();
         }
     }
@@ -76,7 +74,7 @@ public class FieldISOXMLViewModel : DialogViewModelBase
     public string PreviewText
     {
         get => _previewText;
-        set => this.RaiseAndSetIfChanged(ref _previewText, value);
+        set => SetProperty(ref _previewText, value);
     }
 
     /// <summary>

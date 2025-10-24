@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -24,8 +23,8 @@ public class EnterFlagViewModel : DialogViewModelBase
     /// </summary>
     public EnterFlagViewModel()
     {
-        PickColorCommand = ReactiveCommand.Create(OnPickColor);
-        UseCurrentPositionCommand = ReactiveCommand.Create(OnUseCurrentPosition);
+        PickColorCommand = new RelayCommand(OnPickColor);
+        UseCurrentPositionCommand = new RelayCommand(OnUseCurrentPosition);
     }
 
     /// <summary>
@@ -49,7 +48,7 @@ public class EnterFlagViewModel : DialogViewModelBase
         get => _flagName;
         set
         {
-            this.RaiseAndSetIfChanged(ref _flagName, value);
+            SetProperty(ref _flagName, value);
             ClearError();
         }
     }
@@ -62,7 +61,7 @@ public class EnterFlagViewModel : DialogViewModelBase
         get => _latitude;
         set
         {
-            this.RaiseAndSetIfChanged(ref _latitude, value);
+            SetProperty(ref _latitude, value);
             ClearError();
         }
     }
@@ -75,7 +74,7 @@ public class EnterFlagViewModel : DialogViewModelBase
         get => _longitude;
         set
         {
-            this.RaiseAndSetIfChanged(ref _longitude, value);
+            SetProperty(ref _longitude, value);
             ClearError();
         }
     }
@@ -86,7 +85,7 @@ public class EnterFlagViewModel : DialogViewModelBase
     public string FlagColorHex
     {
         get => _flagColorHex;
-        set => this.RaiseAndSetIfChanged(ref _flagColorHex, value);
+        set => SetProperty(ref _flagColorHex, value);
     }
 
     /// <summary>
@@ -95,7 +94,7 @@ public class EnterFlagViewModel : DialogViewModelBase
     public string Notes
     {
         get => _notes;
-        set => this.RaiseAndSetIfChanged(ref _notes, value);
+        set => SetProperty(ref _notes, value);
     }
 
     /// <summary>
@@ -104,7 +103,7 @@ public class EnterFlagViewModel : DialogViewModelBase
     public Position? CurrentPosition
     {
         get => _currentPosition;
-        set => this.RaiseAndSetIfChanged(ref _currentPosition, value);
+        set => SetProperty(ref _currentPosition, value);
     }
 
     /// <summary>

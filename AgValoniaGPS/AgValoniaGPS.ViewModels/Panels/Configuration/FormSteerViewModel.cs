@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -35,9 +35,9 @@ public class FormSteerViewModel : PanelViewModelBase
         Title = "Steering Configuration";
 
         // Commands
-        ApplySettingsCommand = ReactiveCommand.Create(OnApplySettings);
-        ResetToDefaultsCommand = ReactiveCommand.Create(OnResetToDefaults);
-        TestSteeringCommand = ReactiveCommand.Create(OnTestSteering);
+        ApplySettingsCommand = new RelayCommand(OnApplySettings);
+        ResetToDefaultsCommand = new RelayCommand(OnResetToDefaults);
+        TestSteeringCommand = new RelayCommand(OnTestSteering);
 
         // Load current settings
         LoadCurrentSettings();
@@ -51,7 +51,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public string SteeringMode
     {
         get => _steeringMode;
-        set => this.RaiseAndSetIfChanged(ref _steeringMode, value);
+        set => SetProperty(ref _steeringMode, value);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double MinimalLookAhead
     {
         get => _minimalLookAhead;
-        set => this.RaiseAndSetIfChanged(ref _minimalLookAhead, Math.Clamp(value, 5.0, 25.0));
+        set => SetProperty(ref _minimalLookAhead, Math.Clamp(value, 5.0, 25.0));
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double AggressivenessMultiplier
     {
         get => _aggressivenessMultiplier;
-        set => this.RaiseAndSetIfChanged(ref _aggressivenessMultiplier, Math.Clamp(value, 0.5, 2.0));
+        set => SetProperty(ref _aggressivenessMultiplier, Math.Clamp(value, 0.5, 2.0));
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double IntegralGain
     {
         get => _integralGain;
-        set => this.RaiseAndSetIfChanged(ref _integralGain, Math.Clamp(value, 0.0, 1.0));
+        set => SetProperty(ref _integralGain, Math.Clamp(value, 0.0, 1.0));
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double ProportionalGain
     {
         get => _proportionalGain;
-        set => this.RaiseAndSetIfChanged(ref _proportionalGain, Math.Clamp(value, 0.0, 100.0));
+        set => SetProperty(ref _proportionalGain, Math.Clamp(value, 0.0, 100.0));
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double StanleyHeadingErrorGain
     {
         get => _stanleyHeadingErrorGain;
-        set => this.RaiseAndSetIfChanged(ref _stanleyHeadingErrorGain, Math.Clamp(value, 0.0, 1.0));
+        set => SetProperty(ref _stanleyHeadingErrorGain, Math.Clamp(value, 0.0, 1.0));
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double MaxSteerAngle
     {
         get => _maxSteerAngle;
-        set => this.RaiseAndSetIfChanged(ref _maxSteerAngle, value);
+        set => SetProperty(ref _maxSteerAngle, value);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class FormSteerViewModel : PanelViewModelBase
     public double WheelBase
     {
         get => _wheelBase;
-        set => this.RaiseAndSetIfChanged(ref _wheelBase, value);
+        set => SetProperty(ref _wheelBase, value);
     }
 
     public ICommand ApplySettingsCommand { get; }

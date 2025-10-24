@@ -1,11 +1,9 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -41,24 +39,10 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     {
         AvailableFields = new ObservableCollection<CloudField>();
 
-        ConnectCommand = ReactiveCommand.CreateFromTask(OnConnectAsync,
-            this.WhenAnyValue(
-                x => x.IsConnected,
-                x => x.Username,
-                x => x.Password,
-                (connected, user, pass) => !connected && !string.IsNullOrWhiteSpace(user) && !string.IsNullOrWhiteSpace(pass)));
-
-        DisconnectCommand = ReactiveCommand.Create(OnDisconnect,
-            this.WhenAnyValue(x => x.IsConnected).Select(connected => connected));
-
-        RefreshCommand = ReactiveCommand.CreateFromTask(OnRefreshAsync,
-            this.WhenAnyValue(x => x.IsConnected).Select(connected => connected));
-
-        DownloadCommand = ReactiveCommand.CreateFromTask(OnDownloadAsync,
-            this.WhenAnyValue(
-                x => x.IsConnected,
-                x => x.SelectedField,
-                (connected, field) => connected && field != null));
+        ConnectCommand = new AsyncRelayCommand(OnConnectAsync);
+        DisconnectCommand = new RelayCommand(OnDisconnect);
+        RefreshCommand = new AsyncRelayCommand(OnRefreshAsync);
+        DownloadCommand = new AsyncRelayCommand(OnDownloadAsync);
     }
 
     /// <summary>
@@ -72,7 +56,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     public string ServerURL
     {
         get => _serverURL;
-        set => this.RaiseAndSetIfChanged(ref _serverURL, value);
+        set => SetProperty(ref _serverURL, value);
     }
 
     /// <summary>
@@ -81,7 +65,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     public string Username
     {
         get => _username;
-        set => this.RaiseAndSetIfChanged(ref _username, value);
+        set => SetProperty(ref _username, value);
     }
 
     /// <summary>
@@ -90,7 +74,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     public string Password
     {
         get => _password;
-        set => this.RaiseAndSetIfChanged(ref _password, value);
+        set => SetProperty(ref _password, value);
     }
 
     /// <summary>
@@ -101,7 +85,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
         get => _isConnected;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isConnected, value);
+            SetProperty(ref _isConnected, value);
             ConnectionStatus = value ? "Connected" : "Disconnected";
         }
     }
@@ -112,7 +96,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     public CloudField? SelectedField
     {
         get => _selectedField;
-        set => this.RaiseAndSetIfChanged(ref _selectedField, value);
+        set => SetProperty(ref _selectedField, value);
     }
 
     /// <summary>
@@ -121,7 +105,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     public double DownloadProgress
     {
         get => _downloadProgress;
-        set => this.RaiseAndSetIfChanged(ref _downloadProgress, value);
+        set => SetProperty(ref _downloadProgress, value);
     }
 
     /// <summary>
@@ -130,7 +114,7 @@ public class AgShareDownloaderViewModel : DialogViewModelBase
     public string ConnectionStatus
     {
         get => _connectionStatus;
-        set => this.RaiseAndSetIfChanged(ref _connectionStatus, value);
+        set => SetProperty(ref _connectionStatus, value);
     }
 
     /// <summary>

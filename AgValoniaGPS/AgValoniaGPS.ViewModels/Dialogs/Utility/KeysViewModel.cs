@@ -1,8 +1,9 @@
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -25,9 +26,7 @@ public class KeysViewModel : DialogViewModelBase
 
         LoadKeyboardShortcuts();
 
-        // Subscribe to search and category changes
-        this.WhenAnyValue(x => x.SearchText, x => x.SelectedCategory)
-            .Subscribe(_ => FilterShortcuts());
+        // Subscribe to search and category changes (handled via property setters)
     }
 
     /// <summary>
@@ -46,7 +45,11 @@ public class KeysViewModel : DialogViewModelBase
     public string SearchText
     {
         get => _searchText;
-        set => this.RaiseAndSetIfChanged(ref _searchText, value);
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                FilterShortcuts();
+        }
     }
 
     /// <summary>
@@ -55,7 +58,11 @@ public class KeysViewModel : DialogViewModelBase
     public KeyCategory? SelectedCategory
     {
         get => _selectedCategory;
-        set => this.RaiseAndSetIfChanged(ref _selectedCategory, value);
+        set
+        {
+            if (SetProperty(ref _selectedCategory, value))
+                FilterShortcuts();
+        }
     }
 
     /// <summary>
@@ -223,7 +230,7 @@ public class KeysViewModel : DialogViewModelBase
 /// <summary>
 /// Represents a category of keyboard shortcuts.
 /// </summary>
-public class KeyCategory : ReactiveObject
+public class KeyCategory : ObservableObject
 {
     private string _name = string.Empty;
 
@@ -233,7 +240,7 @@ public class KeyCategory : ReactiveObject
     public string Name
     {
         get => _name;
-        set => this.RaiseAndSetIfChanged(ref _name, value);
+        set => SetProperty(ref _name, value);
     }
 
     /// <summary>
@@ -245,7 +252,7 @@ public class KeyCategory : ReactiveObject
 /// <summary>
 /// Represents a keyboard shortcut with key combination and description.
 /// </summary>
-public class KeyboardShortcut : ReactiveObject
+public class KeyboardShortcut : ObservableObject
 {
     private string _key = string.Empty;
     private string _description = string.Empty;
@@ -274,7 +281,7 @@ public class KeyboardShortcut : ReactiveObject
     public string Key
     {
         get => _key;
-        set => this.RaiseAndSetIfChanged(ref _key, value);
+        set => SetProperty(ref _key, value);
     }
 
     /// <summary>
@@ -283,6 +290,6 @@ public class KeyboardShortcut : ReactiveObject
     public string Description
     {
         get => _description;
-        set => this.RaiseAndSetIfChanged(ref _description, value);
+        set => SetProperty(ref _description, value);
     }
 }

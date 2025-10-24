@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="ReactiveUI" Version="20.1.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
   </ItemGroup>
 

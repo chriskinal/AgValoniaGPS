@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -22,12 +21,12 @@ public class BndToolViewModel : DialogViewModelBase
     /// </summary>
     public BndToolViewModel()
     {
-        SetDrawModeCommand = ReactiveCommand.Create(() => SetMode(BoundaryToolMode.Draw));
-        SetEraseModeCommand = ReactiveCommand.Create(() => SetMode(BoundaryToolMode.Erase));
-        SetSimplifyModeCommand = ReactiveCommand.Create(() => SetMode(BoundaryToolMode.Simplify));
-        SetMoveModeCommand = ReactiveCommand.Create(() => SetMode(BoundaryToolMode.Move));
-        UndoCommand = ReactiveCommand.Create(OnUndo);
-        ClearCommand = ReactiveCommand.Create(OnClear);
+        SetDrawModeCommand = new RelayCommand(() => SetMode(BoundaryToolMode.Draw));
+        SetEraseModeCommand = new RelayCommand(() => SetMode(BoundaryToolMode.Erase));
+        SetSimplifyModeCommand = new RelayCommand(() => SetMode(BoundaryToolMode.Simplify));
+        SetMoveModeCommand = new RelayCommand(() => SetMode(BoundaryToolMode.Move));
+        UndoCommand = new RelayCommand(OnUndo);
+        ClearCommand = new RelayCommand(OnClear);
     }
 
     /// <summary>
@@ -36,7 +35,7 @@ public class BndToolViewModel : DialogViewModelBase
     public BoundaryToolMode CurrentMode
     {
         get => _currentMode;
-        set => this.RaiseAndSetIfChanged(ref _currentMode, value);
+        set => SetProperty(ref _currentMode, value);
     }
 
     /// <summary>
@@ -45,7 +44,7 @@ public class BndToolViewModel : DialogViewModelBase
     public int DrawingPointCount
     {
         get => _drawingPointCount;
-        set => this.RaiseAndSetIfChanged(ref _drawingPointCount, value);
+        set => SetProperty(ref _drawingPointCount, value);
     }
 
     /// <summary>
@@ -59,7 +58,7 @@ public class BndToolViewModel : DialogViewModelBase
         {
             if (value >= 0.1 && value <= 10.0)
             {
-                this.RaiseAndSetIfChanged(ref _simplifyTolerance, value);
+                SetProperty(ref _simplifyTolerance, value);
             }
         }
     }
@@ -135,10 +134,10 @@ public class BndToolViewModel : DialogViewModelBase
     private void SetMode(BoundaryToolMode mode)
     {
         CurrentMode = mode;
-        this.RaisePropertyChanged(nameof(IsDrawMode));
-        this.RaisePropertyChanged(nameof(IsEraseMode));
-        this.RaisePropertyChanged(nameof(IsSimplifyMode));
-        this.RaisePropertyChanged(nameof(IsMoveMode));
+        OnPropertyChanged(nameof(IsDrawMode));
+        OnPropertyChanged(nameof(IsEraseMode));
+        OnPropertyChanged(nameof(IsSimplifyMode));
+        OnPropertyChanged(nameof(IsMoveMode));
         ModeChanged?.Invoke(this, mode);
     }
 

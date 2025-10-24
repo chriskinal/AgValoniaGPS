@@ -1,8 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Configuration;
 using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Windows.Input;
 
@@ -37,9 +37,9 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
         Title = "Vehicle Configuration";
 
         // Commands
-        SaveVehicleCommand = ReactiveCommand.Create(OnSaveVehicle);
-        LoadVehicleCommand = ReactiveCommand.Create(OnLoadVehicle);
-        NewVehicleCommand = ReactiveCommand.Create(OnNewVehicle);
+        SaveVehicleCommand = new RelayCommand(OnSaveVehicle);
+        LoadVehicleCommand = new RelayCommand(OnLoadVehicle);
+        NewVehicleCommand = new RelayCommand(OnNewVehicle);
 
         // Load current settings
         LoadCurrentSettings();
@@ -53,7 +53,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public string VehicleName
     {
         get => _vehicleName;
-        set => this.RaiseAndSetIfChanged(ref _vehicleName, value);
+        set => SetProperty(ref _vehicleName, value);
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public string VehicleType
     {
         get => _vehicleType;
-        set => this.RaiseAndSetIfChanged(ref _vehicleType, value);
+        set => SetProperty(ref _vehicleType, value);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double Wheelbase
     {
         get => _wheelbase;
-        set => this.RaiseAndSetIfChanged(ref _wheelbase, Math.Clamp(value, 1.0, 10.0));
+        set => SetProperty(ref _wheelbase, Math.Clamp(value, 1.0, 10.0));
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double TrackWidth
     {
         get => _trackWidth;
-        set => this.RaiseAndSetIfChanged(ref _trackWidth, Math.Clamp(value, 1.0, 10.0));
+        set => SetProperty(ref _trackWidth, Math.Clamp(value, 1.0, 10.0));
     }
 
     /// <summary>
@@ -89,7 +89,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double AntennaHeight
     {
         get => _antennaHeight;
-        set => this.RaiseAndSetIfChanged(ref _antennaHeight, Math.Clamp(value, 0.5, 5.0));
+        set => SetProperty(ref _antennaHeight, Math.Clamp(value, 0.5, 5.0));
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double AntennaForwardOffset
     {
         get => _antennaForwardOffset;
-        set => this.RaiseAndSetIfChanged(ref _antennaForwardOffset, Math.Clamp(value, -5.0, 5.0));
+        set => SetProperty(ref _antennaForwardOffset, Math.Clamp(value, -5.0, 5.0));
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double AntennaRightOffset
     {
         get => _antennaRightOffset;
-        set => this.RaiseAndSetIfChanged(ref _antennaRightOffset, Math.Clamp(value, -5.0, 5.0));
+        set => SetProperty(ref _antennaRightOffset, Math.Clamp(value, -5.0, 5.0));
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double MaxSteerAngle
     {
         get => _maxSteerAngle;
-        set => this.RaiseAndSetIfChanged(ref _maxSteerAngle, Math.Clamp(value, 10.0, 45.0));
+        set => SetProperty(ref _maxSteerAngle, Math.Clamp(value, 10.0, 45.0));
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public class FormVehicleConfigViewModel : PanelViewModelBase
     public double HitchLength
     {
         get => _hitchLength;
-        set => this.RaiseAndSetIfChanged(ref _hitchLength, Math.Clamp(value, 0.0, 10.0));
+        set => SetProperty(ref _hitchLength, Math.Clamp(value, 0.0, 10.0));
     }
 
     public ICommand SaveVehicleCommand { get; }

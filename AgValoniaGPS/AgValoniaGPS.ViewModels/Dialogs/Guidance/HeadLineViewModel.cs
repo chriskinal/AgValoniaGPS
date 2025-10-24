@@ -1,12 +1,11 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -32,11 +31,9 @@ public class HeadLineViewModel : DialogViewModelBase
         BoundaryPoints = new List<Position>();
         HeadlandPasses = new ObservableCollection<ObservableCollection<Position>>();
 
-        SetDistanceCommand = ReactiveCommand.Create<double>(OnSetDistance);
-        GenerateHeadlandCommand = ReactiveCommand.Create(OnGenerateHeadland,
-            this.WhenAnyValue(x => x.HasBoundary).Select(hasBoundary => hasBoundary));
-        ClearHeadlandCommand = ReactiveCommand.Create(OnClearHeadland,
-            this.WhenAnyValue(x => x.HasHeadland).Select(hasHeadland => hasHeadland));
+        SetDistanceCommand = new RelayCommand<double>(OnSetDistance);
+        GenerateHeadlandCommand = new RelayCommand(OnGenerateHeadland);
+        ClearHeadlandCommand = new RelayCommand(OnClearHeadland);
     }
 
     /// <summary>
@@ -64,8 +61,8 @@ public class HeadLineViewModel : DialogViewModelBase
         get => _distanceFromBoundary;
         set
         {
-            this.RaiseAndSetIfChanged(ref _distanceFromBoundary, Math.Max(value, 0));
-            this.RaisePropertyChanged(nameof(DistanceFromBoundaryFormatted));
+            SetProperty(ref _distanceFromBoundary, Math.Max(value, 0));
+            OnPropertyChanged(nameof(DistanceFromBoundaryFormatted));
         }
     }
 
@@ -83,8 +80,8 @@ public class HeadLineViewModel : DialogViewModelBase
         get => _numberOfPasses;
         set
         {
-            this.RaiseAndSetIfChanged(ref _numberOfPasses, Math.Clamp(value, 1, 10));
-            this.RaisePropertyChanged(nameof(NumberOfPassesDisplay));
+            SetProperty(ref _numberOfPasses, Math.Clamp(value, 1, 10));
+            OnPropertyChanged(nameof(NumberOfPassesDisplay));
         }
     }
 
@@ -102,8 +99,8 @@ public class HeadLineViewModel : DialogViewModelBase
         get => _implementWidth;
         set
         {
-            this.RaiseAndSetIfChanged(ref _implementWidth, Math.Max(value, 1.0));
-            this.RaisePropertyChanged(nameof(ImplementWidthFormatted));
+            SetProperty(ref _implementWidth, Math.Max(value, 1.0));
+            OnPropertyChanged(nameof(ImplementWidthFormatted));
         }
     }
 
@@ -118,7 +115,7 @@ public class HeadLineViewModel : DialogViewModelBase
     public bool HasHeadland
     {
         get => _hasHeadland;
-        private set => this.RaiseAndSetIfChanged(ref _hasHeadland, value);
+        private set => SetProperty(ref _hasHeadland, value);
     }
 
     /// <summary>
@@ -143,8 +140,8 @@ public class HeadLineViewModel : DialogViewModelBase
     public void LoadBoundary(List<Position> boundary)
     {
         BoundaryPoints = new List<Position>(boundary);
-        this.RaisePropertyChanged(nameof(BoundaryPoints));
-        this.RaisePropertyChanged(nameof(HasBoundary));
+        OnPropertyChanged(nameof(BoundaryPoints));
+        OnPropertyChanged(nameof(HasBoundary));
     }
 
     /// <summary>

@@ -1,12 +1,11 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows.Input;
 
 namespace AgValoniaGPS.ViewModels.Panels.FieldManagement;
@@ -35,16 +34,14 @@ public partial class FormFieldFileManagerViewModel : PanelViewModelBase
 
         AvailableFields = new ObservableCollection<FieldInfo>();
 
-        // Commands with explicit observable creation to avoid ambiguity
-        var canOpenOrDelete = this.WhenAnyValue(x => x.SelectedField).Select(field => field != null);
-
-        NewFieldCommand = ReactiveCommand.Create(OnNewField);
-        OpenFieldCommand = ReactiveCommand.Create(OnOpenField, canOpenOrDelete);
-        SaveFieldCommand = ReactiveCommand.Create(OnSaveField);
-        SaveAsFieldCommand = ReactiveCommand.Create(OnSaveAsField);
-        DeleteFieldCommand = ReactiveCommand.Create(OnDeleteField, canOpenOrDelete);
-        ImportBoundaryCommand = ReactiveCommand.Create(OnImportBoundary);
-        ExportBoundaryCommand = ReactiveCommand.Create(OnExportBoundary);
+        // Commands
+        NewFieldCommand = new RelayCommand(OnNewField);
+        OpenFieldCommand = new RelayCommand(OnOpenField);
+        SaveFieldCommand = new RelayCommand(OnSaveField);
+        SaveAsFieldCommand = new RelayCommand(OnSaveAsField);
+        DeleteFieldCommand = new RelayCommand(OnDeleteField);
+        ImportBoundaryCommand = new RelayCommand(OnImportBoundary);
+        ExportBoundaryCommand = new RelayCommand(OnExportBoundary);
 
         // Subscribe to field service events
         _fieldService.ActiveFieldChanged += OnActiveFieldChanged;
@@ -64,7 +61,7 @@ public partial class FormFieldFileManagerViewModel : PanelViewModelBase
     public string CurrentFieldName
     {
         get => _currentFieldName;
-        set => this.RaiseAndSetIfChanged(ref _currentFieldName, value);
+        set => SetProperty(ref _currentFieldName, value);
     }
 
     /// <summary>
@@ -78,7 +75,7 @@ public partial class FormFieldFileManagerViewModel : PanelViewModelBase
     public FieldInfo? SelectedField
     {
         get => _selectedField;
-        set => this.RaiseAndSetIfChanged(ref _selectedField, value);
+        set => SetProperty(ref _selectedField, value);
     }
 
     /// <summary>
@@ -87,7 +84,7 @@ public partial class FormFieldFileManagerViewModel : PanelViewModelBase
     public DateTime? LastSaveTime
     {
         get => _lastSaveTime;
-        set => this.RaiseAndSetIfChanged(ref _lastSaveTime, value);
+        set => SetProperty(ref _lastSaveTime, value);
     }
 
     public ICommand NewFieldCommand { get; }

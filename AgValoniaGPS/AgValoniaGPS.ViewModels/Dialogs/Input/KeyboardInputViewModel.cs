@@ -1,8 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Input;
 
@@ -16,7 +15,7 @@ public class KeyboardInputViewModel : DialogViewModelBase
 
     public KeyboardInputViewModel()
     {
-        AcceptCommand = ReactiveCommand.Create(OnAccept);
+        AcceptCommand = new RelayCommand(OnAccept);
     }
 
     /// <summary>
@@ -25,7 +24,7 @@ public class KeyboardInputViewModel : DialogViewModelBase
     public string InputText
     {
         get => _inputText;
-        set => this.RaiseAndSetIfChanged(ref _inputText, value);
+        set => SetProperty(ref _inputText, value);
     }
 
     /// <summary>
@@ -34,7 +33,7 @@ public class KeyboardInputViewModel : DialogViewModelBase
     public string Prompt
     {
         get => _prompt;
-        set => this.RaiseAndSetIfChanged(ref _prompt, value);
+        set => SetProperty(ref _prompt, value);
     }
 
     /// <summary>

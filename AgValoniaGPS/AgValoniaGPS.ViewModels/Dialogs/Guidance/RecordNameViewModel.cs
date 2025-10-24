@@ -1,8 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -30,12 +29,7 @@ public class RecordNameViewModel : DialogViewModelBase
         _totalDistance = totalDistance;
         _recordedDate = DateTime.Now;
 
-        SaveRecordingCommand = ReactiveCommand.Create(OnSaveRecording,
-            this.WhenAnyValue(x => x.IsValid).Select(valid => valid));
-
-        // Validate whenever recording name changes
-        this.WhenAnyValue(x => x.RecordingName)
-            .Subscribe(_ => ValidateRecordingName());
+        SaveRecordingCommand = new RelayCommand(OnSaveRecording);
     }
 
     /// <summary>
@@ -45,7 +39,11 @@ public class RecordNameViewModel : DialogViewModelBase
     public string RecordingName
     {
         get => _recordingName;
-        set => this.RaiseAndSetIfChanged(ref _recordingName, value);
+        set
+        {
+            if (SetProperty(ref _recordingName, value))
+                ValidateRecordingName();
+        }
     }
 
     /// <summary>
@@ -54,7 +52,7 @@ public class RecordNameViewModel : DialogViewModelBase
     public string Description
     {
         get => _description;
-        set => this.RaiseAndSetIfChanged(ref _description, value);
+        set => SetProperty(ref _description, value);
     }
 
     /// <summary>
@@ -65,8 +63,8 @@ public class RecordNameViewModel : DialogViewModelBase
         get => _recordedDate;
         set
         {
-            this.RaiseAndSetIfChanged(ref _recordedDate, value);
-            this.RaisePropertyChanged(nameof(RecordedDateFormatted));
+            SetProperty(ref _recordedDate, value);
+            OnPropertyChanged(nameof(RecordedDateFormatted));
         }
     }
 
@@ -83,8 +81,8 @@ public class RecordNameViewModel : DialogViewModelBase
         get => _pointCount;
         set
         {
-            this.RaiseAndSetIfChanged(ref _pointCount, value);
-            this.RaisePropertyChanged(nameof(PointCountDisplay));
+            SetProperty(ref _pointCount, value);
+            OnPropertyChanged(nameof(PointCountDisplay));
         }
     }
 
@@ -101,8 +99,8 @@ public class RecordNameViewModel : DialogViewModelBase
         get => _totalDistance;
         set
         {
-            this.RaiseAndSetIfChanged(ref _totalDistance, value);
-            this.RaisePropertyChanged(nameof(TotalDistanceFormatted));
+            SetProperty(ref _totalDistance, value);
+            OnPropertyChanged(nameof(TotalDistanceFormatted));
         }
     }
 
@@ -117,7 +115,7 @@ public class RecordNameViewModel : DialogViewModelBase
     public bool IsValid
     {
         get => _isValid;
-        private set => this.RaiseAndSetIfChanged(ref _isValid, value);
+        private set => SetProperty(ref _isValid, value);
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -36,7 +36,7 @@ public class SavingViewModel : ViewModelBase
     public string Message
     {
         get => _message;
-        set => this.RaiseAndSetIfChanged(ref _message, value);
+        set => SetProperty(ref _message, value);
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ public class SavingViewModel : ViewModelBase
         get => _progress;
         set
         {
-            this.RaiseAndSetIfChanged(ref _progress, value);
+            SetProperty(ref _progress, value);
             IsIndeterminate = false;
         }
     }
@@ -58,7 +58,7 @@ public class SavingViewModel : ViewModelBase
     public bool IsIndeterminate
     {
         get => _isIndeterminate;
-        set => this.RaiseAndSetIfChanged(ref _isIndeterminate, value);
+        set => SetProperty(ref _isIndeterminate, value);
     }
 
     /// <summary>

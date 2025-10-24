@@ -1,11 +1,9 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -40,8 +38,8 @@ public class FieldKMLViewModel : DialogViewModelBase
 
         Features = new ObservableCollection<KMLFeature>();
 
-        BrowseKMLCommand = ReactiveCommand.Create(OnBrowseKML);
-        ImportCommand = ReactiveCommand.Create(OnImport, this.WhenAnyValue(x => x.SelectedFeature).Select(feature => feature != null));
+        BrowseKMLCommand = new RelayCommand(OnBrowseKML);
+        ImportCommand = new RelayCommand(OnImport);
     }
 
     /// <summary>
@@ -57,7 +55,7 @@ public class FieldKMLViewModel : DialogViewModelBase
         get => _kmlFilePath;
         set
         {
-            this.RaiseAndSetIfChanged(ref _kmlFilePath, value);
+            SetProperty(ref _kmlFilePath, value);
             ParseKMLFile();
         }
     }
@@ -70,7 +68,7 @@ public class FieldKMLViewModel : DialogViewModelBase
         get => _selectedFeature;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedFeature, value);
+            SetProperty(ref _selectedFeature, value);
             if (value != null)
             {
                 PointCount = value.PointCount;
@@ -84,7 +82,7 @@ public class FieldKMLViewModel : DialogViewModelBase
     public int PointCount
     {
         get => _pointCount;
-        set => this.RaiseAndSetIfChanged(ref _pointCount, value);
+        set => SetProperty(ref _pointCount, value);
     }
 
     /// <summary>
@@ -93,7 +91,7 @@ public class FieldKMLViewModel : DialogViewModelBase
     public string PreviewText
     {
         get => _previewText;
-        set => this.RaiseAndSetIfChanged(ref _previewText, value);
+        set => SetProperty(ref _previewText, value);
     }
 
     /// <summary>

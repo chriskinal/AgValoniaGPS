@@ -1,8 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -36,13 +36,13 @@ public partial class FormBoundaryEditorViewModel : PanelViewModelBase
         BoundaryPoints = new ObservableCollection<Position>();
 
         // Commands
-        StartDrawingCommand = ReactiveCommand.Create(OnStartDrawing, this.WhenAnyValue(x => x.IsDrawingMode, drawing => !drawing));
-        StopDrawingCommand = ReactiveCommand.Create(OnStopDrawing, this.WhenAnyValue(x => x.IsDrawingMode));
-        AddPointCommand = ReactiveCommand.Create(OnAddPoint, this.WhenAnyValue(x => x.IsDrawingMode));
-        UndoLastPointCommand = ReactiveCommand.Create(OnUndoLastPoint, this.WhenAnyValue(x => x.PointCount, count => count > 0));
-        ClearBoundaryCommand = ReactiveCommand.Create(OnClearBoundary);
-        SimplifyBoundaryCommand = ReactiveCommand.Create(OnSimplifyBoundary, this.WhenAnyValue(x => x.PointCount, count => count > 3));
-        SaveBoundaryCommand = ReactiveCommand.Create(OnSaveBoundary, this.WhenAnyValue(x => x.PointCount, count => count >= 3));
+        StartDrawingCommand = new RelayCommand(OnStartDrawing);
+        StopDrawingCommand = new RelayCommand(OnStopDrawing);
+        AddPointCommand = new RelayCommand(OnAddPoint);
+        UndoLastPointCommand = new RelayCommand(OnUndoLastPoint);
+        ClearBoundaryCommand = new RelayCommand(OnClearBoundary);
+        SimplifyBoundaryCommand = new RelayCommand(OnSimplifyBoundary);
+        SaveBoundaryCommand = new RelayCommand(OnSaveBoundary);
 
         // Load existing boundary if available
         LoadBoundary();
@@ -61,7 +61,7 @@ public partial class FormBoundaryEditorViewModel : PanelViewModelBase
     public bool IsDrawingMode
     {
         get => _isDrawingMode;
-        set => this.RaiseAndSetIfChanged(ref _isDrawingMode, value);
+        set => SetProperty(ref _isDrawingMode, value);
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public partial class FormBoundaryEditorViewModel : PanelViewModelBase
     public int PointCount
     {
         get => _pointCount;
-        set => this.RaiseAndSetIfChanged(ref _pointCount, value);
+        set => SetProperty(ref _pointCount, value);
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public partial class FormBoundaryEditorViewModel : PanelViewModelBase
     public double BoundaryAreaHectares
     {
         get => _boundaryAreaHectares;
-        set => this.RaiseAndSetIfChanged(ref _boundaryAreaHectares, value);
+        set => SetProperty(ref _boundaryAreaHectares, value);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public partial class FormBoundaryEditorViewModel : PanelViewModelBase
     public double SimplificationTolerance
     {
         get => _simplificationTolerance;
-        set => this.RaiseAndSetIfChanged(ref _simplificationTolerance, Math.Max(0.1, value));
+        set => SetProperty(ref _simplificationTolerance, Math.Max(0.1, value));
     }
 
     public ICommand StartDrawingCommand { get; }

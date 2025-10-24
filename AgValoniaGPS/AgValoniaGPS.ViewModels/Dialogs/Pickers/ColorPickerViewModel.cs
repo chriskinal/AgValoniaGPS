@@ -1,8 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
 using Avalonia.Media;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Pickers;
 
@@ -24,15 +24,7 @@ public class ColorPickerViewModel : DialogViewModelBase
     /// </summary>
     public ColorPickerViewModel()
     {
-        SelectColorCommand = ReactiveCommand.Create<Color>(SelectColor);
-
-        // Subscribe to RGB changes to update color
-        this.WhenAnyValue(x => x.Red, x => x.Green, x => x.Blue)
-            .Subscribe(_ => UpdateColorFromRGB());
-
-        // Subscribe to hex input changes
-        this.WhenAnyValue(x => x.HexValue)
-            .Subscribe(_ => UpdateColorFromHex());
+        SelectColorCommand = new RelayCommand<Color>(SelectColor);
     }
 
     /// <summary>
@@ -52,7 +44,7 @@ public class ColorPickerViewModel : DialogViewModelBase
         get => _selectedColor;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedColor, value);
+            SetProperty(ref _selectedColor, value);
             UpdateFromColor();
         }
     }
@@ -63,7 +55,11 @@ public class ColorPickerViewModel : DialogViewModelBase
     public byte Red
     {
         get => _red;
-        set => this.RaiseAndSetIfChanged(ref _red, value);
+        set
+        {
+            if (SetProperty(ref _red, value))
+                UpdateColorFromRGB();
+        }
     }
 
     /// <summary>
@@ -72,7 +68,11 @@ public class ColorPickerViewModel : DialogViewModelBase
     public byte Green
     {
         get => _green;
-        set => this.RaiseAndSetIfChanged(ref _green, value);
+        set
+        {
+            if (SetProperty(ref _green, value))
+                UpdateColorFromRGB();
+        }
     }
 
     /// <summary>
@@ -81,7 +81,11 @@ public class ColorPickerViewModel : DialogViewModelBase
     public byte Blue
     {
         get => _blue;
-        set => this.RaiseAndSetIfChanged(ref _blue, value);
+        set
+        {
+            if (SetProperty(ref _blue, value))
+                UpdateColorFromRGB();
+        }
     }
 
     /// <summary>
@@ -90,7 +94,11 @@ public class ColorPickerViewModel : DialogViewModelBase
     public string HexValue
     {
         get => _hexValue;
-        set => this.RaiseAndSetIfChanged(ref _hexValue, value?.ToUpperInvariant() ?? "#FFFFFF");
+        set
+        {
+            if (SetProperty(ref _hexValue, value?.ToUpperInvariant() ?? "#FFFFFF"))
+                UpdateColorFromHex();
+        }
     }
 
     /// <summary>

@@ -1,14 +1,13 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -32,9 +31,9 @@ public class FieldDirViewModel : DialogViewModelBase
         Directories = new ObservableCollection<DirectoryInfo>();
         FieldsInDirectory = new ObservableCollection<FieldInfo>();
 
-        BrowseCommand = ReactiveCommand.Create(OnBrowse);
-        CreateDirectoryCommand = ReactiveCommand.Create(OnCreateDirectory);
-        RefreshCommand = ReactiveCommand.Create(OnRefresh);
+        BrowseCommand = new RelayCommand(OnBrowse);
+        CreateDirectoryCommand = new RelayCommand(OnCreateDirectory);
+        RefreshCommand = new RelayCommand(OnRefresh);
     }
 
     /// <summary>
@@ -45,7 +44,7 @@ public class FieldDirViewModel : DialogViewModelBase
         get => _selectedDirectory;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedDirectory, value);
+            SetProperty(ref _selectedDirectory, value);
             OnRefresh();
         }
     }
@@ -66,7 +65,7 @@ public class FieldDirViewModel : DialogViewModelBase
     public bool IsValidDirectory
     {
         get => _isValidDirectory;
-        set => this.RaiseAndSetIfChanged(ref _isValidDirectory, value);
+        set => SetProperty(ref _isValidDirectory, value);
     }
 
     /// <summary>
@@ -145,7 +144,7 @@ public class FieldDirViewModel : DialogViewModelBase
         if (string.IsNullOrWhiteSpace(SelectedDirectory) || !Directory.Exists(SelectedDirectory))
         {
             IsValidDirectory = false;
-            this.RaisePropertyChanged(nameof(FieldCount));
+            OnPropertyChanged(nameof(FieldCount));
             return;
         }
 
@@ -192,7 +191,7 @@ public class FieldDirViewModel : DialogViewModelBase
             }
 
             IsValidDirectory = FieldsInDirectory.Count > 0;
-            this.RaisePropertyChanged(nameof(FieldCount));
+            OnPropertyChanged(nameof(FieldCount));
         }
         catch (Exception ex)
         {

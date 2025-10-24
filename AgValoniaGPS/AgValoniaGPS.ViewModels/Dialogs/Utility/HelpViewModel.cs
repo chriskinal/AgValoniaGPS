@@ -1,7 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -22,9 +23,7 @@ public class HelpViewModel : DialogViewModelBase
         HelpTopics = new ObservableCollection<HelpTopic>();
         LoadHelpTopics();
 
-        // Subscribe to search text changes
-        this.WhenAnyValue(x => x.SearchText)
-            .Subscribe(_ => FilterTopics());
+        // Subscribe to search text changes (handled via property setter)
     }
 
     /// <summary>
@@ -38,7 +37,7 @@ public class HelpViewModel : DialogViewModelBase
     public HelpTopic? SelectedTopic
     {
         get => _selectedTopic;
-        set => this.RaiseAndSetIfChanged(ref _selectedTopic, value);
+        set => SetProperty(ref _selectedTopic, value);
     }
 
     /// <summary>
@@ -47,7 +46,11 @@ public class HelpViewModel : DialogViewModelBase
     public string SearchText
     {
         get => _searchText;
-        set => this.RaiseAndSetIfChanged(ref _searchText, value);
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                FilterTopics();
+        }
     }
 
     /// <summary>
@@ -106,14 +109,14 @@ public class HelpViewModel : DialogViewModelBase
         // This is a simplified implementation
         // In a real application, you'd filter the topics based on search text
         // For now, we just keep all topics visible
-        this.RaisePropertyChanged(nameof(HelpTopics));
+        OnPropertyChanged(nameof(HelpTopics));
     }
 }
 
 /// <summary>
 /// Represents a help topic with title and content.
 /// </summary>
-public class HelpTopic : ReactiveObject
+public class HelpTopic : ObservableObject
 {
     private string _title = string.Empty;
     private string _content = string.Empty;
@@ -124,7 +127,7 @@ public class HelpTopic : ReactiveObject
     public string Title
     {
         get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
+        set => SetProperty(ref _title, value);
     }
 
     /// <summary>
@@ -133,6 +136,6 @@ public class HelpTopic : ReactiveObject
     public string Content
     {
         get => _content;
-        set => this.RaiseAndSetIfChanged(ref _content, value);
+        set => SetProperty(ref _content, value);
     }
 }

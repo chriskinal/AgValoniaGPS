@@ -1,8 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
+using System.Threading;
+using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -15,14 +15,14 @@ public class TimedMessageViewModel : DialogViewModelBase
     private string _message = string.Empty;
     private int _secondsRemaining;
     private int _totalSeconds;
-    private IDisposable? _timerSubscription;
+    private Timer? _timer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TimedMessageViewModel"/> class.
     /// </summary>
     public TimedMessageViewModel()
     {
-        CloseNowCommand = ReactiveCommand.Create(OnCloseNow);
+        CloseNowCommand = new RelayCommand(OnCloseNow);
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ public class TimedMessageViewModel : DialogViewModelBase
     public string Message
     {
         get => _message;
-        set => this.RaiseAndSetIfChanged(ref _message, value);
+        set => SetProperty(ref _message, value);
     }
 
     /// <summary>
@@ -55,8 +55,8 @@ public class TimedMessageViewModel : DialogViewModelBase
         get => _secondsRemaining;
         set
         {
-            this.RaiseAndSetIfChanged(ref _secondsRemaining, value);
-            this.RaisePropertyChanged(nameof(CountdownText));
+            SetProperty(ref _secondsRemaining, value);
+            OnPropertyChanged(nameof(CountdownText));
         }
     }
 
@@ -66,7 +66,7 @@ public class TimedMessageViewModel : DialogViewModelBase
     public int TotalSeconds
     {
         get => _totalSeconds;
-        set => this.RaiseAndSetIfChanged(ref _totalSeconds, value);
+        set => SetProperty(ref _totalSeconds, value);
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public class TimedMessageViewModel : DialogViewModelBase
     /// <summary>
     /// Gets the command to close the dialog immediately.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> CloseNowCommand { get; }
+    public ICommand CloseNowCommand { get; }
 
     /// <summary>
     /// Starts the countdown timer.
@@ -88,10 +88,7 @@ public class TimedMessageViewModel : DialogViewModelBase
         StopTimer();
 
         // Create a timer that ticks every second
-        _timerSubscription = Observable
-            .Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ => OnTimerTick());
+        _timer = new Timer(_ => OnTimerTick(), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
     }
 
     /// <summary>
@@ -99,8 +96,8 @@ public class TimedMessageViewModel : DialogViewModelBase
     /// </summary>
     public void StopTimer()
     {
-        _timerSubscription?.Dispose();
-        _timerSubscription = null;
+        _timer?.Dispose();
+        _timer = null;
     }
 
     /// <summary>

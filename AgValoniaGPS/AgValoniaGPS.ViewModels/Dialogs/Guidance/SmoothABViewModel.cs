@@ -1,12 +1,11 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -35,12 +34,10 @@ public class SmoothABViewModel : DialogViewModelBase
         RecordedPoints = new ObservableCollection<Position>(_originalPoints);
         SmoothedPoints = new ObservableCollection<Position>();
 
-        LoadTrackCommand = ReactiveCommand.Create(OnLoadTrack);
-        PreviewSmoothingCommand = ReactiveCommand.Create(OnPreviewSmoothing,
-            this.WhenAnyValue(x => x.OriginalPointCount).Select(count => count > 2));
-        ApplySmoothingCommand = ReactiveCommand.Create(OnApplySmoothing,
-            this.WhenAnyValue(x => x.HasPreview).Select(preview => preview));
-        ResetCommand = ReactiveCommand.Create(OnReset);
+        LoadTrackCommand = new RelayCommand(OnLoadTrack);
+        PreviewSmoothingCommand = new RelayCommand(OnPreviewSmoothing);
+        ApplySmoothingCommand = new RelayCommand(OnApplySmoothing);
+        ResetCommand = new RelayCommand(OnReset);
     }
 
     /// <summary>
@@ -62,9 +59,9 @@ public class SmoothABViewModel : DialogViewModelBase
         get => _smoothingTolerance;
         set
         {
-            this.RaiseAndSetIfChanged(ref _smoothingTolerance, Math.Clamp(value, 0.1, 10.0));
+            SetProperty(ref _smoothingTolerance, Math.Clamp(value, 0.1, 10.0));
             _hasPreview = false; // Clear preview when tolerance changes
-            this.RaisePropertyChanged(nameof(HasPreview));
+            OnPropertyChanged(nameof(HasPreview));
         }
     }
 
@@ -76,8 +73,8 @@ public class SmoothABViewModel : DialogViewModelBase
         get => _originalPointCount;
         set
         {
-            this.RaiseAndSetIfChanged(ref _originalPointCount, value);
-            this.RaisePropertyChanged(nameof(OriginalPointCountDisplay));
+            SetProperty(ref _originalPointCount, value);
+            OnPropertyChanged(nameof(OriginalPointCountDisplay));
             UpdateReductionPercentage();
         }
     }
@@ -95,8 +92,8 @@ public class SmoothABViewModel : DialogViewModelBase
         get => _smoothedPointCount;
         set
         {
-            this.RaiseAndSetIfChanged(ref _smoothedPointCount, value);
-            this.RaisePropertyChanged(nameof(SmoothedPointCountDisplay));
+            SetProperty(ref _smoothedPointCount, value);
+            OnPropertyChanged(nameof(SmoothedPointCountDisplay));
             UpdateReductionPercentage();
         }
     }
@@ -122,7 +119,7 @@ public class SmoothABViewModel : DialogViewModelBase
     public bool HasPreview
     {
         get => _hasPreview;
-        private set => this.RaiseAndSetIfChanged(ref _hasPreview, value);
+        private set => SetProperty(ref _hasPreview, value);
     }
 
     /// <summary>
@@ -235,8 +232,8 @@ public class SmoothABViewModel : DialogViewModelBase
             ReductionPercentage = 0;
         }
 
-        this.RaisePropertyChanged(nameof(ReductionPercentage));
-        this.RaisePropertyChanged(nameof(ReductionPercentageDisplay));
+        OnPropertyChanged(nameof(ReductionPercentage));
+        OnPropertyChanged(nameof(ReductionPercentageDisplay));
     }
 
     /// <summary>

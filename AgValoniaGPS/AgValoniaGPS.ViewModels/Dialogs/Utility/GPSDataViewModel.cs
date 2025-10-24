@@ -1,7 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 using System;
-using System.Reactive;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -32,7 +32,7 @@ public class GPSDataViewModel : DialogViewModelBase
         // TODO: Inject IPositionUpdateService and INmeaParserService from Wave 1
         // For now, we'll show placeholder data
 
-        RefreshCommand = ReactiveCommand.Create(OnRefresh);
+        RefreshCommand = new RelayCommand(OnRefresh);
 
         // Initialize with sample data
         UpdateSampleData();
@@ -46,8 +46,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _latitude;
         set
         {
-            this.RaiseAndSetIfChanged(ref _latitude, value);
-            this.RaisePropertyChanged(nameof(LatitudeFormatted));
+            SetProperty(ref _latitude, value);
+            OnPropertyChanged(nameof(LatitudeFormatted));
         }
     }
 
@@ -64,8 +64,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _longitude;
         set
         {
-            this.RaiseAndSetIfChanged(ref _longitude, value);
-            this.RaisePropertyChanged(nameof(LongitudeFormatted));
+            SetProperty(ref _longitude, value);
+            OnPropertyChanged(nameof(LongitudeFormatted));
         }
     }
 
@@ -82,8 +82,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _altitude;
         set
         {
-            this.RaiseAndSetIfChanged(ref _altitude, value);
-            this.RaisePropertyChanged(nameof(AltitudeFormatted));
+            SetProperty(ref _altitude, value);
+            OnPropertyChanged(nameof(AltitudeFormatted));
         }
     }
 
@@ -100,8 +100,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _speed;
         set
         {
-            this.RaiseAndSetIfChanged(ref _speed, value);
-            this.RaisePropertyChanged(nameof(SpeedFormatted));
+            SetProperty(ref _speed, value);
+            OnPropertyChanged(nameof(SpeedFormatted));
         }
     }
 
@@ -118,8 +118,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _heading;
         set
         {
-            this.RaiseAndSetIfChanged(ref _heading, value);
-            this.RaisePropertyChanged(nameof(HeadingFormatted));
+            SetProperty(ref _heading, value);
+            OnPropertyChanged(nameof(HeadingFormatted));
         }
     }
 
@@ -134,7 +134,7 @@ public class GPSDataViewModel : DialogViewModelBase
     public string FixQuality
     {
         get => _fixQuality;
-        set => this.RaiseAndSetIfChanged(ref _fixQuality, value);
+        set => SetProperty(ref _fixQuality, value);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ public class GPSDataViewModel : DialogViewModelBase
     public int SatelliteCount
     {
         get => _satelliteCount;
-        set => this.RaiseAndSetIfChanged(ref _satelliteCount, value);
+        set => SetProperty(ref _satelliteCount, value);
     }
 
     /// <summary>
@@ -154,8 +154,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _hdop;
         set
         {
-            this.RaiseAndSetIfChanged(ref _hdop, value);
-            this.RaisePropertyChanged(nameof(HDOPFormatted));
+            SetProperty(ref _hdop, value);
+            OnPropertyChanged(nameof(HDOPFormatted));
         }
     }
 
@@ -172,8 +172,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _ageOfCorrection;
         set
         {
-            this.RaiseAndSetIfChanged(ref _ageOfCorrection, value);
-            this.RaisePropertyChanged(nameof(AgeOfCorrectionFormatted));
+            SetProperty(ref _ageOfCorrection, value);
+            OnPropertyChanged(nameof(AgeOfCorrectionFormatted));
         }
     }
 
@@ -190,8 +190,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _isConnected;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isConnected, value);
-            this.RaisePropertyChanged(nameof(ConnectionStatus));
+            SetProperty(ref _isConnected, value);
+            OnPropertyChanged(nameof(ConnectionStatus));
         }
     }
 
@@ -208,8 +208,8 @@ public class GPSDataViewModel : DialogViewModelBase
         get => _lastUpdate;
         set
         {
-            this.RaiseAndSetIfChanged(ref _lastUpdate, value);
-            this.RaisePropertyChanged(nameof(LastUpdateFormatted));
+            SetProperty(ref _lastUpdate, value);
+            OnPropertyChanged(nameof(LastUpdateFormatted));
         }
     }
 
@@ -221,7 +221,7 @@ public class GPSDataViewModel : DialogViewModelBase
     /// <summary>
     /// Gets the command to manually refresh GPS data.
     /// </summary>
-    public ReactiveCommand<Unit, Unit> RefreshCommand { get; }
+    public ICommand RefreshCommand { get; }
 
     /// <summary>
     /// Updates with sample GPS data for testing.

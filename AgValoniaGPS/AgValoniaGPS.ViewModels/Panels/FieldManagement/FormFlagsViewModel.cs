@@ -1,8 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -35,10 +35,10 @@ public partial class FormFlagsViewModel : PanelViewModelBase
         Flags = new ObservableCollection<FieldFlag>();
 
         // Commands
-        AddFlagCommand = ReactiveCommand.Create(OnAddFlag, this.WhenAnyValue(x => x.CanAddFlag));
-        DeleteFlagCommand = ReactiveCommand.Create(OnDeleteFlag, this.WhenAnyValue(x => x.CanDeleteFlag));
-        EditFlagCommand = ReactiveCommand.Create(OnEditFlag, this.WhenAnyValue(x => x.CanDeleteFlag));
-        ClearAllFlagsCommand = ReactiveCommand.Create(OnClearAllFlags);
+        AddFlagCommand = new RelayCommand(OnAddFlag);
+        DeleteFlagCommand = new RelayCommand(OnDeleteFlag);
+        EditFlagCommand = new RelayCommand(OnEditFlag);
+        ClearAllFlagsCommand = new RelayCommand(OnClearAllFlags);
 
         // Load existing flags
         LoadFlags();
@@ -59,7 +59,7 @@ public partial class FormFlagsViewModel : PanelViewModelBase
         get => _selectedFlag;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedFlag, value);
+            SetProperty(ref _selectedFlag, value);
             CanDeleteFlag = value != null;
         }
     }
@@ -70,7 +70,7 @@ public partial class FormFlagsViewModel : PanelViewModelBase
     public bool CanAddFlag
     {
         get => _canAddFlag;
-        set => this.RaiseAndSetIfChanged(ref _canAddFlag, value);
+        set => SetProperty(ref _canAddFlag, value);
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ public partial class FormFlagsViewModel : PanelViewModelBase
     public bool CanDeleteFlag
     {
         get => _canDeleteFlag;
-        set => this.RaiseAndSetIfChanged(ref _canDeleteFlag, value);
+        set => SetProperty(ref _canDeleteFlag, value);
     }
 
     public ICommand AddFlagCommand { get; }

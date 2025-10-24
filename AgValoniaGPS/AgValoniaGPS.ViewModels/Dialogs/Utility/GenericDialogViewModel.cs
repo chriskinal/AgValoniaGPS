@@ -1,6 +1,6 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Utility;
 
@@ -57,7 +57,7 @@ public class GenericDialogViewModel : DialogViewModelBase
     public string Title
     {
         get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
+        set => SetProperty(ref _title, value);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class GenericDialogViewModel : DialogViewModelBase
     public string Message
     {
         get => _message;
-        set => this.RaiseAndSetIfChanged(ref _message, value);
+        set => SetProperty(ref _message, value);
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class GenericDialogViewModel : DialogViewModelBase
     public string OKButtonText
     {
         get => _okButtonText;
-        set => this.RaiseAndSetIfChanged(ref _okButtonText, value);
+        set => SetProperty(ref _okButtonText, value);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class GenericDialogViewModel : DialogViewModelBase
     public string CancelButtonText
     {
         get => _cancelButtonText;
-        set => this.RaiseAndSetIfChanged(ref _cancelButtonText, value);
+        set => SetProperty(ref _cancelButtonText, value);
     }
 
     /// <summary>
@@ -93,6 +93,6 @@ public class GenericDialogViewModel : DialogViewModelBase
     public bool ShowCancelButton
     {
         get => _showCancelButton;
-        set => this.RaiseAndSetIfChanged(ref _showCancelButton, value);
+        set => SetProperty(ref _showCancelButton, value);
     }
 }

@@ -1,9 +1,8 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -24,10 +23,9 @@ public class GridViewModel : DialogViewModelBase
     /// </summary>
     public GridViewModel()
     {
-        SetOriginCommand = ReactiveCommand.Create(OnSetOrigin);
-        RotateGridCommand = ReactiveCommand.Create<double>(OnRotateGrid);
-        ApplyGridCommand = ReactiveCommand.Create(OnApplyGrid,
-            this.WhenAnyValue(x => x.GridOrigin).Select(origin => origin != null));
+        SetOriginCommand = new RelayCommand(OnSetOrigin);
+        RotateGridCommand = new RelayCommand<double>(OnRotateGrid);
+        ApplyGridCommand = new RelayCommand(OnApplyGrid);
 
         // Initialize with default origin (will be replaced by current position)
         _gridOrigin = new Position { Latitude = 0, Longitude = 0 };
@@ -42,8 +40,8 @@ public class GridViewModel : DialogViewModelBase
         get => _gridSpacing;
         set
         {
-            this.RaiseAndSetIfChanged(ref _gridSpacing, Math.Clamp(value, 1.0, 100.0));
-            this.RaisePropertyChanged(nameof(GridSpacingFormatted));
+            SetProperty(ref _gridSpacing, Math.Clamp(value, 1.0, 100.0));
+            OnPropertyChanged(nameof(GridSpacingFormatted));
         }
     }
 
@@ -65,8 +63,8 @@ public class GridViewModel : DialogViewModelBase
             var normalized = value % 360.0;
             if (normalized < 0) normalized += 360.0;
 
-            this.RaiseAndSetIfChanged(ref _gridAngle, normalized);
-            this.RaisePropertyChanged(nameof(GridAngleFormatted));
+            SetProperty(ref _gridAngle, normalized);
+            OnPropertyChanged(nameof(GridAngleFormatted));
         }
     }
 
@@ -83,9 +81,9 @@ public class GridViewModel : DialogViewModelBase
         get => _gridOrigin;
         set
         {
-            this.RaiseAndSetIfChanged(ref _gridOrigin, value);
-            this.RaisePropertyChanged(nameof(GridOriginFormatted));
-            this.RaisePropertyChanged(nameof(HasOrigin));
+            SetProperty(ref _gridOrigin, value);
+            OnPropertyChanged(nameof(GridOriginFormatted));
+            OnPropertyChanged(nameof(HasOrigin));
         }
     }
 
@@ -108,7 +106,7 @@ public class GridViewModel : DialogViewModelBase
     public bool ShowGrid
     {
         get => _showGrid;
-        set => this.RaiseAndSetIfChanged(ref _showGrid, value);
+        set => SetProperty(ref _showGrid, value);
     }
 
     /// <summary>
@@ -120,8 +118,8 @@ public class GridViewModel : DialogViewModelBase
         get => _numberOfLines;
         set
         {
-            this.RaiseAndSetIfChanged(ref _numberOfLines, Math.Clamp(value, 1, 20));
-            this.RaisePropertyChanged(nameof(TotalLinesDisplay));
+            SetProperty(ref _numberOfLines, Math.Clamp(value, 1, 20));
+            OnPropertyChanged(nameof(TotalLinesDisplay));
         }
     }
 

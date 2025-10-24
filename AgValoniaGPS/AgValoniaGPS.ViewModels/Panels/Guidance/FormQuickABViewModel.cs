@@ -2,7 +2,7 @@ using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
 
@@ -35,18 +35,11 @@ public partial class FormQuickABViewModel : PanelViewModelBase
         Title = "Quick A-B Setup";
 
         // Commands
-        SetPointACommand = ReactiveCommand.Create(OnSetPointA);
-        SetPointBCommand = ReactiveCommand.Create(OnSetPointB);
-        ApplyCommand = ReactiveCommand.Create(OnApply, this.WhenAnyValue(x => x.CanApply));
-        CancelCommand = ReactiveCommand.Create(OnCancel);
-        CreateFromHeadingCommand = ReactiveCommand.Create(OnCreateFromHeading);
-
-        // Update CanApply when points change
-        this.WhenAnyValue(
-            x => x.PointASet,
-            x => x.PointBSet,
-            (a, b) => a && b)
-            .Subscribe(canApply => CanApply = canApply);
+        SetPointACommand = new RelayCommand(OnSetPointA);
+        SetPointBCommand = new RelayCommand(OnSetPointB);
+        ApplyCommand = new RelayCommand(OnApply);
+        CancelCommand = new RelayCommand(OnCancel);
+        CreateFromHeadingCommand = new RelayCommand(OnCreateFromHeading);
     }
 
     public string Title { get; } = "Quick A-B Setup";
@@ -59,7 +52,7 @@ public partial class FormQuickABViewModel : PanelViewModelBase
         get => _pointA;
         set
         {
-            this.RaiseAndSetIfChanged(ref _pointA, value);
+            SetProperty(ref _pointA, value);
             PointASet = value != null;
         }
     }
@@ -72,7 +65,7 @@ public partial class FormQuickABViewModel : PanelViewModelBase
         get => _pointB;
         set
         {
-            this.RaiseAndSetIfChanged(ref _pointB, value);
+            SetProperty(ref _pointB, value);
             PointBSet = value != null;
         }
     }
@@ -87,7 +80,7 @@ public partial class FormQuickABViewModel : PanelViewModelBase
         {
             if (value >= -180 && value <= 180)
             {
-                this.RaiseAndSetIfChanged(ref _headingAdjustment, value);
+                SetProperty(ref _headingAdjustment, value);
             }
         }
     }
@@ -102,7 +95,7 @@ public partial class FormQuickABViewModel : PanelViewModelBase
         {
             if (value >= -100 && value <= 100)
             {
-                this.RaiseAndSetIfChanged(ref _lineOffset, value);
+                SetProperty(ref _lineOffset, value);
             }
         }
     }
@@ -113,7 +106,7 @@ public partial class FormQuickABViewModel : PanelViewModelBase
     public bool CanApply
     {
         get => _canApply;
-        set => this.RaiseAndSetIfChanged(ref _canApply, value);
+        set => SetProperty(ref _canApply, value);
     }
 
     /// <summary>
@@ -122,7 +115,11 @@ public partial class FormQuickABViewModel : PanelViewModelBase
     public bool PointASet
     {
         get => _pointASet;
-        private set => this.RaiseAndSetIfChanged(ref _pointASet, value);
+        private set
+        {
+            if (SetProperty(ref _pointASet, value))
+                UpdateCanApply();
+        }
     }
 
     /// <summary>
@@ -131,7 +128,16 @@ public partial class FormQuickABViewModel : PanelViewModelBase
     public bool PointBSet
     {
         get => _pointBSet;
-        private set => this.RaiseAndSetIfChanged(ref _pointBSet, value);
+        private set
+        {
+            if (SetProperty(ref _pointBSet, value))
+                UpdateCanApply();
+        }
+    }
+
+    private void UpdateCanApply()
+    {
+        CanApply = PointASet && PointBSet;
     }
 
     public ICommand SetPointACommand { get; }

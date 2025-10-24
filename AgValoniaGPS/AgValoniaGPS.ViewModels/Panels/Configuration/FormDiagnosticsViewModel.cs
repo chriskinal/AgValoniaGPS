@@ -1,9 +1,9 @@
+using CommunityToolkit.Mvvm.Input;
 using AgValoniaGPS.Models.Communication;
 using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Guidance;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -43,9 +43,9 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
         ErrorLog = new ObservableCollection<string>();
 
         // Commands
-        ClearErrorLogCommand = ReactiveCommand.Create(OnClearErrorLog);
-        ExportDiagnosticsCommand = ReactiveCommand.Create(OnExportDiagnostics);
-        RefreshStatusCommand = ReactiveCommand.Create(OnRefreshStatus);
+        ClearErrorLogCommand = new RelayCommand(OnClearErrorLog);
+        ExportDiagnosticsCommand = new RelayCommand(OnExportDiagnostics);
+        RefreshStatusCommand = new RelayCommand(OnRefreshStatus);
 
         // Subscribe to module events
         _moduleCoordinator.ModuleConnected += OnModuleConnected;
@@ -64,7 +64,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public double GpsUpdateRate
     {
         get => _gpsUpdateRate;
-        set => this.RaiseAndSetIfChanged(ref _gpsUpdateRate, value);
+        set => SetProperty(ref _gpsUpdateRate, value);
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public double SteeringLoopRate
     {
         get => _steeringLoopRate;
-        set => this.RaiseAndSetIfChanged(ref _steeringLoopRate, value);
+        set => SetProperty(ref _steeringLoopRate, value);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public string AutoSteerModuleStatus
     {
         get => _autoSteerModuleStatus;
-        set => this.RaiseAndSetIfChanged(ref _autoSteerModuleStatus, value);
+        set => SetProperty(ref _autoSteerModuleStatus, value);
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public string MachineModuleStatus
     {
         get => _machineModuleStatus;
-        set => this.RaiseAndSetIfChanged(ref _machineModuleStatus, value);
+        set => SetProperty(ref _machineModuleStatus, value);
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public string ImuModuleStatus
     {
         get => _imuModuleStatus;
-        set => this.RaiseAndSetIfChanged(ref _imuModuleStatus, value);
+        set => SetProperty(ref _imuModuleStatus, value);
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public string LastErrorMessage
     {
         get => _lastErrorMessage;
-        set => this.RaiseAndSetIfChanged(ref _lastErrorMessage, value);
+        set => SetProperty(ref _lastErrorMessage, value);
     }
 
     /// <summary>
@@ -118,7 +118,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public double MemoryUsageMb
     {
         get => _memoryUsageMb;
-        set => this.RaiseAndSetIfChanged(ref _memoryUsageMb, value);
+        set => SetProperty(ref _memoryUsageMb, value);
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public class FormDiagnosticsViewModel : PanelViewModelBase
     public double CpuUsagePercent
     {
         get => _cpuUsagePercent;
-        set => this.RaiseAndSetIfChanged(ref _cpuUsagePercent, value);
+        set => SetProperty(ref _cpuUsagePercent, value);
     }
 
     /// <summary>

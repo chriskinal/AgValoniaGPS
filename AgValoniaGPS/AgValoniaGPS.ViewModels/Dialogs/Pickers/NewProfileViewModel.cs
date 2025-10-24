@@ -1,10 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Pickers;
 
@@ -25,10 +25,6 @@ public class NewProfileViewModel : DialogViewModelBase
     public NewProfileViewModel(string profilesDirectory)
     {
         _profilesDirectory = profilesDirectory;
-
-        // Subscribe to property changes for validation
-        this.WhenAnyValue(x => x.ProfileName)
-            .Subscribe(_ => ValidateProfileName());
     }
 
     /// <summary>
@@ -37,7 +33,11 @@ public class NewProfileViewModel : DialogViewModelBase
     public string ProfileName
     {
         get => _profileName;
-        set => this.RaiseAndSetIfChanged(ref _profileName, value?.Trim() ?? string.Empty);
+        set
+        {
+            if (SetProperty(ref _profileName, value?.Trim() ?? string.Empty))
+                ValidateProfileName();
+        }
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class NewProfileViewModel : DialogViewModelBase
     public string Description
     {
         get => _description;
-        set => this.RaiseAndSetIfChanged(ref _description, value ?? string.Empty);
+        set => SetProperty(ref _description, value ?? string.Empty);
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class NewProfileViewModel : DialogViewModelBase
     public ProfileTypeEnum ProfileType
     {
         get => _profileType;
-        set => this.RaiseAndSetIfChanged(ref _profileType, value);
+        set => SetProperty(ref _profileType, value);
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public class NewProfileViewModel : DialogViewModelBase
         if (string.IsNullOrWhiteSpace(ProfileName))
         {
             SetError("Profile name is required.");
-            this.RaisePropertyChanged(nameof(IsValid));
+            OnPropertyChanged(nameof(IsValid));
             return;
         }
 
@@ -108,7 +108,7 @@ public class NewProfileViewModel : DialogViewModelBase
         if (ProfileName.Any(c => invalidChars.Contains(c)))
         {
             SetError("Profile name contains invalid characters.");
-            this.RaisePropertyChanged(nameof(IsValid));
+            OnPropertyChanged(nameof(IsValid));
             return;
         }
 
@@ -119,12 +119,12 @@ public class NewProfileViewModel : DialogViewModelBase
             if (File.Exists(existingFile))
             {
                 SetError("A profile with this name already exists.");
-                this.RaisePropertyChanged(nameof(IsValid));
+                OnPropertyChanged(nameof(IsValid));
                 return;
             }
         }
 
-        this.RaisePropertyChanged(nameof(IsValid));
+        OnPropertyChanged(nameof(IsValid));
     }
 
     /// <summary>

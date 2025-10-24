@@ -1,11 +1,10 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Pickers;
 
@@ -26,9 +25,9 @@ public class LoadProfileViewModel : DialogViewModelBase
     {
         _profilesDirectory = profilesDirectory;
 
-        LoadFromFileCommand = ReactiveCommand.Create(LoadFromFile);
-        DeleteProfileCommand = ReactiveCommand.Create(DeleteProfile, this.WhenAnyValue(x => x.SelectedProfile).Select(p => p != null));
-        RefreshCommand = ReactiveCommand.Create(LoadProfiles);
+        LoadFromFileCommand = new RelayCommand(LoadFromFile);
+        DeleteProfileCommand = new RelayCommand(DeleteProfile);
+        RefreshCommand = new RelayCommand(LoadProfiles);
 
         LoadProfiles();
     }
@@ -39,7 +38,7 @@ public class LoadProfileViewModel : DialogViewModelBase
     public ObservableCollection<ProfileInfo> Profiles
     {
         get => _profiles;
-        private set => this.RaiseAndSetIfChanged(ref _profiles, value);
+        private set => SetProperty(ref _profiles, value);
     }
 
     /// <summary>
@@ -50,8 +49,8 @@ public class LoadProfileViewModel : DialogViewModelBase
         get => _selectedProfile;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedProfile, value);
-            this.RaisePropertyChanged(nameof(HasSelection));
+            SetProperty(ref _selectedProfile, value);
+            OnPropertyChanged(nameof(HasSelection));
         }
     }
 

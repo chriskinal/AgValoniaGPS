@@ -1,13 +1,11 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive;
 using System.Windows.Input;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.FieldManagement;
 
@@ -36,13 +34,11 @@ public class BoundaryViewModel : DialogViewModelBase
 
         BoundaryPoints = new ObservableCollection<Position>();
 
-        NewBoundaryCommand = ReactiveCommand.Create(OnNewBoundary);
-        LoadBoundaryCommand = ReactiveCommand.Create(OnLoadBoundary);
-        SaveBoundaryCommand = ReactiveCommand.Create(OnSaveBoundary,
-            this.WhenAnyValue(x => x.IsValid).Select(valid => valid));
-        SimplifyCommand = ReactiveCommand.Create(OnSimplify,
-            this.WhenAnyValue(x => x.PointCount).Select(count => count > 3));
-        ClearCommand = ReactiveCommand.Create(OnClear);
+        NewBoundaryCommand = new RelayCommand(OnNewBoundary);
+        LoadBoundaryCommand = new RelayCommand(OnLoadBoundary);
+        SaveBoundaryCommand = new RelayCommand(OnSaveBoundary);
+        SimplifyCommand = new RelayCommand(OnSimplify);
+        ClearCommand = new RelayCommand(OnClear);
 
         UpdateCalculations();
     }
@@ -63,7 +59,7 @@ public class BoundaryViewModel : DialogViewModelBase
     public double BoundaryArea
     {
         get => _boundaryArea;
-        set => this.RaiseAndSetIfChanged(ref _boundaryArea, value);
+        set => SetProperty(ref _boundaryArea, value);
     }
 
     /// <summary>
@@ -72,7 +68,7 @@ public class BoundaryViewModel : DialogViewModelBase
     public bool IsValid
     {
         get => _isValid;
-        set => this.RaiseAndSetIfChanged(ref _isValid, value);
+        set => SetProperty(ref _isValid, value);
     }
 
     /// <summary>
@@ -221,7 +217,7 @@ public class BoundaryViewModel : DialogViewModelBase
     /// </summary>
     private void UpdateCalculations()
     {
-        this.RaisePropertyChanged(nameof(PointCount));
+        OnPropertyChanged(nameof(PointCount));
 
         // A valid boundary needs at least 3 points and should be closed
         IsValid = BoundaryPoints.Count >= 3;

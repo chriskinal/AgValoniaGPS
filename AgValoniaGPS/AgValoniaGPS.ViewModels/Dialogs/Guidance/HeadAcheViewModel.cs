@@ -1,8 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using AgValoniaGPS.ViewModels.Base;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Dialogs.Guidance;
 
@@ -35,12 +34,9 @@ public class HeadAcheViewModel : DialogViewModelBase
     {
         _maxPasses = Math.Max(maxPasses, 1);
 
-        SetModeCommand = ReactiveCommand.Create<HeadlandMode>(OnSetMode);
-        NextPassCommand = ReactiveCommand.Create(OnNextPass,
-            this.WhenAnyValue(x => x.CurrentPass, x => x.MaxPasses)
-                .Select(tuple => tuple.Item1 < tuple.Item2));
-        PreviousPassCommand = ReactiveCommand.Create(OnPreviousPass,
-            this.WhenAnyValue(x => x.CurrentPass).Select(pass => pass > 1));
+        SetModeCommand = new RelayCommand<HeadlandMode>(OnSetMode);
+        NextPassCommand = new RelayCommand(OnNextPass);
+        PreviousPassCommand = new RelayCommand(OnPreviousPass);
 
         // TODO: Subscribe to headland service events
         // Example: _headlandService.HeadlandEntered += OnHeadlandEntered;
@@ -54,10 +50,10 @@ public class HeadAcheViewModel : DialogViewModelBase
         get => _currentMode;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentMode, value);
-            this.RaisePropertyChanged(nameof(CurrentModeDisplay));
-            this.RaisePropertyChanged(nameof(IsAutoMode));
-            this.RaisePropertyChanged(nameof(IsManualMode));
+            SetProperty(ref _currentMode, value);
+            OnPropertyChanged(nameof(CurrentModeDisplay));
+            OnPropertyChanged(nameof(IsAutoMode));
+            OnPropertyChanged(nameof(IsManualMode));
         }
     }
 
@@ -84,8 +80,8 @@ public class HeadAcheViewModel : DialogViewModelBase
         get => _currentPass;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentPass, Math.Clamp(value, 1, MaxPasses));
-            this.RaisePropertyChanged(nameof(CurrentPassDisplay));
+            SetProperty(ref _currentPass, Math.Clamp(value, 1, MaxPasses));
+            OnPropertyChanged(nameof(CurrentPassDisplay));
         }
     }
 
@@ -102,8 +98,8 @@ public class HeadAcheViewModel : DialogViewModelBase
         get => _maxPasses;
         set
         {
-            this.RaiseAndSetIfChanged(ref _maxPasses, Math.Max(value, 1));
-            this.RaisePropertyChanged(nameof(CurrentPassDisplay));
+            SetProperty(ref _maxPasses, Math.Max(value, 1));
+            OnPropertyChanged(nameof(CurrentPassDisplay));
         }
     }
 
@@ -115,9 +111,9 @@ public class HeadAcheViewModel : DialogViewModelBase
         get => _isInHeadland;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isInHeadland, value);
-            this.RaisePropertyChanged(nameof(HeadlandStatusText));
-            this.RaisePropertyChanged(nameof(HeadlandStatusColor));
+            SetProperty(ref _isInHeadland, value);
+            OnPropertyChanged(nameof(HeadlandStatusText));
+            OnPropertyChanged(nameof(HeadlandStatusColor));
         }
     }
 
@@ -139,8 +135,8 @@ public class HeadAcheViewModel : DialogViewModelBase
         get => _distanceToHeadland;
         set
         {
-            this.RaiseAndSetIfChanged(ref _distanceToHeadland, Math.Max(value, 0));
-            this.RaisePropertyChanged(nameof(DistanceToHeadlandFormatted));
+            SetProperty(ref _distanceToHeadland, Math.Max(value, 0));
+            OnPropertyChanged(nameof(DistanceToHeadlandFormatted));
         }
     }
 
