@@ -3,7 +3,7 @@
 **Wave**: 10.5 (Bridge between Wave 10 and Wave 11)
 **Created**: 2025-10-24
 **Status**: Draft
-**Estimated Effort**: 20-40 hours
+**Estimated Effort**: 18-38 hours (reduced from 20-40 hours - icons already extracted)
 
 ---
 
@@ -14,7 +14,7 @@ Wave 10.5 implements the authentic docking panel system from the legacy AgOpenGP
 **Key Objectives:**
 1. Refactor MainWindow/FormGPS to implement proper docking panel architecture
 2. Create PanelHostingService for dynamic panel loading/unloading
-3. Extract and implement button icons from legacy Resources
+3. ✅ ~~Extract button icons from legacy Resources~~ **COMPLETE** - 236 icons already in Assets/Icons/
 4. Update all 15 Wave 10 panels to support docking behavior
 5. Provide familiar UI layout matching original AgOpenGPS
 
@@ -527,49 +527,42 @@ public partial class MainWindow : Window
 
 ## Button/Icon Extraction
 
-### Current Situation
+### Current Situation ✅ COMPLETE
 
-The original AgOpenGPS has hundreds of button icons stored in Resources:
+**Status**: ✅ Icons already extracted
+**Location**: `AgValoniaGPS/AgValoniaGPS.Desktop/Assets/Icons/`
+**Count**: 236 PNG icons
+
+The original AgOpenGPS button icons have already been extracted and are available in the Assets/Icons directory:
 - Field operation buttons (guidance, section control, etc.)
 - Configuration tool buttons
 - Camera control buttons
 - File operation buttons
 - Navigation buttons
 
-These icons provide visual familiarity and must be extracted for authentic UI recreation.
+These icons provide visual familiarity for authentic UI recreation.
 
-### Extraction Strategy
+**Sample Icons Available:**
+- AutoSteerOn.png, AutoSteerOff.png
+- ABDraw.png, ABLineCycle.png, ABTrackAB.png
+- Boundary.png, BoundaryFromTracks.png
+- Camera.png, CameraOn.png
+- FileOpen.png, FileSave.png
+- And 216 more...
 
-#### Option 1: Manual Extraction from Resources (Recommended)
-1. Open legacy project: `SourceCode/AgOpenGPS/GPS/GPS.csproj`
-2. Navigate to Resources.resx in Visual Studio
-3. Export all image resources to `AgValoniaGPS/AgValoniaGPS.Desktop/Assets/Buttons/`
-4. Convert to PNG format if needed
-5. Document icon names and purposes
+### ~~Extraction Strategy~~ (No longer needed - already complete)
 
-#### Option 2: Programmatic Extraction
-```csharp
-// Tool to extract resources from legacy project
-using System.Resources;
-using System.Drawing;
+~~Option 1: Manual Extraction from Resources~~
+~~Option 2: Programmatic Extraction~~
 
-var resourceReader = new ResourceReader("GPS.resources");
-foreach (DictionaryEntry entry in resourceReader)
-{
-    if (entry.Value is Bitmap bitmap)
-    {
-        string filename = $"Assets/Buttons/{entry.Key}.png";
-        bitmap.Save(filename, ImageFormat.Png);
-    }
-}
-```
+Icons have already been extracted to `Assets/Icons/` directory.
 
 ### Icon Integration
 
 ```xml
 <!-- Example button with extracted icon -->
 <Button Classes="IconButton" ToolTip.Tip="Start Guidance">
-    <Image Source="/Assets/Buttons/btnAutoSteerOn.png" Width="48" Height="48"/>
+    <Image Source="/Assets/Icons/AutoSteerOn.png" Width="48" Height="48"/>
 </Button>
 ```
 
