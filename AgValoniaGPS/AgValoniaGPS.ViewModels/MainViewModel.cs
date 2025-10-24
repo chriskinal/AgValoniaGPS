@@ -824,4 +824,126 @@ public class MainViewModel : ReactiveObject
     public IConfigurationService ConfigurationService => _configService;
     public ISessionManagementService SessionManagementService => _sessionService;
     public IProfileManagementService ProfileManagementService => _profileService;
+
+    // ========== Wave 10 Panel Visibility Management ==========
+
+    // Task Group 1: Core Operations Panels
+    private bool _isFieldDataPanelVisible;
+    private bool _isGPSDataPanelVisible;
+    private bool _isTramLinePanelVisible;
+    private bool _isQuickABPanelVisible;
+
+    // Task Group 2: Configuration Panels
+    private bool _isSteerConfigPanelVisible;
+    private bool _isGeneralConfigPanelVisible;
+    private bool _isDiagnosticsPanelVisible;
+    private bool _isRollCorrectionPanelVisible;
+    private bool _isVehicleConfigPanelVisible;
+
+    // Task Group 3: Field Management Panels
+    private bool _isFlagsPanelVisible;
+    private bool _isCameraPanelVisible;
+    private bool _isBoundaryEditorPanelVisible;
+    private bool _isFieldToolsPanelVisible;
+    private bool _isFieldFileManagerPanelVisible;
+
+    public bool IsFieldDataPanelVisible
+    {
+        get => _isFieldDataPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isFieldDataPanelVisible, value);
+    }
+
+    public bool IsGPSDataPanelVisible
+    {
+        get => _isGPSDataPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isGPSDataPanelVisible, value);
+    }
+
+    public bool IsTramLinePanelVisible
+    {
+        get => _isTramLinePanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isTramLinePanelVisible, value);
+    }
+
+    public bool IsQuickABPanelVisible
+    {
+        get => _isQuickABPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isQuickABPanelVisible, value);
+    }
+
+    public bool IsSteerConfigPanelVisible
+    {
+        get => _isSteerConfigPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isSteerConfigPanelVisible, value);
+    }
+
+    public bool IsGeneralConfigPanelVisible
+    {
+        get => _isGeneralConfigPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isGeneralConfigPanelVisible, value);
+    }
+
+    public bool IsDiagnosticsPanelVisible
+    {
+        get => _isDiagnosticsPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isDiagnosticsPanelVisible, value);
+    }
+
+    public bool IsRollCorrectionPanelVisible
+    {
+        get => _isRollCorrectionPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isRollCorrectionPanelVisible, value);
+    }
+
+    public bool IsVehicleConfigPanelVisible
+    {
+        get => _isVehicleConfigPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isVehicleConfigPanelVisible, value);
+    }
+
+    public bool IsFlagsPanelVisible
+    {
+        get => _isFlagsPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isFlagsPanelVisible, value);
+    }
+
+    public bool IsCameraPanelVisible
+    {
+        get => _isCameraPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isCameraPanelVisible, value);
+    }
+
+    public bool IsBoundaryEditorPanelVisible
+    {
+        get => _isBoundaryEditorPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isBoundaryEditorPanelVisible, value);
+    }
+
+    public bool IsFieldToolsPanelVisible
+    {
+        get => _isFieldToolsPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isFieldToolsPanelVisible, value);
+    }
+
+    public bool IsFieldFileManagerPanelVisible
+    {
+        get => _isFieldFileManagerPanelVisible;
+        set => this.RaiseAndSetIfChanged(ref _isFieldFileManagerPanelVisible, value);
+    }
+
+    // Panel Toggle Commands
+    public ICommand ToggleFieldDataPanelCommand => ReactiveCommand.Create(() => IsFieldDataPanelVisible = !IsFieldDataPanelVisible);
+    public ICommand ToggleGPSDataPanelCommand => ReactiveCommand.Create(() => IsGPSDataPanelVisible = !IsGPSDataPanelVisible);
+    public ICommand ToggleTramLinePanelCommand => ReactiveCommand.Create(() => IsTramLinePanelVisible = !IsTramLinePanelVisible);
+    public ICommand ToggleQuickABPanelCommand => ReactiveCommand.Create(() => IsQuickABPanelVisible = !IsQuickABPanelVisible);
+    public ICommand ToggleSteerConfigPanelCommand => ReactiveCommand.Create(() => IsSteerConfigPanelVisible = !IsSteerConfigPanelVisible);
+    public ICommand ToggleGeneralConfigPanelCommand => ReactiveCommand.Create(() => IsGeneralConfigPanelVisible = !IsGeneralConfigPanelVisible);
+    public ICommand ToggleDiagnosticsPanelCommand => ReactiveCommand.Create(() => IsDiagnosticsPanelVisible = !IsDiagnosticsPanelVisible);
+    public ICommand ToggleRollCorrectionPanelCommand => ReactiveCommand.Create(() => IsRollCorrectionPanelVisible = !IsRollCorrectionPanelVisible);
+    public ICommand ToggleVehicleConfigPanelCommand => ReactiveCommand.Create(() => IsVehicleConfigPanelVisible = !IsVehicleConfigPanelVisible);
+    public ICommand ToggleFlagsPanelCommand => ReactiveCommand.Create(() => IsFlagsPanelVisible = !IsFlagsPanelVisible);
+    public ICommand ToggleCameraPanelCommand => ReactiveCommand.Create(() => IsCameraPanelVisible = !IsCameraPanelVisible);
+    public ICommand ToggleBoundaryEditorPanelCommand => ReactiveCommand.Create(() => IsBoundaryEditorPanelVisible = !IsBoundaryEditorPanelVisible);
+    public ICommand ToggleFieldToolsPanelCommand => ReactiveCommand.Create(() => IsFieldToolsPanelVisible = !IsFieldToolsPanelVisible);
+    public ICommand ToggleFieldFileManagerPanelCommand => ReactiveCommand.Create(() => IsFieldFileManagerPanelVisible = !IsFieldFileManagerPanelVisible);
 }

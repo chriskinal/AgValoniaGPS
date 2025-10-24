@@ -18,18 +18,18 @@
                                FontWeight="SemiBold"
                                FontSize="14"/>
 
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" RowGap="8">
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="GPS Update Rate:" Margin="0,0,10,0"/>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GpsUpdateRate, StringFormat='{}{0:F1} Hz'}"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Steering Loop Rate:" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SteeringLoopRate, StringFormat='{}{0:F1} Hz'}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Steering Loop Rate:" Margin="0,8,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SteeringLoopRate, StringFormat='{}{0:F1} Hz'}" Margin="0,8,0,0"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Memory Usage:" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MemoryUsageMb, StringFormat='{}{0:F1} MB'}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Memory Usage:" Margin="0,8,10,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MemoryUsageMb, StringFormat='{}{0:F1} MB'}" Margin="0,8,0,0"/>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="CPU Usage:" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CpuUsagePercent, StringFormat='{}{0:F1}%'}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="CPU Usage:" Margin="0,8,10,0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CpuUsagePercent, StringFormat='{}{0:F1}%'}" Margin="0,8,0,0"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -41,7 +41,7 @@
                                FontWeight="SemiBold"
                                FontSize="14"/>
 
-                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" RowGap="8">
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="AutoSteer:" Margin="0,0,10,0"/>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AutoSteerModuleStatus}"/>
                         <Ellipse Grid.Row="0" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0">
@@ -56,13 +56,13 @@
                             </Ellipse.Fill>
                         </Ellipse>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Machine:" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MachineModuleStatus}"/>
-                        <Ellipse Grid.Row="1" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0" Fill="Gray"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Machine:" Margin="0,8,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MachineModuleStatus}" Margin="0,8,0,0"/>
+                        <Ellipse Grid.Row="1" Grid.Column="2" Width="12" Height="12" Margin="10,8,0,0" Fill="Gray"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="IMU:" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ImuModuleStatus}"/>
-                        <Ellipse Grid.Row="2" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0" Fill="Gray"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="IMU:" Margin="0,8,10,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ImuModuleStatus}" Margin="0,8,0,0"/>
+                        <Ellipse Grid.Row="2" Grid.Column="2" Width="12" Height="12" Margin="10,8,0,0" Fill="Gray"/>
                     </Grid>
                 </StackPanel>
             </Border>

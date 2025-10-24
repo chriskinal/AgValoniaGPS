@@ -92,12 +92,12 @@
                                FontWeight="SemiBold"
                                FontSize="14"/>
 
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" RowGap="8">
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Max Steer Angle:" Margin="0,0,10,0"/>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MaxSteerAngle, StringFormat='{}{0:F1}°'}"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Wheelbase:" Margin="0,0,10,0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding WheelBase, StringFormat='{}{0:F2} m'}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Wheelbase:" Margin="0,8,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding WheelBase, StringFormat='{}{0:F2} m'}" Margin="0,8,0,0"/>
                     </Grid>
                 </StackPanel>
             </Border>

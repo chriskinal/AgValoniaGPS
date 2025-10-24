@@ -4,6 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AgValoniaGPS.ViewModels"
         xmlns:controls="using:AgValoniaGPS.Desktop.Controls"
+        xmlns:panelsFieldMgmt="using:AgValoniaGPS.Desktop.Views.Panels.FieldManagement"
+        xmlns:panelsDisplay="using:AgValoniaGPS.Desktop.Views.Panels.Display"
+        xmlns:panelsFieldOps="using:AgValoniaGPS.Desktop.Views.Panels.FieldOperations"
+        xmlns:panelsGuidance="using:AgValoniaGPS.Desktop.Views.Panels.Guidance"
+        xmlns:panelsConfig="using:AgValoniaGPS.Desktop.Views.Panels.Configuration"
         mc:Ignorable="d" d:DesignWidth="1366" d:DesignHeight="768"
         x:Class="AgValoniaGPS.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
@@ -133,6 +138,73 @@
             </StackPanel>
         </Border>
 
+        <!-- PANEL TOGGLES: Show/Hide Wave 10 Panels -->
+        <Border Classes="FloatingPanel"
+                ZIndex="10"
+                Margin="20,20,20,200"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                MaxWidth="250"
+                IsHitTestVisible="True">
+            <ScrollViewer MaxHeight="500">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="PANELS" Foreground="#3498DB" FontSize="12" FontWeight="Bold" Margin="0,0,0,6"/>
+
+                    <!-- Task Group 1: Core Operations -->
+                    <Button Classes="ModernButton" Content="Field Data" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleFieldDataPanelCommand}"
+                            Background="{Binding IsFieldDataPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="GPS Data" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleGPSDataPanelCommand}"
+                            Background="{Binding IsGPSDataPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Tram Lines" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleTramLinePanelCommand}"
+                            Background="{Binding IsTramLinePanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Quick A-B" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleQuickABPanelCommand}"
+                            Background="{Binding IsQuickABPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+
+                    <Separator Height="1" Background="#444" Margin="0,4"/>
+
+                    <!-- Task Group 2: Configuration -->
+                    <Button Classes="ModernButton" Content="Steering Config" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleSteerConfigPanelCommand}"
+                            Background="{Binding IsSteerConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="General Config" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleGeneralConfigPanelCommand}"
+                            Background="{Binding IsGeneralConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Diagnostics" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleDiagnosticsPanelCommand}"
+                            Background="{Binding IsDiagnosticsPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Roll Correction" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleRollCorrectionPanelCommand}"
+                            Background="{Binding IsRollCorrectionPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Vehicle Config" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleVehicleConfigPanelCommand}"
+                            Background="{Binding IsVehicleConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+
+                    <Separator Height="1" Background="#444" Margin="0,4"/>
+
+                    <!-- Task Group 3: Field Management -->
+                    <Button Classes="ModernButton" Content="Flags" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleFlagsPanelCommand}"
+                            Background="{Binding IsFlagsPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Camera" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleCameraPanelCommand}"
+                            Background="{Binding IsCameraPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Boundary Editor" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleBoundaryEditorPanelCommand}"
+                            Background="{Binding IsBoundaryEditorPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Field Tools" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleFieldToolsPanelCommand}"
+                            Background="{Binding IsFieldToolsPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                    <Button Classes="ModernButton" Content="Field Files" FontSize="11" Padding="8,4"
+                            Command="{Binding ToggleFieldFileManagerPanelCommand}"
+                            Background="{Binding IsFieldFileManagerPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
         <!-- BOTTOM BAR: Function Buttons (horizontal) -->
         <Border Classes="FloatingPanel"
                 ZIndex="10"
@@ -192,5 +264,103 @@
             </StackPanel>
         </Border>
         </Canvas>
+
+        <!-- ========== WAVE 10 OPERATIONAL PANELS ========== -->
+
+        <!-- Task Group 1: Core Operations Panels -->
+        <panelsFieldMgmt:FormFieldData
+            IsVisible="{Binding IsFieldDataPanelVisible}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="200,20,20,20"
+            ZIndex="15" />
+
+        <panelsDisplay:FormGPSData
+            IsVisible="{Binding IsGPSDataPanelVisible}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="200,100,20,20"
+            ZIndex="15" />
+
+        <panelsFieldOps:FormTramLine
+            IsVisible="{Binding IsTramLinePanelVisible}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="200,180,20,20"
+            ZIndex="15" />
+
+        <panelsGuidance:FormQuickAB
+            IsVisible="{Binding IsQuickABPanelVisible}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="200,260,20,20"
+            ZIndex="15" />
+
+        <!-- Task Group 2: Configuration Panels -->
+        <panelsConfig:FormSteer
+            IsVisible="{Binding IsSteerConfigPanelVisible}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            ZIndex="15" />
+
+        <panelsConfig:FormConfig
+            IsVisible="{Binding IsGeneralConfigPanelVisible}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            ZIndex="15" />
+
+        <panelsConfig:FormDiagnostics
+            IsVisible="{Binding IsDiagnosticsPanelVisible}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            ZIndex="15" />
+
+        <panelsConfig:FormRollCorrection
+            IsVisible="{Binding IsRollCorrectionPanelVisible}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            ZIndex="15" />
+
+        <panelsConfig:FormVehicleConfig
+            IsVisible="{Binding IsVehicleConfigPanelVisible}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            ZIndex="15" />
+
+        <!-- Task Group 3: Field Management Panels -->
+        <panelsFieldMgmt:FormFlags
+            IsVisible="{Binding IsFlagsPanelVisible}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="200,20,20,20"
+            ZIndex="15" />
+
+        <panelsFieldMgmt:FormCamera
+            IsVisible="{Binding IsCameraPanelVisible}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="200,100,20,20"
+            ZIndex="15" />
+
+        <panelsFieldMgmt:FormBoundaryEditor
+            IsVisible="{Binding IsBoundaryEditorPanelVisible}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="200,180,20,20"
+            ZIndex="15" />
+
+        <panelsFieldMgmt:FormFieldTools
+            IsVisible="{Binding IsFieldToolsPanelVisible}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="200,260,20,20"
+            ZIndex="15" />
+
+        <panelsFieldMgmt:FormFieldFileManager
+            IsVisible="{Binding IsFieldFileManagerPanelVisible}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            ZIndex="15" />
+
     </Grid>
 </Window>
