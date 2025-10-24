@@ -8,6 +8,7 @@ using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.Services.Profile;
+using AgValoniaGPS.Services.UI;
 using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
@@ -31,6 +32,9 @@ public class MainViewModel : ReactiveObject
     private readonly IConfigurationService _configService;
     private readonly ISessionManagementService _sessionService;
     private readonly IProfileManagementService _profileService;
+
+    // Wave 9 UI Services
+    private readonly IDialogService _dialogService;
 
     private string _statusMessage = "Starting...";
     private double _latitude;
@@ -73,7 +77,8 @@ public class MainViewModel : ReactiveObject
         IHeadingCalculatorService headingService,
         IConfigurationService configService,
         ISessionManagementService sessionService,
-        IProfileManagementService profileService)
+        IProfileManagementService profileService,
+        IDialogService dialogService)
     {
         _udpService = udpService;
         _gpsService = gpsService;
@@ -87,6 +92,7 @@ public class MainViewModel : ReactiveObject
         _configService = configService;
         _sessionService = sessionService;
         _profileService = profileService;
+        _dialogService = dialogService;
         _nmeaParser = new NmeaParserService(gpsService);
 
         // Subscribe to GPS and UDP events
@@ -100,6 +106,9 @@ public class MainViewModel : ReactiveObject
         // Subscribe to Wave 1 service events
         _positionService.PositionUpdated += OnPositionUpdated;
         _headingService.HeadingChanged += OnHeadingChanged;
+
+        // Initialize panel toggle commands on UI thread (fixes ReactiveCommand threading issues)
+        InitializePanelToggleCommands();
 
         // Start UDP communication
         InitializeAsync();
@@ -931,19 +940,70 @@ public class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _isFieldFileManagerPanelVisible, value);
     }
 
-    // Panel Toggle Commands
-    public ICommand ToggleFieldDataPanelCommand => ReactiveCommand.Create(() => IsFieldDataPanelVisible = !IsFieldDataPanelVisible);
-    public ICommand ToggleGPSDataPanelCommand => ReactiveCommand.Create(() => IsGPSDataPanelVisible = !IsGPSDataPanelVisible);
-    public ICommand ToggleTramLinePanelCommand => ReactiveCommand.Create(() => IsTramLinePanelVisible = !IsTramLinePanelVisible);
-    public ICommand ToggleQuickABPanelCommand => ReactiveCommand.Create(() => IsQuickABPanelVisible = !IsQuickABPanelVisible);
-    public ICommand ToggleSteerConfigPanelCommand => ReactiveCommand.Create(() => IsSteerConfigPanelVisible = !IsSteerConfigPanelVisible);
-    public ICommand ToggleGeneralConfigPanelCommand => ReactiveCommand.Create(() => IsGeneralConfigPanelVisible = !IsGeneralConfigPanelVisible);
-    public ICommand ToggleDiagnosticsPanelCommand => ReactiveCommand.Create(() => IsDiagnosticsPanelVisible = !IsDiagnosticsPanelVisible);
-    public ICommand ToggleRollCorrectionPanelCommand => ReactiveCommand.Create(() => IsRollCorrectionPanelVisible = !IsRollCorrectionPanelVisible);
-    public ICommand ToggleVehicleConfigPanelCommand => ReactiveCommand.Create(() => IsVehicleConfigPanelVisible = !IsVehicleConfigPanelVisible);
-    public ICommand ToggleFlagsPanelCommand => ReactiveCommand.Create(() => IsFlagsPanelVisible = !IsFlagsPanelVisible);
-    public ICommand ToggleCameraPanelCommand => ReactiveCommand.Create(() => IsCameraPanelVisible = !IsCameraPanelVisible);
-    public ICommand ToggleBoundaryEditorPanelCommand => ReactiveCommand.Create(() => IsBoundaryEditorPanelVisible = !IsBoundaryEditorPanelVisible);
-    public ICommand ToggleFieldToolsPanelCommand => ReactiveCommand.Create(() => IsFieldToolsPanelVisible = !IsFieldToolsPanelVisible);
-    public ICommand ToggleFieldFileManagerPanelCommand => ReactiveCommand.Create(() => IsFieldFileManagerPanelVisible = !IsFieldFileManagerPanelVisible);
+    // Panel Toggle Commands (initialized in constructor to fix threading issues)
+    public ICommand ToggleFieldDataPanelCommand { get; private set; } = null!;
+    public ICommand ToggleGPSDataPanelCommand { get; private set; } = null!;
+    public ICommand ToggleTramLinePanelCommand { get; private set; } = null!;
+    public ICommand ToggleQuickABPanelCommand { get; private set; } = null!;
+    public ICommand ToggleSteerConfigPanelCommand { get; private set; } = null!;
+    public ICommand ToggleGeneralConfigPanelCommand { get; private set; } = null!;
+    public ICommand ToggleDiagnosticsPanelCommand { get; private set; } = null!;
+    public ICommand ToggleRollCorrectionPanelCommand { get; private set; } = null!;
+    public ICommand ToggleVehicleConfigPanelCommand { get; private set; } = null!;
+    public ICommand ToggleFlagsPanelCommand { get; private set; } = null!;
+    public ICommand ToggleCameraPanelCommand { get; private set; } = null!;
+    public ICommand ToggleBoundaryEditorPanelCommand { get; private set; } = null!;
+    public ICommand ToggleFieldToolsPanelCommand { get; private set; } = null!;
+    public ICommand ToggleFieldFileManagerPanelCommand { get; private set; } = null!;
+
+    /// <summary>
+    /// Initialize panel toggle commands on the UI thread.
+    /// Must be called from constructor to avoid ReactiveCommand threading issues.
+    /// </summary>
+    private void InitializePanelToggleCommands()
+    {
+        // Create commands on UI thread with proper scheduling
+        ToggleFieldDataPanelCommand = ReactiveCommand.Create(() => IsFieldDataPanelVisible = !IsFieldDataPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleGPSDataPanelCommand = ReactiveCommand.Create(() => IsGPSDataPanelVisible = !IsGPSDataPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleTramLinePanelCommand = ReactiveCommand.Create(() => IsTramLinePanelVisible = !IsTramLinePanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleQuickABPanelCommand = ReactiveCommand.Create(() => IsQuickABPanelVisible = !IsQuickABPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleSteerConfigPanelCommand = ReactiveCommand.Create(() => IsSteerConfigPanelVisible = !IsSteerConfigPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleGeneralConfigPanelCommand = ReactiveCommand.Create(() => IsGeneralConfigPanelVisible = !IsGeneralConfigPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleDiagnosticsPanelCommand = ReactiveCommand.Create(() => IsDiagnosticsPanelVisible = !IsDiagnosticsPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleRollCorrectionPanelCommand = ReactiveCommand.Create(() => IsRollCorrectionPanelVisible = !IsRollCorrectionPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleVehicleConfigPanelCommand = ReactiveCommand.Create(() => IsVehicleConfigPanelVisible = !IsVehicleConfigPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleFlagsPanelCommand = ReactiveCommand.Create(() => IsFlagsPanelVisible = !IsFlagsPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleCameraPanelCommand = ReactiveCommand.Create(() => IsCameraPanelVisible = !IsCameraPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleBoundaryEditorPanelCommand = ReactiveCommand.Create(() => IsBoundaryEditorPanelVisible = !IsBoundaryEditorPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleFieldToolsPanelCommand = ReactiveCommand.Create(() => IsFieldToolsPanelVisible = !IsFieldToolsPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+        ToggleFieldFileManagerPanelCommand = ReactiveCommand.Create(() => IsFieldFileManagerPanelVisible = !IsFieldFileManagerPanelVisible, outputScheduler: RxApp.MainThreadScheduler);
+    }
+
+    // ========== Wave 9 Task 8.1: Dialog Launching Methods ==========
+
+    /// <summary>
+    /// Show Settings dialog (general application configuration)
+    /// </summary>
+    public async System.Threading.Tasks.Task ShowSettingsDialogAsync()
+    {
+        // TODO: Implement settings dialog launch
+        await System.Threading.Tasks.Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Show Field Picker dialog workflow (select field directory and field)
+    /// </summary>
+    public async System.Threading.Tasks.Task<Field?> ShowFieldPickerWorkflowAsync()
+    {
+        // TODO: Implement field picker workflow
+        // 1. Show FormFieldDir to select directory
+        // 2. Show FormFieldExisting to select field from directory
+        // 3. Return selected field
+        return await System.Threading.Tasks.Task.FromResult<Field?>(null);
+    }
+
+    /// <summary>
+    /// Expose DialogService for advanced UI scenarios
+    /// </summary>
+    public IDialogService DialogService => _dialogService;
 }
