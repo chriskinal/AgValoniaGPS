@@ -335,123 +335,143 @@
         </Border>
         </Canvas>
 
-        <!-- ========== WAVE 10 OPERATIONAL PANELS ========== -->
+        <!-- ========== WAVE 10 OPERATIONAL PANELS (DRAGGABLE) ========== -->
         <!-- Panel Positioning Design:
-             - Panels use fixed HorizontalAlignment/VerticalAlignment/Margin positioning
-             - Panels are NOT draggable (this is by design for consistent layout)
-             - Only the Section Control panel (above) is draggable via Canvas positioning
+             - All panels are draggable via Canvas positioning
              - Panels can be shown/hidden via toggle buttons in the left sidebar
              - Panel close buttons (×) trigger CloseRequested events → MainViewModel visibility toggles
+             - Drag the ≡ handle or any part of the header to move panels
         -->
+        <Canvas ZIndex="15">
+            <!-- Task Group 1: Core Operations Panels (Right side) -->
+            <panelsFieldMgmt:FormFieldData x:Name="FieldDataPanel"
+                Canvas.Left="1000" Canvas.Top="20"
+                DataContext="{Binding FieldDataVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsFieldDataPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <!-- Task Group 1: Core Operations Panels -->
-        <panelsFieldMgmt:FormFieldData
-            DataContext="{Binding FieldDataVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsFieldDataPanelVisible}"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="200,20,20,20"
-            ZIndex="15" />
+            <panelsDisplay:FormGPSData x:Name="GPSDataPanel"
+                Canvas.Left="1000" Canvas.Top="100"
+                DataContext="{Binding GPSDataVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsGPSDataPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsDisplay:FormGPSData
-            DataContext="{Binding GPSDataVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsGPSDataPanelVisible}"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="200,100,20,20"
-            ZIndex="15" />
+            <panelsFieldOps:FormTramLine x:Name="TramLinePanel"
+                Canvas.Left="1000" Canvas.Top="180"
+                DataContext="{Binding TramLineVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsTramLinePanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsFieldOps:FormTramLine
-            DataContext="{Binding TramLineVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsTramLinePanelVisible}"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="200,180,20,20"
-            ZIndex="15" />
+            <panelsGuidance:FormQuickAB x:Name="QuickABPanel"
+                Canvas.Left="1000" Canvas.Top="260"
+                DataContext="{Binding QuickABVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsQuickABPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsGuidance:FormQuickAB
-            DataContext="{Binding QuickABVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsQuickABPanelVisible}"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Margin="200,260,20,20"
-            ZIndex="15" />
+            <!-- Task Group 2: Configuration Panels (Center) -->
+            <panelsConfig:FormSteer x:Name="SteerPanel"
+                Canvas.Left="500" Canvas.Top="200"
+                DataContext="{Binding SteerVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsSteerConfigPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <!-- Task Group 2: Configuration Panels -->
-        <panelsConfig:FormSteer
-            DataContext="{Binding SteerVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsSteerConfigPanelVisible}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ZIndex="15" />
+            <panelsConfig:FormConfig x:Name="ConfigPanel"
+                Canvas.Left="500" Canvas.Top="200"
+                DataContext="{Binding ConfigVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsGeneralConfigPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsConfig:FormConfig
-            DataContext="{Binding ConfigVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsGeneralConfigPanelVisible}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ZIndex="15" />
+            <panelsConfig:FormDiagnostics x:Name="DiagnosticsPanel"
+                Canvas.Left="500" Canvas.Top="200"
+                DataContext="{Binding DiagnosticsVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsDiagnosticsPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsConfig:FormDiagnostics
-            DataContext="{Binding DiagnosticsVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsDiagnosticsPanelVisible}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ZIndex="15" />
+            <panelsConfig:FormRollCorrection x:Name="RollCorrectionPanel"
+                Canvas.Left="500" Canvas.Top="200"
+                DataContext="{Binding RollCorrectionVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsRollCorrectionPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsConfig:FormRollCorrection
-            DataContext="{Binding RollCorrectionVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsRollCorrectionPanelVisible}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ZIndex="15" />
+            <panelsConfig:FormVehicleConfig x:Name="VehicleConfigPanel"
+                Canvas.Left="500" Canvas.Top="200"
+                DataContext="{Binding VehicleConfigVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsVehicleConfigPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsConfig:FormVehicleConfig
-            DataContext="{Binding VehicleConfigVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsVehicleConfigPanelVisible}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ZIndex="15" />
+            <!-- Task Group 3: Field Management Panels (Left side) -->
+            <panelsFieldMgmt:FormFlags x:Name="FlagsPanel"
+                Canvas.Left="300" Canvas.Top="20"
+                DataContext="{Binding FlagsVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsFlagsPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <!-- Task Group 3: Field Management Panels -->
-        <panelsFieldMgmt:FormFlags
-            DataContext="{Binding FlagsVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsFlagsPanelVisible}"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Margin="200,20,20,20"
-            ZIndex="15" />
+            <panelsFieldMgmt:FormCamera x:Name="CameraPanel"
+                Canvas.Left="300" Canvas.Top="100"
+                DataContext="{Binding CameraVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsCameraPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsFieldMgmt:FormCamera
-            DataContext="{Binding CameraVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsCameraPanelVisible}"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Margin="200,100,20,20"
-            ZIndex="15" />
+            <panelsFieldMgmt:FormBoundaryEditor x:Name="BoundaryEditorPanel"
+                Canvas.Left="300" Canvas.Top="180"
+                DataContext="{Binding BoundaryEditorVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsBoundaryEditorPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsFieldMgmt:FormBoundaryEditor
-            DataContext="{Binding BoundaryEditorVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsBoundaryEditorPanelVisible}"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Margin="200,180,20,20"
-            ZIndex="15" />
+            <panelsFieldMgmt:FormFieldTools x:Name="FieldToolsPanel"
+                Canvas.Left="300" Canvas.Top="260"
+                DataContext="{Binding FieldToolsVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsFieldToolsPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
 
-        <panelsFieldMgmt:FormFieldTools
-            DataContext="{Binding FieldToolsVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsFieldToolsPanelVisible}"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Margin="200,260,20,20"
-            ZIndex="15" />
-
-        <panelsFieldMgmt:FormFieldFileManager
-            DataContext="{Binding FieldFileManagerVM}"
-            IsVisible="{Binding $parent[Window].DataContext.IsFieldFileManagerPanelVisible}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            ZIndex="15" />
+            <panelsFieldMgmt:FormFieldFileManager x:Name="FieldFileManagerPanel"
+                Canvas.Left="500" Canvas.Top="200"
+                DataContext="{Binding FieldFileManagerVM}"
+                IsVisible="{Binding $parent[Window].DataContext.IsFieldFileManagerPanelVisible}"
+                PointerPressed="Panel_PointerPressed"
+                PointerMoved="Panel_PointerMoved"
+                PointerReleased="Panel_PointerReleased"
+                Cursor="Hand" />
+        </Canvas>
 
     </Grid>
 </Window>

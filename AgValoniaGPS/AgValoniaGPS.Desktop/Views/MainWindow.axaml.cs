@@ -14,6 +14,8 @@ public partial class MainWindow : Window
 {
     private MainViewModel? ViewModel => DataContext as MainViewModel;
     private bool _isDraggingSection = false;
+    private bool _isDraggingPanel = false;
+    private Control? _draggingPanel = null;
     private Avalonia.Point _dragStartPoint;
 
     public MainWindow()
@@ -339,6 +341,67 @@ public partial class MainWindow : Window
         {
             double zoomFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
             MapControl.Zoom(zoomFactor);
+            e.Handled = true;
+        }
+    }
+
+    // Drag functionality for operational panels
+    private void Panel_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is Control panel)
+        {
+            _isDraggingPanel = true;
+            _draggingPanel = panel;
+            _dragStartPoint = e.GetPosition(this);
+            e.Pointer.Capture(panel);
+            e.Handled = true;
+        }
+    }
+
+    private void Panel_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isDraggingPanel && sender is Control panel && panel == _draggingPanel)
+        {
+            var currentPoint = e.GetPosition(this);
+            var delta = currentPoint - _dragStartPoint;
+
+            // Get current position
+            double currentLeft = Canvas.GetLeft(panel);
+            double currentTop = Canvas.GetTop(panel);
+
+            if (double.IsNaN(currentLeft)) currentLeft = 0;
+            if (double.IsNaN(currentTop)) currentTop = 0;
+
+            // Calculate new position
+            double newLeft = currentLeft + delta.X;
+            double newTop = currentTop + delta.Y;
+
+            // Constrain to window bounds
+            double maxLeft = Bounds.Width - panel.Bounds.Width;
+            double maxTop = Bounds.Height - panel.Bounds.Height;
+
+            newLeft = Math.Clamp(newLeft, 0, Math.Max(0, maxLeft));
+            newTop = Math.Clamp(newTop, 0, Math.Max(0, maxTop));
+
+            // Update position
+            Canvas.SetLeft(panel, newLeft);
+            Canvas.SetTop(panel, newTop);
+
+            _dragStartPoint = currentPoint;
+            e.Handled = true;
+        }
+    }
+
+    private void Panel_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (_isDraggingPanel)
+        {
+            _isDraggingPanel = false;
+            if (sender is Control panel)
+            {
+                e.Pointer.Capture(null);
+            }
+            _draggingPanel = null;
             e.Handled = true;
         }
     }
