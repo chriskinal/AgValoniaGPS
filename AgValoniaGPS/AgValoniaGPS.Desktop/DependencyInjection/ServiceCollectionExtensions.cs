@@ -9,6 +9,7 @@ using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.Services.Profile;
 using AgValoniaGPS.Services.UI;
+using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Desktop.Services;
 using AgValoniaGPS.Models;
@@ -31,6 +32,16 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IGpsService, GpsService>();
         services.AddSingleton<INtripClientService, NtripClientService>();
 
+        // Machine Communication Services (Wave 4)
+        services.AddSingleton<IMachineCommunicationService, MachineCommunicationService>();
+        services.AddSingleton<IAutoSteerCommunicationService, AutoSteerCommunicationService>();
+        services.AddSingleton<IImuCommunicationService, ImuCommunicationService>();
+        services.AddSingleton<IPgnMessageBuilderService, PgnMessageBuilderService>();
+        services.AddSingleton<IPgnMessageParserService, PgnMessageParserService>();
+        services.AddSingleton<ITransportAbstractionService, TransportAbstractionService>();
+        services.AddSingleton<IModuleCoordinatorService, ModuleCoordinatorService>();
+        services.AddSingleton<IHardwareSimulatorService, HardwareSimulatorService>();
+
         // Position & Kinematics Services (Wave 1)
         services.AddSingleton<IPositionUpdateService, PositionUpdateService>();
         services.AddSingleton<IHeadingCalculatorService, HeadingCalculatorService>();
@@ -39,17 +50,41 @@ public static class ServiceCollectionExtensions
         // Guidance Services (Wave 2)
         services.AddSingleton<IABLineService, ABLineService>();
         services.AddSingleton<ICurveLineService, CurveLineService>();
+        services.AddSingleton<IContourService, ContourService>();
         services.AddSingleton<IGuidanceService, GuidanceService>();
 
+        // Guidance File Services (Wave 2)
+        services.AddSingleton<ABLineFileService>();
+        services.AddSingleton<CurveLineFileService>();
+        services.AddSingleton<ContourLineFileService>();
+
         // Section Control Services (Wave 4)
+        services.AddSingleton<IAnalogSwitchStateService, AnalogSwitchStateService>();
+        services.AddSingleton<ISectionConfigurationService, SectionConfigurationService>();
+        services.AddSingleton<ISectionSpeedService, SectionSpeedService>();
+        services.AddSingleton<ICoverageMapService, CoverageMapService>();
+        services.AddSingleton<ISectionControlFileService, SectionControlFileService>();
+        services.AddSingleton<ICoverageMapFileService, CoverageMapFileService>();
         services.AddSingleton<ISectionControlService, SectionControlService>();
 
         // Field Operations Services (Wave 5)
         services.AddSingleton<IFieldService, FieldService>();
         services.AddSingleton<IFieldStatisticsService, FieldStatisticsService>();
         services.AddSingleton<ITramLineService, TramLineService>();
+        services.AddSingleton<IPointInPolygonService, PointInPolygonService>();
+        services.AddSingleton<IBoundaryManagementService, BoundaryManagementService>();
+        services.AddSingleton<IHeadlandService, HeadlandService>();
+        services.AddSingleton<IUTurnService, UTurnService>();
+
+        // Field Operations File Services (Wave 5)
+        services.AddSingleton<IBoundaryFileService, BoundaryFileService>();
+        services.AddSingleton<IHeadlandFileService, HeadlandFileService>();
+        services.AddSingleton<ITramLineFileService, TramLineFileService>();
 
         // Steering Services (Wave 5)
+        services.AddSingleton<IStanleySteeringService, StanleySteeringService>();
+        services.AddSingleton<IPurePursuitService, PurePursuitService>();
+        services.AddSingleton<ILookAheadDistanceService, LookAheadDistanceService>();
         services.AddSingleton<ISteeringCoordinatorService, SteeringCoordinatorService>();
 
         // State Management Services (Wave 8)
