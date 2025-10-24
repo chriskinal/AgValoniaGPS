@@ -547,10 +547,46 @@ All Task Groups 1-5 → Task Group 6 (Integration & Testing)
 
 ## Notes
 
-- **Parallel Work**: Task Groups 1, 2, and 3 can be worked on in parallel
-- **Blockers**: Task Group 4 requires Task Groups 1, 2, and 3 to be complete
-- **Critical Path**: Task 1.1 → Task 2.2 → Task 2.3 → Task 4.4 → Task 6.1 (20 hours)
-- **Quick Wins**: Task 3.1 (icon extraction) can be done independently and provides immediate value
+### Parallel Work Opportunities
+
+**✅ Can Run in Parallel (28 hours total):**
+- **Task Group 1**: MainWindow refactoring (8 hours)
+- **Task Group 2**: PanelHostingService implementation (6 hours)
+- **Task Group 3**: ✅ Complete - icons already extracted (0 hours)
+- **Task Group 4 (partial)**: 14 out of 16 hours can run in parallel:
+  - Task 4.1: Create button views (4 hours) - only needs icons ✅
+  - Task 4.2: Refactor panels (4 hours) - independent work
+  - Task 4.3: Show/hide logic (3 hours) - depends on 4.1 only
+  - Task 4.5: Status indicators (3 hours) - depends on 4.1 only
+
+**⚠️ Must Run Sequentially (14 hours total):**
+- **Task 4.4**: Panel registration (2 hours) - requires Groups 1 & 2 complete
+- **Task Group 5**: Navigation panel (4 hours) - can start after Groups 1-4
+- **Task Group 6**: Integration & Testing (6 hours) - requires all groups complete
+
+### Optimal Execution Strategy
+
+**Single Developer (Sequential):** 5-6 weeks
+- Week 1: Task Groups 1 & 2 (14 hours)
+- Week 2-3: Task Group 4 (16 hours)
+- Week 4: Task Groups 5 & 6 (10 hours)
+
+**2-3 Developers (Parallel):** 2 weeks
+- **Week 1 (Parallel):**
+  - Dev 1: Task Group 1 (MainWindow) - 8 hours
+  - Dev 2: Task Group 2 (PanelHostingService) - 6 hours
+  - Dev 3: Task Group 4.1-4.5 (Button views & logic) - 14 hours
+- **Week 2 (Sequential):**
+  - Task 4.4: Panel registration - 2 hours
+  - Task Group 5: Navigation panel - 4 hours
+  - Task Group 6: Integration & Testing - 6 hours
+
+### Key Dependencies
+
+- **Critical Path**: Task 1.1 → Task 2.2 → Task 2.3 → Task 4.4 → Task 6.1 (20 hours minimum)
+- **87.5% of Task Group 4** can run in parallel (14/16 hours)
+- **Only 12.5% blocked** by Groups 1 & 2 (Task 4.4 - 2 hours)
+- **Quick Wins**: Task 3.1 ✅ complete - 236 icons already extracted
 
 ---
 
