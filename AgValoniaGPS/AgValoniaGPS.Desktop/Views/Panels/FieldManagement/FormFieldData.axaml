@@ -91,7 +91,7 @@
 
                         <TextBlock Text="Work Switch:" Grid.Row="1" Grid.Column="0" Foreground="#CCC"/>
                         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
-                            <Ellipse Width="12" Height="12" Fill="{Binding WorkSwitchOn, Converter={StaticResource BoolToGreenRedBrushConverter}}"/>
+                            <Ellipse Width="12" Height="12" Fill="{Binding WorkSwitchOn, Converter={StaticResource BoolToColorConverter}}"/>
                             <TextBlock Text="{Binding WorkSwitchOn}"
                                        FontWeight="Bold" Foreground="White"/>
                         </StackPanel>

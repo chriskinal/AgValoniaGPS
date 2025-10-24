@@ -46,13 +46,7 @@
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AutoSteerModuleStatus}"/>
                         <Ellipse Grid.Row="0" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0">
                             <Ellipse.Fill>
-                                <SolidColorBrush>
-                                    <SolidColorBrush.Color>
-                                        <MultiBinding Converter="{StaticResource StatusToColorConverter}">
-                                            <Binding Path="AutoSteerModuleStatus"/>
-                                        </MultiBinding>
-                                    </SolidColorBrush.Color>
-                                </SolidColorBrush>
+                                <SolidColorBrush Color="{Binding AutoSteerModuleStatus, Converter={StaticResource StatusToColorConverter}}"/>
                             </Ellipse.Fill>
                         </Ellipse>
 
@@ -95,7 +89,7 @@
 
                     <TextBlock Text="{Binding LastErrorMessage}"
                                Foreground="DarkRed"
-                               IsVisible="{Binding LastErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"/>
+                               IsVisible="{Binding LastErrorMessage, Converter={StaticResource EmptyStringToVisibility}}"/>
                 </StackPanel>
             </Border>
 

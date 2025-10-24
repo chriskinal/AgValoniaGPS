@@ -113,18 +113,8 @@
                 <StackPanel Spacing="6">
                     <TextBlock Text="NTRIP Status" Foreground="#AAA" FontSize="12"/>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Ellipse Width="12" Height="12">
-                            <Ellipse.Fill>
-                                <SolidColorBrush>
-                                    <SolidColorBrush.Color>
-                                        <MultiBinding Converter="{StaticResource BoolToColorConverter}">
-                                            <Binding Path="NTRIPConnected"/>
-                                        </MultiBinding>
-                                    </SolidColorBrush.Color>
-                                </SolidColorBrush>
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="{Binding NTRIPConnected, Converter={StaticResource BoolToConnectedTextConverter}}"
+                        <Ellipse Width="12" Height="12" Fill="{Binding NTRIPConnected, Converter={StaticResource BoolToColorConverter}}"/>
+                        <TextBlock Text="{Binding NTRIPConnected, Converter={StaticResource BoolToStatusConverter}}"
                                    FontWeight="Bold" Foreground="White"/>
                     </StackPanel>
                 </StackPanel>

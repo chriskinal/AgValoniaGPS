@@ -19,6 +19,12 @@
         <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibility"/>
         <converters:UnitConverter x:Key="UnitConverter"/>
         <converters:EnumToStringConverter x:Key="EnumToString"/>
+
+        <!-- Wave 10 Panel converters -->
+        <converters:BoolToSetColorConverter x:Key="BoolToSetColorConverter"/>
+        <converters:BoolToEnabledDisabledConverter x:Key="BoolToEnabledDisabledConverter"/>
+        <converters:StringEqualsConverter x:Key="StringEqualsConverter"/>
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
     </Application.Resources>
 
     <Application.DataTemplates>

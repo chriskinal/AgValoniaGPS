@@ -12,6 +12,7 @@ using AgValoniaGPS.Services.UI;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Desktop.Services;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Profile;
 using AgValoniaGPS.ViewModels;
 using AgValoniaGPS.ViewModels.Panels.Display;
 using AgValoniaGPS.ViewModels.Panels.FieldManagement;
@@ -54,6 +55,9 @@ public static class ServiceCollectionExtensions
         // State Management Services (Wave 8)
         services.AddSingleton<IConfigurationService, ConfigurationService>();
         services.AddSingleton<ISessionManagementService, SessionManagementService>();
+        services.AddSingleton<ICrashRecoveryService, CrashRecoveryService>();
+        services.AddSingleton<IProfileProvider<VehicleProfile>, VehicleProfileProvider>();
+        services.AddSingleton<IProfileProvider<UserProfile>, UserProfileProvider>();
         services.AddSingleton<IProfileManagementService, ProfileManagementService>();
 
         // UI Services (Wave 9)
