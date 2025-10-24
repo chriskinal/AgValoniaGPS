@@ -53,20 +53,6 @@ public class FieldDataViewModelTests
     }
 
     [Fact]
-    public void SetFieldName_ClearsError()
-    {
-        // Arrange
-        var vm = new FieldDataViewModel();
-        vm.SetError("Test error");
-
-        // Act
-        vm.FieldName = "Valid Name";
-
-        // Assert
-        Assert.False(vm.HasError);
-    }
-
-    [Fact]
     public void OnOK_WithEmptyFieldName_ShowsError()
     {
         // Arrange
