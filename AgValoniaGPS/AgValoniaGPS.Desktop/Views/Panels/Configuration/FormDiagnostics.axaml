@@ -7,9 +7,27 @@
     <Border Classes="FloatingPanel" Padding="15">
         <StackPanel Spacing="15">
             <!-- Header -->
-            <TextBlock Text="{Binding Title}"
-                       FontSize="18"
-                       FontWeight="Bold"/>
+            <Grid Height="32" Margin="0,0,0,8">
+                <!-- Drag handle and title -->
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="≡" Foreground="#888" FontSize="16" FontWeight="Bold"
+                               VerticalAlignment="Center" ToolTip.Tip="Drag to move panel"/>
+                    <TextBlock Text="{Binding Title}"
+                               FontWeight="Bold"
+                               FontSize="18"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <!-- Close button (absolutely positioned in top-right) -->
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"/>
+            </Grid>
 
             <!-- System Performance -->
             <Border Classes="StatusBox">

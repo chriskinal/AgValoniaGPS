@@ -7,20 +7,27 @@
     <Border Classes="FloatingPanel" Width="220" MinHeight="280">
         <StackPanel Spacing="15">
             <!-- Header -->
-            <DockPanel>
-                <TextBlock Text="{Binding Title}"
-                           FontWeight="Bold"
-                           FontSize="18"
-                           Foreground="White"
-                           DockPanel.Dock="Left"/>
+            <Grid Height="32" Margin="0,0,0,8">
+                <!-- Drag handle and title -->
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="≡" Foreground="#888" FontSize="16" FontWeight="Bold"
+                               VerticalAlignment="Center" ToolTip.Tip="Drag to move panel"/>
+                    <TextBlock Text="{Binding Title}"
+                               FontWeight="Bold"
+                               FontSize="18"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <!-- Close button (absolutely positioned in top-right) -->
                 <Button Classes="IconButton"
                         Content="×"
                         Width="32"
                         Height="32"
                         FontSize="20"
                         Command="{Binding CloseCommand}"
-                        DockPanel.Dock="Right"/>
-            </DockPanel>
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"/>
+            </Grid>
 
             <!-- Zoom Controls -->
             <Border Classes="StatusBox">
