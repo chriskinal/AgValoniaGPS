@@ -80,7 +80,7 @@
                          Background="Transparent"
                          BorderThickness="0">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="vm:FileItem">
                             <Grid ColumnDefinitions="Auto,*,Auto,Auto"
                                   Margin="5">
                                 <!-- Icon -->
@@ -118,13 +118,6 @@
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior EventName="DoubleTapped">
-                            <InvokeCommandAction Command="{Binding SelectFileCommand}"
-                                               CommandParameter="{Binding SelectedFile}"/>
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
                 </ListBox>
             </ScrollViewer>
         </Border>

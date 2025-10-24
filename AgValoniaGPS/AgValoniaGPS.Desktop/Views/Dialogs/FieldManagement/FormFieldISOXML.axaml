@@ -17,12 +17,12 @@
         </StackPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="16" Margin="0,16">
-            <ListBox Grid.Column="0" Items="{Binding ISOFields}" SelectedItem="{Binding SelectedField}" Height="280">
+            <ListBox Grid.Column="0" ItemsSource="{Binding ISOFields}" SelectedItem="{Binding SelectedField}" Height="280">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="vm:ISOField">
                         <StackPanel>
                             <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
-                            <TextBlock Text="{Binding AreaHectares, StringFormat='{}{0:F2} ha'}" FontSize="12"/>
+                            <TextBlock Text="{Binding Area, StringFormat='{}{0:F2} ha'}" FontSize="12"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

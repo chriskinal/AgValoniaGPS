@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:AgValoniaGPS.Desktop.Controls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="400"
              x:Class="AgValoniaGPS.Desktop.Controls.NumericKeypad">
 
@@ -104,7 +105,7 @@
         <Border Background="#2C3E50" CornerRadius="8,8,0,0" Margin="0,0,0,5">
             <TextBlock x:Name="DisplayText"
                        Classes="Display"
-                       Text="{Binding $parent[UserControl].DisplayValue}"
+                       Text="{Binding $parent[controls:NumericKeypad].DisplayValue}"
                        ToolTip.Tip="Current Value"/>
         </Border>
 
@@ -134,7 +135,7 @@
                     Classes="NumberButton"
                     Content="."
                     Click="OnDecimalClick"
-                    IsVisible="{Binding $parent[UserControl].ShowDecimalButton}"
+                    IsVisible="{Binding $parent[controls:NumericKeypad].ShowDecimalButton}"
                     ToolTip.Tip="Decimal Point"/>
             <Button Grid.Row="3" Grid.Column="1" Classes="NumberButton" Content="0" Click="OnNumberClick" Tag="0"/>
             <Button Grid.Row="3" Grid.Column="2" Classes="NumberButton" Content="00" Click="OnNumberClick" Tag="00"/>

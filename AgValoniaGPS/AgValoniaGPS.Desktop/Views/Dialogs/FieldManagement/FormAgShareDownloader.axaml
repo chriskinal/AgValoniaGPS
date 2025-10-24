@@ -30,9 +30,9 @@
 
         <!-- Fields List -->
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="16">
-            <ListBox Grid.Column="0" Items="{Binding AvailableFields}" SelectedItem="{Binding SelectedField}">
+            <ListBox Grid.Column="0" ItemsSource="{Binding AvailableFields}" SelectedItem="{Binding SelectedField}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="vm:CloudField">
                         <StackPanel>
                             <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
                             <TextBlock Text="{Binding AreaHectares, StringFormat='Area: {0:F2} ha'}" FontSize="12"/>

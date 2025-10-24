@@ -27,7 +27,7 @@
             <!-- Subdirectories -->
             <StackPanel Grid.Column="0">
                 <TextBlock Text="Subdirectories" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                <ListBox Items="{Binding Directories}" Height="320"/>
+                <ListBox ItemsSource="{Binding Directories}" Height="320"/>
             </StackPanel>
 
             <!-- Fields -->
@@ -37,10 +37,10 @@
                     <Run Text="{Binding FieldCount}"/>
                     <Run Text=")"/>
                 </TextBlock>
-                <ListBox Items="{Binding FieldsInDirectory}" Height="320">
+                <ListBox ItemsSource="{Binding FieldsInDirectory}" Height="320">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
+                        <DataTemplate DataType="x:String">
+                            <TextBlock Text="{Binding}"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AgValoniaGPS.ViewModels.Dialogs.FieldManagement"
+        xmlns:models="using:AgValoniaGPS.Models"
         x:Class="AgValoniaGPS.Desktop.Views.Dialogs.FieldManagement.FormFieldExisting"
         x:DataType="vm:FieldExistingViewModel"
         Title="Load Existing Field"
@@ -12,9 +13,9 @@
 
         <Grid Grid.Row="1" ColumnDefinitions="300,*" ColumnSpacing="16">
             <!-- Field List -->
-            <ListBox Grid.Column="0" Items="{Binding Fields}" SelectedItem="{Binding SelectedField}">
+            <ListBox Grid.Column="0" ItemsSource="{Binding Fields}" SelectedItem="{Binding SelectedField}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="models:FieldInfo">
                         <StackPanel>
                             <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
                             <TextBlock Text="{Binding AreaHectares, StringFormat='{}{0:F2} ha'}" FontSize="12" Foreground="Gray"/>

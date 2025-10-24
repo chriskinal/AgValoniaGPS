@@ -15,11 +15,11 @@
                 <!-- Tram Pattern Selection -->
                 <StackPanel Spacing="4">
                     <TextBlock Text="Tram Line Pattern" FontWeight="SemiBold"/>
-                    <ListBox Items="{Binding Patterns}"
+                    <ListBox ItemsSource="{Binding Patterns}"
                              SelectedItem="{Binding SelectedPattern}"
                              MinHeight="200">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate DataType="vm:TramLinePattern">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding Description}" Foreground="#666" VerticalAlignment="Center"/>

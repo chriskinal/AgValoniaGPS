@@ -97,22 +97,12 @@
                     <StackPanel Spacing="10">
                         <RadioButton Content="Vehicle Profile"
                                      IsChecked="{Binding IsVehicleProfile}"
-                                     MinHeight="44">
-                            <RadioButton.ToolTip>
-                                <ToolTip>
-                                    <TextBlock Text="Configuration for a specific vehicle or tractor"/>
-                                </ToolTip>
-                            </RadioButton.ToolTip>
-                        </RadioButton>
+                                     MinHeight="44"
+                                     ToolTip.Tip="Configuration for a specific vehicle or tractor"/>
                         <RadioButton Content="User Profile"
                                      IsChecked="{Binding IsUserProfile}"
-                                     MinHeight="44">
-                            <RadioButton.ToolTip>
-                                <ToolTip>
-                                    <TextBlock Text="Configuration for a specific user or operator"/>
-                                </ToolTip>
-                            </RadioButton.ToolTip>
-                        </RadioButton>
+                                     MinHeight="44"
+                                     ToolTip.Tip="Configuration for a specific user or operator"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

@@ -80,7 +80,7 @@
                              Background="Transparent"
                              BorderThickness="0">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate DataType="vm:ProfileInfo">
                                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
                                     <!-- Icon -->
                                     <TextBlock Grid.Column="0" Grid.RowSpan="2"
@@ -127,64 +127,67 @@
                     Background="#34495E"
                     CornerRadius="8"
                     Padding="15">
-                <StackPanel Spacing="15" IsVisible="{Binding HasSelection}">
-                    <TextBlock Text="Profile Details"
-                               Foreground="White"
-                               FontSize="16"
-                               FontWeight="SemiBold"/>
-
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Name:" Foreground="#95A5A6" FontSize="12"/>
-                        <TextBlock Text="{Binding SelectedProfile.Name}"
+                <Grid>
+                    <!-- Details Panel -->
+                    <StackPanel Spacing="15" IsVisible="{Binding HasSelection}">
+                        <TextBlock Text="Profile Details"
                                    Foreground="White"
-                                   FontSize="14"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="16"
+                                   FontWeight="SemiBold"/>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Name:" Foreground="#95A5A6" FontSize="12"/>
+                            <TextBlock Text="{Binding SelectedProfile.Name}"
+                                       Foreground="White"
+                                       FontSize="14"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Type:" Foreground="#95A5A6" FontSize="12"/>
+                            <TextBlock Text="{Binding SelectedProfile.ProfileType}"
+                                       Foreground="White"
+                                       FontSize="14"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Description:" Foreground="#95A5A6" FontSize="12"/>
+                            <TextBlock Text="{Binding SelectedProfile.Description}"
+                                       Foreground="White"
+                                       FontSize="14"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Last Modified:" Foreground="#95A5A6" FontSize="12"/>
+                            <TextBlock Text="{Binding SelectedProfile.LastModifiedString}"
+                                       Foreground="White"
+                                       FontSize="14"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="File Size:" Foreground="#95A5A6" FontSize="12"/>
+                            <TextBlock Text="{Binding SelectedProfile.FileSize}"
+                                       Foreground="White"
+                                       FontSize="14"/>
+                        </StackPanel>
+
+                        <Separator Background="#7F8C8D" Margin="0,10"/>
+
+                        <Button Classes="DangerButton"
+                                Content="Delete Profile"
+                                Command="{Binding DeleteProfileCommand}"
+                                HorizontalAlignment="Stretch"/>
                     </StackPanel>
 
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Type:" Foreground="#95A5A6" FontSize="12"/>
-                        <TextBlock Text="{Binding SelectedProfile.ProfileType}"
-                                   Foreground="White"
-                                   FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Description:" Foreground="#95A5A6" FontSize="12"/>
-                        <TextBlock Text="{Binding SelectedProfile.Description}"
-                                   Foreground="White"
-                                   FontSize="14"
-                                   TextWrapping="Wrap"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Last Modified:" Foreground="#95A5A6" FontSize="12"/>
-                        <TextBlock Text="{Binding SelectedProfile.LastModifiedString}"
-                                   Foreground="White"
-                                   FontSize="14"/>
-                    </StackPanel>
-
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="File Size:" Foreground="#95A5A6" FontSize="12"/>
-                        <TextBlock Text="{Binding SelectedProfile.FileSize}"
-                                   Foreground="White"
-                                   FontSize="14"/>
-                    </StackPanel>
-
-                    <Separator Background="#7F8C8D" Margin="0,10"/>
-
-                    <Button Classes="DangerButton"
-                            Content="Delete Profile"
-                            Command="{Binding DeleteProfileCommand}"
-                            HorizontalAlignment="Stretch"/>
-                </StackPanel>
-
-                <!-- No Selection Message -->
-                <TextBlock Text="Select a profile to view details"
-                           Foreground="#95A5A6"
-                           FontSize="14"
-                           TextAlignment="Center"
-                           VerticalAlignment="Center"
-                           IsVisible="{Binding !HasSelection}"/>
+                    <!-- No Selection Message -->
+                    <TextBlock Text="Select a profile to view details"
+                               Foreground="#95A5A6"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding !HasSelection}"/>
+                </Grid>
             </Border>
         </Grid>
 

@@ -106,16 +106,29 @@ AgValoniaGPS is a complete rewrite using modern .NET 8 and Avalonia UI for cross
 
 ### Build Commands (AgValoniaGPS)
 
+**⚠️ IMPORTANT: Android project is DEFERRED - DO NOT BUILD**
+
+The AgValoniaGPS.Android project has been removed from the solution and is deferred until desktop platform is fully functional. When building or running, **ONLY target the Desktop project**.
+
 ```bash
-# Build solution
+# Build Desktop project ONLY (recommended)
+dotnet build AgValoniaGPS/AgValoniaGPS.Desktop/AgValoniaGPS.Desktop.csproj
+
+# Build solution (will skip Android - safe to use)
 dotnet build AgValoniaGPS/AgValoniaGPS.sln
 
 # Run tests
 dotnet test AgValoniaGPS/AgValoniaGPS.Services.Tests/
 
-# Run application
+# Run Desktop application
 dotnet run --project AgValoniaGPS/AgValoniaGPS.Desktop/
 ```
+
+**Why Android is Deferred:**
+- Android SDK setup causes build failures
+- Desktop development takes priority
+- Android implementation will resume after Waves 1-8 are complete on desktop
+- The Android project code exists in `AgValoniaGPS/AgValoniaGPS.Android/` but is excluded from solution
 
 ### Architecture (AgValoniaGPS)
 

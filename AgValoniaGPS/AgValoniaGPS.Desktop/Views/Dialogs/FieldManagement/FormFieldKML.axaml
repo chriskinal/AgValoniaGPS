@@ -19,9 +19,9 @@
         <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="16" Margin="0,16">
             <StackPanel Grid.Column="0">
                 <TextBlock Text="Features" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                <ListBox Items="{Binding Features}" SelectedItem="{Binding SelectedFeature}" Height="280">
+                <ListBox ItemsSource="{Binding Features}" SelectedItem="{Binding SelectedFeature}" Height="280">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="vm:KMLFeature">
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
                                 <TextBlock Text="{Binding PointCount, StringFormat='Points: {0}'}" FontSize="12"/>
