@@ -1,0 +1,125 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.FieldOperations"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.FieldOperations.FormTramLine"
+             x:DataType="vm:FormTramLineViewModel">
+
+    <Border Classes="FloatingPanel" Width="300" MinHeight="350">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <DockPanel>
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- Enable/Disable Toggle -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Status" Foreground="#AAA" FontSize="12"/>
+                    <Button Classes="ModernButton"
+                            Command="{Binding ToggleEnabledCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                            <Ellipse Width="12" Height="12">
+                                <Ellipse.Fill>
+                                    <SolidColorBrush Color="{Binding TramEnabled, Converter={StaticResource BoolToEnabledColorConverter}}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Text="{Binding TramEnabled, Converter={StaticResource BoolToEnabledDisabledConverter}}"
+                                       FontWeight="Bold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Configuration -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Configuration" Foreground="#AAA" FontSize="12"/>
+
+                    <!-- Spacing -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Spacing (m)" Foreground="#CCC" FontSize="12"/>
+                        <NumericUpDown Value="{Binding Spacing}"
+                                       Minimum="1"
+                                       Maximum="100"
+                                       Increment="0.5"
+                                       FormatString="F1"
+                                       HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <!-- Passes Before Tram -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Passes Before Tram" Foreground="#CCC" FontSize="12"/>
+                        <NumericUpDown Value="{Binding PassesBeforeTram}"
+                                       Minimum="1"
+                                       Maximum="20"
+                                       Increment="1"
+                                       HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <!-- Skip Lines -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Skip Lines" Foreground="#CCC" FontSize="12"/>
+                        <NumericUpDown Value="{Binding SkipLines}"
+                                       Minimum="0"
+                                       Maximum="10"
+                                       Increment="1"
+                                       HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Mode Selection -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Mode" Foreground="#AAA" FontSize="12"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <RadioButton Content="Auto"
+                                     IsChecked="{Binding Mode, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Auto}"
+                                     GroupName="TramMode"/>
+                        <RadioButton Content="Manual"
+                                     IsChecked="{Binding Mode, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Manual}"
+                                     GroupName="TramMode"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <StackPanel Spacing="8">
+                <Button Classes="ModernButton"
+                        Content="Generate Tram Lines"
+                        Command="{Binding GenerateCommand}"
+                        HorizontalAlignment="Stretch"
+                        Height="40"
+                        Background="#27AE60"/>
+                <Button Classes="ModernButton"
+                        Content="Clear Tram Lines"
+                        Command="{Binding ClearCommand}"
+                        HorizontalAlignment="Stretch"
+                        Height="40"
+                        Background="#E74C3C"/>
+            </StackPanel>
+
+            <!-- Error Message -->
+            <Border Classes="StatusBox"
+                    Background="#99E74C3C"
+                    IsVisible="{Binding HasError}">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

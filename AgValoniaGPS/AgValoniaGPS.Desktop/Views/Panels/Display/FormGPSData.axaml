@@ -1,0 +1,134 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Display"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Display.FormGPSData"
+             x:DataType="vm:FormGPSDataViewModel">
+
+    <Border Classes="FloatingPanel" Width="300" MinHeight="450">
+        <StackPanel Spacing="12">
+            <!-- Header -->
+            <DockPanel>
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- Fix Quality -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Fix Quality" Foreground="#AAA" FontSize="12"/>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Ellipse Width="16" Height="16" Fill="#27AE60"/>
+                        <TextBlock Text="{Binding FixQualityText}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Foreground="White"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Position -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Position" Foreground="#AAA" FontSize="12"/>
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*">
+                        <TextBlock Text="Lat:" Grid.Row="0" Grid.Column="0"
+                                   Foreground="#CCC" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding Latitude, StringFormat='{}{0:F7}°'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontWeight="Bold" FontSize="14" Foreground="White"/>
+
+                        <TextBlock Text="Lon:" Grid.Row="1" Grid.Column="0"
+                                   Foreground="#CCC" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding Longitude, StringFormat='{}{0:F7}°'}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   FontWeight="Bold" FontSize="14" Foreground="White"/>
+
+                        <TextBlock Text="Alt:" Grid.Row="2" Grid.Column="0"
+                                   Foreground="#CCC" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding Altitude, StringFormat='{}{0:F1} m'}"
+                                   Grid.Row="2" Grid.Column="1"
+                                   FontWeight="Bold" FontSize="14" Foreground="White"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Speed & Heading -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Movement" Foreground="#AAA" FontSize="12"/>
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Speed:" Grid.Row="0" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding SpeedKmh, StringFormat='{}{0:F1} km/h'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+
+                        <TextBlock Text="Heading:" Grid.Row="1" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding HeadingDegrees, StringFormat='{}{0:F1}°'}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+
+                        <TextBlock Text="Roll:" Grid.Row="2" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding RollAngleDegrees, StringFormat='{}{0:F1}°'}"
+                                   Grid.Row="2" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- GPS Quality Metrics -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="GPS Quality" Foreground="#AAA" FontSize="12"/>
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Satellites:" Grid.Row="0" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding SatelliteCount}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="#27AE60"/>
+
+                        <TextBlock Text="HDOP:" Grid.Row="1" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding HDOP, StringFormat='{}{0:F1}'}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+
+                        <TextBlock Text="Age:" Grid.Row="2" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding AgeOfCorrection, StringFormat='{}{0:F1}s'}"
+                                   Grid.Row="2" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- NTRIP Status -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="NTRIP Status" Foreground="#AAA" FontSize="12"/>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Ellipse Width="12" Height="12">
+                            <Ellipse.Fill>
+                                <SolidColorBrush>
+                                    <SolidColorBrush.Color>
+                                        <MultiBinding Converter="{StaticResource BoolToColorConverter}">
+                                            <Binding Path="NTRIPConnected"/>
+                                        </MultiBinding>
+                                    </SolidColorBrush.Color>
+                                </SolidColorBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <TextBlock Text="{Binding NTRIPConnected, Converter={StaticResource BoolToConnectedTextConverter}}"
+                                   FontWeight="Bold" Foreground="White"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

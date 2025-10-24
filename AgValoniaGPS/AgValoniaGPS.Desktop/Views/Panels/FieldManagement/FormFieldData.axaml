@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.FieldManagement"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.FieldManagement.FormFieldData"
+             x:DataType="vm:FormFieldDataViewModel">
+
+    <Border Classes="FloatingPanel" Width="300" MinHeight="400">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <DockPanel>
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- Field Name -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Field Name" Foreground="#AAA" FontSize="12"/>
+                    <TextBlock Text="{Binding FieldName}"
+                               FontWeight="Bold"
+                               FontSize="16"
+                               Foreground="White"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Area Statistics -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Area" Foreground="#AAA" FontSize="12"/>
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Field Area:" Grid.Row="0" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding FieldAreaHectares, StringFormat='{}{0:F2} ha'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+
+                        <TextBlock Text="Worked:" Grid.Row="1" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding WorkAreaHectares, StringFormat='{}{0:F2} ha'}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="#27AE60"/>
+
+                        <TextBlock Text="Coverage:" Grid.Row="2" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding CoveragePercent, StringFormat='{}{0:F1}%'}"
+                                   Grid.Row="2" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="#3498DB"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Distance & Time -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Operation" Foreground="#AAA" FontSize="12"/>
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Distance:" Grid.Row="0" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding DistanceTraveledKm, StringFormat='{}{0:F2} km'}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+
+                        <TextBlock Text="Time:" Grid.Row="1" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding TimeElapsed, StringFormat='hh\\:mm\\:ss'}"
+                                   Grid.Row="1" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+
+                        <TextBlock Text="Avg Speed:" Grid.Row="2" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding AverageSpeedKmh, StringFormat='{}{0:F1} km/h'}"
+                                   Grid.Row="2" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="White"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Section Control -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Sections" Foreground="#AAA" FontSize="12"/>
+                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Active:" Grid.Row="0" Grid.Column="0" Foreground="#CCC"/>
+                        <TextBlock Text="{Binding SectionsAppliedCount}"
+                                   Grid.Row="0" Grid.Column="1"
+                                   FontWeight="Bold" Foreground="#27AE60"/>
+
+                        <TextBlock Text="Work Switch:" Grid.Row="1" Grid.Column="0" Foreground="#CCC"/>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                            <Ellipse Width="12" Height="12" Fill="{Binding WorkSwitchOn, Converter={StaticResource BoolToGreenRedBrushConverter}}"/>
+                            <TextBlock Text="{Binding WorkSwitchOn}"
+                                       FontWeight="Bold" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -9,9 +9,14 @@ using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.Services.Profile;
 using AgValoniaGPS.Services.UI;
+using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Desktop.Services;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.ViewModels;
+using AgValoniaGPS.ViewModels.Panels.Display;
+using AgValoniaGPS.ViewModels.Panels.FieldManagement;
+using AgValoniaGPS.ViewModels.Panels.FieldOperations;
+using AgValoniaGPS.ViewModels.Panels.Guidance;
 
 namespace AgValoniaGPS.Desktop.DependencyInjection;
 
@@ -40,6 +45,7 @@ public static class ServiceCollectionExtensions
         // Field Operations Services (Wave 5)
         services.AddSingleton<IFieldService, FieldService>();
         services.AddSingleton<IFieldStatisticsService, FieldStatisticsService>();
+        services.AddSingleton<ITramLineService, TramLineService>();
 
         // Steering Services (Wave 5)
         services.AddSingleton<ISteeringCoordinatorService, SteeringCoordinatorService>();
@@ -55,8 +61,14 @@ public static class ServiceCollectionExtensions
         // Vehicle Configuration
         services.AddSingleton<VehicleConfiguration>();
 
-        // ViewModels
+        // ViewModels - Main
         services.AddSingleton<MainViewModel>();
+
+        // ViewModels - Wave 10: Operational Panels
+        services.AddTransient<FormFieldDataViewModel>();
+        services.AddTransient<FormGPSDataViewModel>();
+        services.AddTransient<FormTramLineViewModel>();
+        services.AddTransient<FormQuickABViewModel>();
 
         return services;
     }

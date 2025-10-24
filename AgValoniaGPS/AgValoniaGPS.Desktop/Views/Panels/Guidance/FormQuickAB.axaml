@@ -1,0 +1,165 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Guidance"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Guidance.FormQuickAB"
+             x:DataType="vm:FormQuickABViewModel">
+
+    <Border Classes="FloatingPanel" Width="320" MinHeight="400">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <DockPanel>
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- Point A & B Buttons -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Set Points" Foreground="#AAA" FontSize="12"/>
+
+                    <!-- Set Point A -->
+                    <Button Classes="ModernButton"
+                            Command="{Binding SetPointACommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="56">
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <Ellipse Width="12" Height="12">
+                                    <Ellipse.Fill>
+                                        <SolidColorBrush Color="{Binding PointASet, Converter={StaticResource BoolToSetColorConverter}}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Text="Set Point A" FontWeight="Bold" FontSize="16"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding PointA.Latitude, StringFormat='Lat: {0:F6}°'}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center"
+                                       IsVisible="{Binding PointASet}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Set Point B -->
+                    <Button Classes="ModernButton"
+                            Command="{Binding SetPointBCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="56">
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <Ellipse Width="12" Height="12">
+                                    <Ellipse.Fill>
+                                        <SolidColorBrush Color="{Binding PointBSet, Converter={StaticResource BoolToSetColorConverter}}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Text="Set Point B" FontWeight="Bold" FontSize="16"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding PointB.Latitude, StringFormat='Lat: {0:F6}°'}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center"
+                                       IsVisible="{Binding PointBSet}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Or Create from Heading -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Or Create from Heading" Foreground="#AAA" FontSize="12"/>
+                    <Button Classes="ModernButton"
+                            Content="Use Current Heading"
+                            Command="{Binding CreateFromHeadingCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Background="#E67E22"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Adjustments -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Adjustments" Foreground="#AAA" FontSize="12"/>
+
+                    <!-- Heading Adjustment -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Heading Adjustment (°)" Foreground="#CCC" FontSize="12"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    Value="{Binding HeadingAdjustment}"
+                                    Minimum="-180"
+                                    Maximum="180"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding HeadingAdjustment, StringFormat='{}{0:F1}°'}"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       MinWidth="60"
+                                       TextAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Line Offset -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Line Offset (m)" Foreground="#CCC" FontSize="12"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Slider Grid.Column="0"
+                                    Value="{Binding LineOffset}"
+                                    Minimum="-100"
+                                    Maximum="100"
+                                    TickFrequency="0.5"
+                                    IsSnapToTickEnabled="True"
+                                    Margin="0,0,8,0"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding LineOffset, StringFormat='{}{0:F1}m'}"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       MinWidth="60"
+                                       TextAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <StackPanel Spacing="8">
+                <Button Classes="ModernButton"
+                        Content="Apply A-B Line"
+                        Command="{Binding ApplyCommand}"
+                        HorizontalAlignment="Stretch"
+                        Height="48"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Background="#27AE60"/>
+                <Button Classes="ModernButton"
+                        Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        HorizontalAlignment="Stretch"
+                        Height="40"
+                        Background="#95A5A6"/>
+            </StackPanel>
+
+            <!-- Error Message -->
+            <Border Classes="StatusBox"
+                    Background="#99E74C3C"
+                    IsVisible="{Binding HasError}">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>
