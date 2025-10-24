@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="380" d:DesignHeight="550"
         x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Input.FormNumeric"
         x:DataType="vm:NumericInputViewModel"
-        Title="{Binding PromptMessage}"
+        Title="{Binding Prompt}"
         Width="380"
         Height="550"
         Background="#2C3E50"
@@ -99,20 +99,11 @@
                 <TextBlock Classes="Label" Text="Current Value:"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Classes="ValueDisplay" Text="{Binding Value, StringFormat='{}{0:F}'}"/>
-                    <TextBlock Classes="Unit"
-                               Text="{Binding Unit}"
-                               IsVisible="{Binding Unit, Converter={StaticResource EmptyStringToVisibility}}"/>
                 </StackPanel>
 
                 <!-- Range Info -->
                 <TextBlock Classes="Label"
-                           Text="{Binding RangeText}"
-                           IsVisible="{Binding RangeText, Converter={StaticResource EmptyStringToVisibility}}"/>
-
-                <!-- Validation Error -->
-                <TextBlock Classes="Error"
-                           Text="{Binding ValidationError}"
-                           IsVisible="{Binding HasValidationError}"/>
+                           Text="{Binding Prompt}"/>
             </StackPanel>
         </Border>
 
@@ -120,10 +111,8 @@
         <Border Classes="Panel">
             <controls:NumericKeypad
                 Value="{Binding Value, Mode=TwoWay}"
-                DecimalPlaces="{Binding DecimalPlaces}"
-                MinValue="{Binding MinValue}"
-                MaxValue="{Binding MaxValue}"
-                ShowDecimalButton="{Binding ShowDecimalButton}"
+                MinValue="{Binding Minimum}"
+                MaxValue="{Binding Maximum}"
                 EnterPressed="OnNumericKeypadEnter"/>
         </Border>
 

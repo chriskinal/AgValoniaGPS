@@ -11,7 +11,7 @@
         <TextBlock Grid.Row="0" Text="Boundary Management" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
 
         <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="16">
-            <ListBox Grid.Column="0" Items="{Binding BoundaryPoints}" Height="320">
+            <ListBox Grid.Column="0" ItemsSource="{Binding BoundaryPoints}" Height="320">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Latitude, StringFormat='Lat: {0:F6}, Lon: '}"/>

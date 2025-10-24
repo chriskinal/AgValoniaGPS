@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="550"
         x:Class="AgValoniaGPS.Desktop.Views.Dialogs.Input.FormKeyboard"
         x:DataType="vm:KeyboardInputViewModel"
-        Title="{Binding PromptMessage}"
+        Title="{Binding Prompt}"
         Width="850"
         Height="550"
         Background="#2C3E50"
@@ -97,7 +97,7 @@
             <StackPanel>
                 <!-- Prompt Message -->
                 <TextBlock Classes="Label"
-                           Text="{Binding PromptMessage}"
+                           Text="{Binding Prompt}"
                            FontSize="16"
                            FontWeight="SemiBold"
                            Foreground="#3498DB"
@@ -106,32 +106,15 @@
 
                 <!-- Text Input Display -->
                 <TextBox Classes="InputBox"
-                         Text="{Binding Text, Mode=TwoWay}"
-                         Watermark="{Binding PlaceholderText}"
-                         MaxLength="{Binding MaxLength}"
+                         Text="{Binding InputText, Mode=TwoWay}"
                          AcceptsReturn="False"/>
-
-                <!-- Character Count -->
-                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
-                    <TextBlock Grid.Column="0"
-                               Classes="Error"
-                               Text="{Binding ValidationError}"
-                               IsVisible="{Binding HasValidationError}"/>
-
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <TextBlock Classes="Label" Text="Characters:"/>
-                        <TextBlock Classes="Value" Text="{Binding CharacterCount}"/>
-                        <TextBlock Classes="Label" Text="/"/>
-                        <TextBlock Classes="Value" Text="{Binding MaxLength}"/>
-                    </StackPanel>
-                </Grid>
             </StackPanel>
         </Border>
 
         <!-- Virtual Keyboard Control -->
         <Border Classes="Panel" Padding="10">
             <controls:VirtualKeyboard
-                Text="{Binding Text, Mode=TwoWay}"
+                Text="{Binding InputText, Mode=TwoWay}"
                 EnterPressed="OnVirtualKeyboardEnter"/>
         </Border>
 
