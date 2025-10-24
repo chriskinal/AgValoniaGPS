@@ -195,20 +195,20 @@ public class GridViewModel : DialogViewModelBase
     /// <summary>
     /// Validates grid configuration before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (GridOrigin == null)
         {
             SetError("Grid origin must be set");
-            return false;
+            return;
         }
 
         if (GridSpacing < 1.0 || GridSpacing > 100.0)
         {
             SetError("Grid spacing must be between 1 and 100 meters");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

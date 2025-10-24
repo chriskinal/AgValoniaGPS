@@ -145,16 +145,16 @@ public class LoadProfileViewModel : DialogViewModelBase
     /// <summary>
     /// Validates that a profile is selected before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (SelectedProfile == null)
         {
             SetError("Please select a profile to load.");
-            return false;
+            return;
         }
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }
 

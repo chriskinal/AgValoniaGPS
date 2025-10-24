@@ -1,6 +1,6 @@
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
-using ReactiveUI;
 
 namespace AgValoniaGPS.ViewModels.Base;
 
@@ -17,9 +17,8 @@ public abstract class DialogViewModelBase : ViewModelBase
     /// </summary>
     protected DialogViewModelBase()
     {
-        // Create commands on UI thread to prevent threading exceptions
-        OKCommand = ReactiveCommand.Create(OnOK, outputScheduler: RxApp.MainThreadScheduler);
-        CancelCommand = ReactiveCommand.Create(OnCancel, outputScheduler: RxApp.MainThreadScheduler);
+        OKCommand = new RelayCommand(OnOK);
+        CancelCommand = new RelayCommand(OnCancel);
     }
 
     /// <summary>
@@ -29,7 +28,7 @@ public abstract class DialogViewModelBase : ViewModelBase
     public bool? DialogResult
     {
         get => _dialogResult;
-        set => this.RaiseAndSetIfChanged(ref _dialogResult, value);
+        set => SetProperty(ref _dialogResult, value);
     }
 
     /// <summary>
@@ -52,12 +51,10 @@ public abstract class DialogViewModelBase : ViewModelBase
     /// Called when the OK command is executed.
     /// Override this method to add validation or custom logic before closing.
     /// </summary>
-    /// <returns>True if the dialog should close, false to keep it open (e.g., validation failed).</returns>
-    protected virtual bool OnOK()
+    protected virtual void OnOK()
     {
         DialogResult = true;
         RequestClose(true);
-        return true;
     }
 
     /// <summary>

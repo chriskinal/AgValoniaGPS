@@ -277,14 +277,14 @@ public class TramViewModel : DialogViewModelBase
     /// <summary>
     /// Validates configuration before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (TramSpacing <= 0)
         {
             SetError("Tram spacing must be greater than zero");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

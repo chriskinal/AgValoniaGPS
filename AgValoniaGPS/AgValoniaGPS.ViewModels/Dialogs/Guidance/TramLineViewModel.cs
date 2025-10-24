@@ -141,11 +141,11 @@ public class TramLineViewModel : DialogViewModelBase
     /// <summary>
     /// Validates and applies tram line settings.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         // TODO: When tram line service is integrated, update the tram line
         // Example: _tramLineService?.UpdateTramLine(TramLineNumber, OffsetDistance, IsActive, LineColor);
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

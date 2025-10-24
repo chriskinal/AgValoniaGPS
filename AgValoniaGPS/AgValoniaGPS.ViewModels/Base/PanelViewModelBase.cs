@@ -1,5 +1,4 @@
-using Avalonia.Threading;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
 
@@ -23,7 +22,7 @@ public abstract class PanelViewModelBase : ViewModelBase
     public bool IsExpanded
     {
         get => _isExpanded;
-        set => this.RaiseAndSetIfChanged(ref _isExpanded, value);
+        set => SetProperty(ref _isExpanded, value);
     }
 
     /// <summary>
@@ -33,7 +32,7 @@ public abstract class PanelViewModelBase : ViewModelBase
     public bool IsPinned
     {
         get => _isPinned;
-        set => this.RaiseAndSetIfChanged(ref _isPinned, value);
+        set => SetProperty(ref _isPinned, value);
     }
 
     /// <summary>
@@ -43,7 +42,7 @@ public abstract class PanelViewModelBase : ViewModelBase
     public bool CanCollapse
     {
         get => _canCollapse;
-        set => this.RaiseAndSetIfChanged(ref _canCollapse, value);
+        set => SetProperty(ref _canCollapse, value);
     }
 
     /// <summary>
@@ -62,8 +61,7 @@ public abstract class PanelViewModelBase : ViewModelBase
     /// </summary>
     protected PanelViewModelBase()
     {
-        // Create commands on UI thread to prevent threading exceptions
-        CloseCommand = ReactiveCommand.Create(OnClose, outputScheduler: RxApp.MainThreadScheduler);
+        CloseCommand = new RelayCommand(OnClose);
     }
 
     /// <summary>

@@ -271,38 +271,38 @@ public class AgShareSettingsViewModel : DialogViewModelBase
     /// <summary>
     /// Validates settings before accepting.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (EnableAgShare)
         {
             if (string.IsNullOrWhiteSpace(ServerUrl))
             {
                 SetError("Server URL is required when AgShare is enabled.");
-                return false;
+                return;
             }
 
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
             {
                 SetError("Username and password are required when AgShare is enabled.");
-                return false;
+                return;
             }
 
             if (Port <= 0 || Port > 65535)
             {
                 SetError("Port must be between 1 and 65535.");
-                return false;
+                return;
             }
 
             if (AutoSync && (SyncIntervalMinutes < 1 || SyncIntervalMinutes > 1440))
             {
                 SetError("Sync interval must be between 1 and 1440 minutes.");
-                return false;
+                return;
             }
         }
 
         // TODO: Save settings via IConfigurationService
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }

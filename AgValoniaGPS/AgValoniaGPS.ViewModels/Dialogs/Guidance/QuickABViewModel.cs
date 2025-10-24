@@ -263,14 +263,14 @@ public class QuickABViewModel : DialogViewModelBase
     /// <summary>
     /// Validates configuration before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (CurrentPosition == null)
         {
             SetError("Current position not available");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

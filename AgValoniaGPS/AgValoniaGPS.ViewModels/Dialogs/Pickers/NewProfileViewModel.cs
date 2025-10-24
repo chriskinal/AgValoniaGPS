@@ -130,17 +130,17 @@ public class NewProfileViewModel : DialogViewModelBase
     /// <summary>
     /// Validates the form before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         ValidateProfileName();
 
         if (!IsValid)
         {
-            return false;
+            return;
         }
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }
 

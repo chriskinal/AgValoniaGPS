@@ -92,21 +92,21 @@ public class FieldDirViewModel : DialogViewModelBase
     /// <summary>
     /// Called when OK is clicked. Validates that a directory is selected.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (string.IsNullOrWhiteSpace(SelectedDirectory))
         {
             SetError("Please select a directory.");
-            return false;
+            return;
         }
 
         if (!Directory.Exists(SelectedDirectory))
         {
             SetError("Selected directory does not exist.");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 
     /// <summary>

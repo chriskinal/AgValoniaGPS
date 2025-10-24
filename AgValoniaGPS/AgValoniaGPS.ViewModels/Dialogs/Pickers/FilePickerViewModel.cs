@@ -211,22 +211,22 @@ public class FilePickerViewModel : DialogViewModelBase
     /// <summary>
     /// Validates that a file is selected before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (string.IsNullOrWhiteSpace(SelectedFilePath))
         {
             SetError("Please select a file.");
-            return false;
+            return;
         }
 
         if (!File.Exists(SelectedFilePath))
         {
             SetError("Selected file does not exist.");
-            return false;
+            return;
         }
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }
 

@@ -187,15 +187,15 @@ public class FirstViewModel : DialogViewModelBase
     /// <summary>
     /// Validates before closing the wizard.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (!AcceptedTerms || !AcceptedLicense)
         {
             SetError("You must accept both the license agreement and terms of service to continue.");
-            return false;
+            return;
         }
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }

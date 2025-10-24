@@ -128,17 +128,17 @@ public class ShiftPosViewModel : DialogViewModelBase
     /// <summary>
     /// Validates the input before accepting.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         // Validate that offsets are reasonable (within ±1000 meters)
         if (Math.Abs(OffsetX) > 1000 || Math.Abs(OffsetY) > 1000)
         {
             SetError("Offset values must be between -1000 and 1000 meters.");
-            return false;
+            return;
         }
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 
     /// <summary>

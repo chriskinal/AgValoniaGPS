@@ -177,13 +177,13 @@ public class RecordNameViewModel : DialogViewModelBase
     /// <summary>
     /// Override OnOK to validate before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (!IsValid)
         {
-            return false; // Keep dialog open if validation fails
+            return; // Keep dialog open if validation fails
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

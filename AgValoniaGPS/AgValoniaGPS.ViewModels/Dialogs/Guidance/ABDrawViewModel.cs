@@ -296,20 +296,20 @@ public class ABDrawViewModel : DialogViewModelBase
     /// <summary>
     /// Validates AB line before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (!IsPointASet || !IsPointBSet)
         {
             SetError("Both Point A and Point B must be set");
-            return false;
+            return;
         }
 
         if (LineLength < 10.0)
         {
             SetError("AB line must be at least 10 meters long");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

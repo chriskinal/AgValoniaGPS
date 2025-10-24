@@ -177,9 +177,9 @@ public class ColorPickerViewModel : DialogViewModelBase
     /// <summary>
     /// Validates and closes the dialog.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }

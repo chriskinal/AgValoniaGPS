@@ -225,20 +225,20 @@ public class HeadLineViewModel : DialogViewModelBase
     /// <summary>
     /// Validates configuration before closing.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (!HasBoundary)
         {
             SetError("No field boundary loaded");
-            return false;
+            return;
         }
 
         if (NumberOfPasses < 1 || NumberOfPasses > 10)
         {
             SetError("Number of passes must be between 1 and 10");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 }

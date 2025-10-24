@@ -140,36 +140,36 @@ public class EnterFlagViewModel : DialogViewModelBase
     /// <summary>
     /// Validates flag data before accepting.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         // Validate flag name
         if (string.IsNullOrWhiteSpace(FlagName))
         {
             SetError("Flag name is required.");
-            return false;
+            return;
         }
 
         if (FlagName.Length > 30)
         {
             SetError("Flag name must be 30 characters or less.");
-            return false;
+            return;
         }
 
         // Validate latitude
         if (Latitude < -90 || Latitude > 90)
         {
             SetError("Latitude must be between -90 and 90 degrees.");
-            return false;
+            return;
         }
 
         // Validate longitude
         if (Longitude < -180 || Longitude > 180)
         {
             SetError("Longitude must be between -180 and 180 degrees.");
-            return false;
+            return;
         }
 
-        return base.OnOK();
+        base.OnOK();
     }
 
     /// <summary>

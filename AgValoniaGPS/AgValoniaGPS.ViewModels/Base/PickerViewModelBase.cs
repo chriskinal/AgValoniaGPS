@@ -111,15 +111,15 @@ public abstract class PickerViewModelBase<T> : DialogViewModelBase
     /// <summary>
     /// Called when OK command is executed. Validates that an item is selected.
     /// </summary>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         if (SelectedItem == null)
         {
             SetError("Please select an item.");
-            return false;
+            return;
         }
 
         ClearError();
-        return base.OnOK();
+        base.OnOK();
     }
 }

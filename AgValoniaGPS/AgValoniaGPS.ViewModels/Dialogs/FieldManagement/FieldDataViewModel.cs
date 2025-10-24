@@ -126,46 +126,46 @@ public class FieldDataViewModel : DialogViewModelBase
     /// Validates field data before accepting changes.
     /// </summary>
     /// <returns>True if validation passes.</returns>
-    protected override bool OnOK()
+    protected override void OnOK()
     {
         // Validate field name
         if (string.IsNullOrWhiteSpace(FieldName))
         {
             SetError("Field name is required.");
-            return false;
+            return;
         }
 
         if (FieldName.Length > 50)
         {
             SetError("Field name must be 50 characters or less.");
-            return false;
+            return;
         }
 
         // Check for invalid filename characters
         if (ContainsInvalidFileNameChars(FieldName))
         {
             SetError("Field name contains invalid characters. Avoid: \\ / : * ? \" < > |");
-            return false;
+            return;
         }
 
         // Validate farm name length
         if (FarmName.Length > 50)
         {
             SetError("Farm name must be 50 characters or less.");
-            return false;
+            return;
         }
 
         // Validate client name length
         if (ClientName.Length > 50)
         {
             SetError("Client name must be 50 characters or less.");
-            return false;
+            return;
         }
 
         // Update modified date on save
         DateModified = DateTime.Now;
 
-        return base.OnOK();
+        base.OnOK();
     }
 
     /// <summary>
