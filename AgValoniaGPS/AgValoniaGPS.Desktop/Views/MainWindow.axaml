@@ -347,7 +347,7 @@
         <!-- Task Group 1: Core Operations Panels -->
         <panelsFieldMgmt:FormFieldData
             DataContext="{Binding FieldDataVM}"
-            IsVisible="{Binding IsFieldDataPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsFieldDataPanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Margin="200,20,20,20"
@@ -355,7 +355,7 @@
 
         <panelsDisplay:FormGPSData
             DataContext="{Binding GPSDataVM}"
-            IsVisible="{Binding IsGPSDataPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsGPSDataPanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Margin="200,100,20,20"
@@ -363,7 +363,7 @@
 
         <panelsFieldOps:FormTramLine
             DataContext="{Binding TramLineVM}"
-            IsVisible="{Binding IsTramLinePanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsTramLinePanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Margin="200,180,20,20"
@@ -371,7 +371,7 @@
 
         <panelsGuidance:FormQuickAB
             DataContext="{Binding QuickABVM}"
-            IsVisible="{Binding IsQuickABPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsQuickABPanelVisible}"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Margin="200,260,20,20"
@@ -380,35 +380,35 @@
         <!-- Task Group 2: Configuration Panels -->
         <panelsConfig:FormSteer
             DataContext="{Binding SteerVM}"
-            IsVisible="{Binding IsSteerConfigPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsSteerConfigPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormConfig
             DataContext="{Binding ConfigVM}"
-            IsVisible="{Binding IsGeneralConfigPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsGeneralConfigPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormDiagnostics
             DataContext="{Binding DiagnosticsVM}"
-            IsVisible="{Binding IsDiagnosticsPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsDiagnosticsPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormRollCorrection
             DataContext="{Binding RollCorrectionVM}"
-            IsVisible="{Binding IsRollCorrectionPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsRollCorrectionPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
 
         <panelsConfig:FormVehicleConfig
             DataContext="{Binding VehicleConfigVM}"
-            IsVisible="{Binding IsVehicleConfigPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsVehicleConfigPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
@@ -416,7 +416,7 @@
         <!-- Task Group 3: Field Management Panels -->
         <panelsFieldMgmt:FormFlags
             DataContext="{Binding FlagsVM}"
-            IsVisible="{Binding IsFlagsPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsFlagsPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="200,20,20,20"
@@ -424,7 +424,7 @@
 
         <panelsFieldMgmt:FormCamera
             DataContext="{Binding CameraVM}"
-            IsVisible="{Binding IsCameraPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsCameraPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="200,100,20,20"
@@ -432,7 +432,7 @@
 
         <panelsFieldMgmt:FormBoundaryEditor
             DataContext="{Binding BoundaryEditorVM}"
-            IsVisible="{Binding IsBoundaryEditorPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsBoundaryEditorPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="200,180,20,20"
@@ -440,7 +440,7 @@
 
         <panelsFieldMgmt:FormFieldTools
             DataContext="{Binding FieldToolsVM}"
-            IsVisible="{Binding IsFieldToolsPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsFieldToolsPanelVisible}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="200,260,20,20"
@@ -448,7 +448,7 @@
 
         <panelsFieldMgmt:FormFieldFileManager
             DataContext="{Binding FieldFileManagerVM}"
-            IsVisible="{Binding IsFieldFileManagerPanelVisible}"
+            IsVisible="{Binding $parent[Window].DataContext.IsFieldFileManagerPanelVisible}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             ZIndex="15" />
