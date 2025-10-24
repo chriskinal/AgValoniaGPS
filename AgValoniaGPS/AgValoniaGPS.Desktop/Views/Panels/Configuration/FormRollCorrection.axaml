@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Configuration"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Configuration.FormRollCorrection"
+             x:DataType="vm:FormRollCorrectionViewModel">
+
+    <Border Classes="FloatingPanel" Padding="15">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <TextBlock Text="{Binding Title}"
+                       FontSize="18"
+                       FontWeight="Bold"/>
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding HasError}"
+                    Background="#FFCCCC"
+                    Padding="10"
+                    CornerRadius="4">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="DarkRed"/>
+            </Border>
+
+            <!-- Roll Correction Settings -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Roll Correction"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <CheckBox IsChecked="{Binding RollCorrectionEnabled}"
+                              Content="Enable Roll Correction"/>
+
+                    <!-- Current Roll Angle Display -->
+                    <Border Background="#F0F0F0"
+                            Padding="10"
+                            CornerRadius="4">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Current Roll Angle"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding CurrentRollAngle, StringFormat='{}{0:F2}°'}"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Roll Zero Offset -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Roll Zero Offset (°)"/>
+                        <Slider Value="{Binding RollZeroOffset}"
+                                Minimum="-10"
+                                Maximum="10"/>
+                        <TextBlock Text="{Binding RollZeroOffset, StringFormat='{}{0:F2}°'}"/>
+                    </StackPanel>
+
+                    <!-- Roll Filter Constant -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Roll Filter Constant"/>
+                        <Slider Value="{Binding RollFilterConstant}"
+                                Minimum="0"
+                                Maximum="1.0"/>
+                        <TextBlock Text="{Binding RollFilterConstant, StringFormat='{}{0:F2}'}"/>
+                    </StackPanel>
+
+                    <!-- Zero Roll Button -->
+                    <Button Classes="ModernButton"
+                            Command="{Binding ZeroRollCommand}"
+                            HorizontalAlignment="Stretch">
+                        Zero Roll at Current Angle
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Antenna Configuration -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Antenna Configuration"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" RowGap="8">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Antenna Height:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AntennaHeight, StringFormat='{}{0:F2} m'}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Antenna Offset:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding AntennaOffset, StringFormat='{}{0:F2} m'}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10"
+                        HorizontalAlignment="Right">
+                <Button Classes="ModernButton"
+                        Command="{Binding ResetCommand}">
+                    Reset
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding ApplySettingsCommand}">
+                    Apply
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

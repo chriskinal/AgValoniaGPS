@@ -1,0 +1,136 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Configuration"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Configuration.FormConfig"
+             x:DataType="vm:FormConfigViewModel">
+
+    <Border Classes="FloatingPanel" Padding="15">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <TextBlock Text="{Binding Title}"
+                       FontSize="18"
+                       FontWeight="Bold"/>
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding HasError}"
+                    Background="#FFCCCC"
+                    Padding="10"
+                    CornerRadius="4">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="DarkRed"/>
+            </Border>
+
+            <!-- Display Settings -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Display Settings"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Display Units"/>
+                        <ComboBox SelectedItem="{Binding DisplayUnits}"
+                                  MinWidth="200">
+                            <ComboBoxItem>Metric</ComboBoxItem>
+                            <ComboBoxItem>Imperial</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <CheckBox IsChecked="{Binding ShowRtkAge}"
+                              Content="Show RTK Age"/>
+                    <CheckBox IsChecked="{Binding ShowSatelliteCount}"
+                              Content="Show Satellite Count"/>
+                </StackPanel>
+            </Border>
+
+            <!-- GPS Settings -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="GPS Settings"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Fix Update Rate (Hz)"/>
+                        <ComboBox SelectedItem="{Binding FixUpdateRate}"
+                                  MinWidth="200">
+                            <ComboBoxItem>10</ComboBoxItem>
+                            <ComboBoxItem>20</ComboBoxItem>
+                            <ComboBoxItem>25</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Simulated Rolling Average (points)"/>
+                        <Slider Value="{Binding SimulatedRollingAverage}"
+                                Minimum="1"
+                                Maximum="10"/>
+                        <TextBlock Text="{Binding SimulatedRollingAverage, StringFormat='{}{0}'}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Auto-save Settings -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Auto-save Settings"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Auto-save Interval (minutes)"/>
+                        <Slider Value="{Binding AutoSaveInterval}"
+                                Minimum="1"
+                                Maximum="60"/>
+                        <TextBlock Text="{Binding AutoSaveInterval, StringFormat='{}{0} min'}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- System Settings -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="System Settings"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <CheckBox IsChecked="{Binding KeepAwakeWhileRunning}"
+                              Content="Keep Screen Awake While Running"/>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Language"/>
+                        <ComboBox SelectedItem="{Binding Language}"
+                                  MinWidth="200">
+                            <ComboBoxItem>English</ComboBoxItem>
+                            <ComboBoxItem>Spanish</ComboBoxItem>
+                            <ComboBoxItem>French</ComboBoxItem>
+                            <ComboBoxItem>German</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10"
+                        HorizontalAlignment="Right">
+                <Button Classes="ModernButton"
+                        Command="{Binding ExportConfigCommand}">
+                    Export
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding ImportConfigCommand}">
+                    Import
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding LoadConfigCommand}">
+                    Load
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding SaveConfigCommand}">
+                    Save
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

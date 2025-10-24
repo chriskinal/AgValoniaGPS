@@ -1,0 +1,145 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.FieldManagement"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.FieldManagement.FormFieldFileManager"
+             x:DataType="vm:FormFieldFileManagerViewModel">
+
+    <Border Classes="FloatingPanel" Width="340" MinHeight="480">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <DockPanel>
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- Current Field -->
+            <Border Classes="StatusBox" Background="#334455">
+                <StackPanel Spacing="5">
+                    <TextBlock Text="Current Field" Foreground="#AAA" FontSize="12"/>
+                    <TextBlock Text="{Binding CurrentFieldName}"
+                               Foreground="White"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="{Binding LastSaveTime, StringFormat='Last saved: {0:g}'}"
+                               Foreground="#CCC"
+                               FontSize="11"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Available Fields List -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Available Fields" Foreground="#AAA" FontSize="12"/>
+                    <ListBox ItemsSource="{Binding AvailableFields}"
+                             SelectedItem="{Binding SelectedField}"
+                             Height="180"
+                             Background="#222"
+                             BorderBrush="#444"
+                             BorderThickness="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Spacing="3" Margin="5">
+                                    <TextBlock Text="{Binding Name}"
+                                               Foreground="White"
+                                               FontWeight="Bold"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="{Binding AreaHectares, StringFormat='{}{0:F1} ha'}"
+                                                   Foreground="Gray"
+                                                   FontSize="11"/>
+                                        <TextBlock Text="{Binding DateModified, StringFormat='{}{0:d}'}"
+                                                   Foreground="Gray"
+                                                   FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+
+            <!-- Field Operations -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Field Operations" Foreground="#AAA" FontSize="12"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Classes="ModernButton"
+                                Content="New"
+                                Command="{Binding NewFieldCommand}"
+                                Width="100"
+                                Height="35"
+                                Background="#27AE60"/>
+                        <Button Classes="ModernButton"
+                                Content="Open"
+                                Command="{Binding OpenFieldCommand}"
+                                Width="100"
+                                Height="35"
+                                Background="#3498DB"/>
+                        <Button Classes="ModernButton"
+                                Content="Delete"
+                                Command="{Binding DeleteFieldCommand}"
+                                Width="100"
+                                Height="35"
+                                Background="#E74C3C"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Classes="ModernButton"
+                                Content="Save"
+                                Command="{Binding SaveFieldCommand}"
+                                Width="150"
+                                Height="35"
+                                Background="#2ECC71"/>
+                        <Button Classes="ModernButton"
+                                Content="Save As..."
+                                Command="{Binding SaveAsFieldCommand}"
+                                Width="150"
+                                Height="35"
+                                Background="#16A085"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Boundary Import/Export -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Boundary Files" Foreground="#AAA" FontSize="12"/>
+
+                    <Button Classes="ModernButton"
+                            Content="Import Boundary (GeoJSON/KML)"
+                            Command="{Binding ImportBoundaryCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="35"
+                            Background="#9B59B6"/>
+
+                    <Button Classes="ModernButton"
+                            Content="Export Boundary"
+                            Command="{Binding ExportBoundaryCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="35"
+                            Background="#8E44AD"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Error Message -->
+            <Border Classes="StatusBox"
+                    Background="#99E74C3C"
+                    IsVisible="{Binding HasError}">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

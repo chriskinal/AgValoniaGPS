@@ -1,0 +1,159 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Configuration"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Configuration.FormVehicleConfig"
+             x:DataType="vm:FormVehicleConfigViewModel">
+
+    <Border Classes="FloatingPanel" Padding="15">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <TextBlock Text="{Binding Title}"
+                       FontSize="18"
+                       FontWeight="Bold"/>
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding HasError}"
+                    Background="#FFCCCC"
+                    Padding="10"
+                    CornerRadius="4">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="DarkRed"/>
+            </Border>
+
+            <!-- Vehicle Basic Info -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Vehicle Information"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Vehicle Name"/>
+                        <TextBox Text="{Binding VehicleName}"
+                                 MinWidth="200"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Vehicle Type"/>
+                        <ComboBox SelectedItem="{Binding VehicleType}"
+                                  MinWidth="200">
+                            <ComboBoxItem>Tractor</ComboBoxItem>
+                            <ComboBoxItem>Sprayer</ComboBoxItem>
+                            <ComboBoxItem>Harvester</ComboBoxItem>
+                            <ComboBoxItem>4WD</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Vehicle Dimensions -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Vehicle Dimensions"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <!-- Wheelbase -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Wheelbase (m)"/>
+                        <Slider Value="{Binding Wheelbase}"
+                                Minimum="1.0"
+                                Maximum="10.0"/>
+                        <TextBlock Text="{Binding Wheelbase, StringFormat='{}{0:F2} m'}"/>
+                    </StackPanel>
+
+                    <!-- Track Width -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Track Width (m)"/>
+                        <Slider Value="{Binding TrackWidth}"
+                                Minimum="1.0"
+                                Maximum="10.0"/>
+                        <TextBlock Text="{Binding TrackWidth, StringFormat='{}{0:F2} m'}"/>
+                    </StackPanel>
+
+                    <!-- Max Steer Angle -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Max Steering Angle (°)"/>
+                        <Slider Value="{Binding MaxSteerAngle}"
+                                Minimum="10"
+                                Maximum="45"/>
+                        <TextBlock Text="{Binding MaxSteerAngle, StringFormat='{}{0:F1}°'}"/>
+                    </StackPanel>
+
+                    <!-- Hitch Length -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Hitch Length (m)"/>
+                        <Slider Value="{Binding HitchLength}"
+                                Minimum="0"
+                                Maximum="10.0"/>
+                        <TextBlock Text="{Binding HitchLength, StringFormat='{}{0:F2} m'}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Antenna Position -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Antenna Position"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <!-- Antenna Height -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Antenna Height (m)"/>
+                        <Slider Value="{Binding AntennaHeight}"
+                                Minimum="0.5"
+                                Maximum="5.0"/>
+                        <TextBlock Text="{Binding AntennaHeight, StringFormat='{}{0:F2} m'}"/>
+                    </StackPanel>
+
+                    <!-- Antenna Forward Offset -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Antenna Forward Offset (m)"/>
+                        <Slider Value="{Binding AntennaForwardOffset}"
+                                Minimum="-5.0"
+                                Maximum="5.0"/>
+                        <TextBlock Text="{Binding AntennaForwardOffset, StringFormat='{}{0:F2} m'}"/>
+                    </StackPanel>
+
+                    <!-- Antenna Right Offset -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Antenna Right Offset (m)"/>
+                        <Slider Value="{Binding AntennaRightOffset}"
+                                Minimum="-5.0"
+                                Maximum="5.0"/>
+                        <TextBlock Text="{Binding AntennaRightOffset, StringFormat='{}{0:F2} m'}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Vehicle Diagram Placeholder -->
+            <Border Classes="StatusBox"
+                    Height="150"
+                    Background="#F0F0F0">
+                <TextBlock Text="Vehicle Diagram (Placeholder)"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="#888888"/>
+            </Border>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10"
+                        HorizontalAlignment="Right">
+                <Button Classes="ModernButton"
+                        Command="{Binding NewVehicleCommand}">
+                    New
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding LoadVehicleCommand}">
+                    Load
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding SaveVehicleCommand}">
+                    Save
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

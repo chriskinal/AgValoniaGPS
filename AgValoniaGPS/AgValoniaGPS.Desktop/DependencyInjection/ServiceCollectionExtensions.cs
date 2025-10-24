@@ -17,6 +17,7 @@ using AgValoniaGPS.ViewModels.Panels.Display;
 using AgValoniaGPS.ViewModels.Panels.FieldManagement;
 using AgValoniaGPS.ViewModels.Panels.FieldOperations;
 using AgValoniaGPS.ViewModels.Panels.Guidance;
+using AgValoniaGPS.ViewModels.Panels.Configuration;
 
 namespace AgValoniaGPS.Desktop.DependencyInjection;
 
@@ -64,11 +65,25 @@ public static class ServiceCollectionExtensions
         // ViewModels - Main
         services.AddSingleton<MainViewModel>();
 
-        // ViewModels - Wave 10: Operational Panels
+        // ViewModels - Wave 10 Task Group 1: Field Operations Panels
         services.AddTransient<FormFieldDataViewModel>();
         services.AddTransient<FormGPSDataViewModel>();
         services.AddTransient<FormTramLineViewModel>();
         services.AddTransient<FormQuickABViewModel>();
+
+        // ViewModels - Wave 10 Task Group 2: Configuration Panels
+        services.AddTransient<FormSteerViewModel>();
+        services.AddTransient<FormConfigViewModel>();
+        services.AddTransient<FormDiagnosticsViewModel>();
+        services.AddTransient<FormRollCorrectionViewModel>();
+        services.AddTransient<FormVehicleConfigViewModel>();
+
+        // ViewModels - Wave 10 Task Group 3: Field Management Panels
+        services.AddTransient<FormFlagsViewModel>();
+        services.AddTransient<FormCameraViewModel>();
+        services.AddTransient<FormBoundaryEditorViewModel>();
+        services.AddTransient<FormFieldToolsViewModel>();
+        services.AddTransient<FormFieldFileManagerViewModel>();
 
         return services;
     }

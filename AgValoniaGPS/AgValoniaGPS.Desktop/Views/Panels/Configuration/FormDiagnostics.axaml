@@ -1,0 +1,121 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Configuration"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Configuration.FormDiagnostics"
+             x:DataType="vm:FormDiagnosticsViewModel">
+
+    <Border Classes="FloatingPanel" Padding="15">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <TextBlock Text="{Binding Title}"
+                       FontSize="18"
+                       FontWeight="Bold"/>
+
+            <!-- System Performance -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="System Performance"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" RowGap="8">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="GPS Update Rate:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding GpsUpdateRate, StringFormat='{}{0:F1} Hz'}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Steering Loop Rate:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SteeringLoopRate, StringFormat='{}{0:F1} Hz'}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Memory Usage:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MemoryUsageMb, StringFormat='{}{0:F1} MB'}"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="CPU Usage:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CpuUsagePercent, StringFormat='{}{0:F1}%'}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Module Status -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Hardware Modules"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" RowGap="8">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="AutoSteer:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AutoSteerModuleStatus}"/>
+                        <Ellipse Grid.Row="0" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0">
+                            <Ellipse.Fill>
+                                <SolidColorBrush>
+                                    <SolidColorBrush.Color>
+                                        <MultiBinding Converter="{StaticResource StatusToColorConverter}">
+                                            <Binding Path="AutoSteerModuleStatus"/>
+                                        </MultiBinding>
+                                    </SolidColorBrush.Color>
+                                </SolidColorBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Machine:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding MachineModuleStatus}"/>
+                        <Ellipse Grid.Row="1" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0" Fill="Gray"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="IMU:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ImuModuleStatus}"/>
+                        <Ellipse Grid.Row="2" Grid.Column="2" Width="12" Height="12" Margin="10,0,0,0" Fill="Gray"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Error Log -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Error Log"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <Border Background="#F5F5F5"
+                            BorderBrush="#CCCCCC"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Height="200">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding ErrorLog}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"
+                                                   FontFamily="Consolas"
+                                                   FontSize="11"
+                                                   Margin="5,2"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <TextBlock Text="{Binding LastErrorMessage}"
+                               Foreground="DarkRed"
+                               IsVisible="{Binding LastErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10"
+                        HorizontalAlignment="Right">
+                <Button Classes="ModernButton"
+                        Command="{Binding ExportDiagnosticsCommand}">
+                    Export
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding ClearErrorLogCommand}">
+                    Clear Log
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding RefreshStatusCommand}">
+                    Refresh
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

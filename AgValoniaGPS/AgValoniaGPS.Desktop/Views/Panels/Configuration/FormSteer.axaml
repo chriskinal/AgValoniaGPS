@@ -1,0 +1,124 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.Configuration"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.Configuration.FormSteer"
+             x:DataType="vm:FormSteerViewModel">
+
+    <Border Classes="FloatingPanel" Padding="15">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <TextBlock Text="{Binding Title}"
+                       FontSize="18"
+                       FontWeight="Bold"/>
+
+            <!-- Error Message -->
+            <Border IsVisible="{Binding HasError}"
+                    Background="#FFCCCC"
+                    Padding="10"
+                    CornerRadius="4">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="DarkRed"/>
+            </Border>
+
+            <!-- Settings Section -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Algorithm Settings"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <!-- Steering Mode -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Steering Mode"/>
+                        <ComboBox SelectedItem="{Binding SteeringMode}"
+                                  MinWidth="200">
+                            <ComboBoxItem>Pure Pursuit</ComboBoxItem>
+                            <ComboBoxItem>Stanley</ComboBoxItem>
+                            <ComboBoxItem>Hybrid</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- Minimal Look Ahead -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Minimal Look Ahead (m)"/>
+                        <Slider Value="{Binding MinimalLookAhead}"
+                                Minimum="5"
+                                Maximum="25"/>
+                        <TextBlock Text="{Binding MinimalLookAhead, StringFormat='{}{0:F1} m'}"/>
+                    </StackPanel>
+
+                    <!-- Aggressiveness Multiplier -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Aggressiveness Multiplier"/>
+                        <Slider Value="{Binding AggressivenessMultiplier}"
+                                Minimum="0.5"
+                                Maximum="2.0"/>
+                        <TextBlock Text="{Binding AggressivenessMultiplier, StringFormat='{}{0:F2}'}"/>
+                    </StackPanel>
+
+                    <!-- Integral Gain -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Integral Gain"/>
+                        <Slider Value="{Binding IntegralGain}"
+                                Minimum="0"
+                                Maximum="1.0"/>
+                        <TextBlock Text="{Binding IntegralGain, StringFormat='{}{0:F2}'}"/>
+                    </StackPanel>
+
+                    <!-- Proportional Gain -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Proportional Gain"/>
+                        <Slider Value="{Binding ProportionalGain}"
+                                Minimum="0"
+                                Maximum="100"/>
+                        <TextBlock Text="{Binding ProportionalGain, StringFormat='{}{0:F1}'}"/>
+                    </StackPanel>
+
+                    <!-- Stanley Heading Error Gain -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Stanley Heading Error Gain"/>
+                        <Slider Value="{Binding StanleyHeadingErrorGain}"
+                                Minimum="0"
+                                Maximum="1.0"/>
+                        <TextBlock Text="{Binding StanleyHeadingErrorGain, StringFormat='{}{0:F2}'}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Vehicle Info Section -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Vehicle Parameters"
+                               FontWeight="SemiBold"
+                               FontSize="14"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" RowGap="8">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Max Steer Angle:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding MaxSteerAngle, StringFormat='{}{0:F1}°'}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Wheelbase:" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding WheelBase, StringFormat='{}{0:F2} m'}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10"
+                        HorizontalAlignment="Right">
+                <Button Classes="ModernButton"
+                        Command="{Binding TestSteeringCommand}">
+                    Test Steering
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding ResetToDefaultsCommand}">
+                    Reset
+                </Button>
+                <Button Classes="ModernButton"
+                        Command="{Binding ApplySettingsCommand}">
+                    Apply
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

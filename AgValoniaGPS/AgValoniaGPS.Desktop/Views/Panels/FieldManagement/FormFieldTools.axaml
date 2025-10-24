@@ -1,0 +1,125 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AgValoniaGPS.ViewModels.Panels.FieldManagement"
+             x:Class="AgValoniaGPS.Desktop.Views.Panels.FieldManagement.FormFieldTools"
+             x:DataType="vm:FormFieldToolsViewModel">
+
+    <Border Classes="FloatingPanel" Width="320" MinHeight="400">
+        <StackPanel Spacing="15">
+            <!-- Header -->
+            <DockPanel>
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           Foreground="White"
+                           DockPanel.Dock="Left"/>
+                <Button Classes="IconButton"
+                        Content="×"
+                        Width="32"
+                        Height="32"
+                        FontSize="20"
+                        Command="{Binding CloseCommand}"
+                        DockPanel.Dock="Right"/>
+            </DockPanel>
+
+            <!-- Headland Configuration -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Headland Configuration" Foreground="#AAA" FontSize="12"/>
+
+                    <!-- Passes -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Headland Passes" Foreground="#CCC" FontSize="12"/>
+                        <NumericUpDown Value="{Binding HeadlandPasses}"
+                                       Minimum="1"
+                                       Maximum="10"
+                                       Increment="1"
+                                       HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <!-- Spacing -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Spacing (meters)" Foreground="#CCC" FontSize="12"/>
+                        <NumericUpDown Value="{Binding HeadlandSpacing}"
+                                       Minimum="1"
+                                       Maximum="50"
+                                       Increment="0.5"
+                                       FormatString="F1"
+                                       HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Area Calculations -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Area Calculations" Foreground="#AAA" FontSize="12"/>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Headland Area:" Foreground="#CCC" Grid.Column="0"/>
+                        <TextBlock Text="{Binding HeadlandAreaHectares, StringFormat='{}{0:F2} ha'}"
+                                   Foreground="White" Grid.Column="1"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Inner Area:" Foreground="#CCC" Grid.Column="0"/>
+                        <TextBlock Text="{Binding InnerBoundaryAreaHectares, StringFormat='{}{0:F2} ha'}"
+                                   Foreground="White" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Headland Actions -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Headland Actions" Foreground="#AAA" FontSize="12"/>
+
+                    <Button Classes="ModernButton"
+                            Content="Generate Headland"
+                            Command="{Binding GenerateHeadlandCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Background="#27AE60"/>
+
+                    <Button Classes="ModernButton"
+                            Content="Clear Headland"
+                            Command="{Binding ClearHeadlandCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Background="#E74C3C"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Field Utilities -->
+            <Border Classes="StatusBox">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Field Utilities" Foreground="#AAA" FontSize="12"/>
+
+                    <Button Classes="ModernButton"
+                            Content="Calculate Field Area"
+                            Command="{Binding CalculateFieldAreaCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="35"
+                            Background="#3498DB"/>
+
+                    <Button Classes="ModernButton"
+                            Content="Export Field Data"
+                            Command="{Binding ExportFieldDataCommand}"
+                            HorizontalAlignment="Stretch"
+                            Height="35"
+                            Background="#9B59B6"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Error Message -->
+            <Border Classes="StatusBox"
+                    Background="#99E74C3C"
+                    IsVisible="{Binding HasError}">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>
