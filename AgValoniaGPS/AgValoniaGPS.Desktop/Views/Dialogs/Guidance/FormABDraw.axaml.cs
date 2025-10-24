@@ -45,7 +45,7 @@ public partial class FormABDraw : Window
         double lat = 42.0 + (point.Y / _drawCanvas.Height) * 0.01;
         double lon = -93.6 + (point.X / _drawCanvas.Width) * 0.01;
 
-        var position = new Position(lat, lon);
+        var position = new Position { Latitude = lat, Longitude = lon };
         viewModel.OnCanvasClick(position);
     }
 }
