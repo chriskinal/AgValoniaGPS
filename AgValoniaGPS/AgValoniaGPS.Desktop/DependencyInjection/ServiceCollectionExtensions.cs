@@ -70,24 +70,24 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainViewModel>();
 
         // ViewModels - Wave 10 Task Group 1: Field Operations Panels
-        services.AddTransient<FormFieldDataViewModel>();
-        services.AddTransient<FormGPSDataViewModel>();
-        services.AddTransient<FormTramLineViewModel>();
-        services.AddTransient<FormQuickABViewModel>();
+        services.AddSingleton<FormFieldDataViewModel>();
+        services.AddSingleton<FormGPSDataViewModel>();
+        services.AddSingleton<FormTramLineViewModel>();
+        services.AddSingleton<FormQuickABViewModel>();
 
         // ViewModels - Wave 10 Task Group 2: Configuration Panels
-        services.AddTransient<FormSteerViewModel>();
-        services.AddTransient<FormConfigViewModel>();
-        services.AddTransient<FormDiagnosticsViewModel>();
-        services.AddTransient<FormRollCorrectionViewModel>();
-        services.AddTransient<FormVehicleConfigViewModel>();
+        services.AddSingleton<FormSteerViewModel>();
+        services.AddSingleton<FormConfigViewModel>();
+        services.AddSingleton<FormDiagnosticsViewModel>();
+        services.AddSingleton<FormRollCorrectionViewModel>();
+        services.AddSingleton<FormVehicleConfigViewModel>();
 
         // ViewModels - Wave 10 Task Group 3: Field Management Panels
-        services.AddTransient<FormFlagsViewModel>();
-        services.AddTransient<FormCameraViewModel>();
-        services.AddTransient<FormBoundaryEditorViewModel>();
-        services.AddTransient<FormFieldToolsViewModel>();
-        services.AddTransient<FormFieldFileManagerViewModel>();
+        services.AddSingleton<FormFlagsViewModel>();
+        services.AddSingleton<FormCameraViewModel>();
+        services.AddSingleton<FormBoundaryEditorViewModel>();
+        services.AddSingleton<FormFieldToolsViewModel>();
+        services.AddSingleton<FormFieldFileManagerViewModel>();
 
         return services;
     }

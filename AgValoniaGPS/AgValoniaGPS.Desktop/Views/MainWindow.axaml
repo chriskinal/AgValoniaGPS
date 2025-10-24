@@ -151,56 +151,126 @@
                     <TextBlock Text="PANELS" Foreground="#3498DB" FontSize="12" FontWeight="Bold" Margin="0,0,0,6"/>
 
                     <!-- Task Group 1: Core Operations -->
-                    <Button Classes="ModernButton" Content="Field Data" FontSize="11" Padding="8,4"
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleFieldDataPanelCommand}"
-                            Background="{Binding IsFieldDataPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="GPS Data" FontSize="11" Padding="8,4"
+                            Background="{Binding IsFieldDataPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/FieldStats.png" Width="16" Height="16"/>
+                            <TextBlock Text="Field Data" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleGPSDataPanelCommand}"
-                            Background="{Binding IsGPSDataPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Tram Lines" FontSize="11" Padding="8,4"
+                            Background="{Binding IsGPSDataPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/GPSQuality.png" Width="16" Height="16"/>
+                            <TextBlock Text="GPS Data" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleTramLinePanelCommand}"
-                            Background="{Binding IsTramLinePanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Quick A-B" FontSize="11" Padding="8,4"
+                            Background="{Binding IsTramLinePanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/TramLines.png" Width="16" Height="16"/>
+                            <TextBlock Text="Tram Lines" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleQuickABPanelCommand}"
-                            Background="{Binding IsQuickABPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                            Background="{Binding IsQuickABPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/ABLineCycle.png" Width="16" Height="16"/>
+                            <TextBlock Text="Quick A-B" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
 
                     <Separator Height="1" Background="#444" Margin="0,4"/>
 
                     <!-- Task Group 2: Configuration -->
-                    <Button Classes="ModernButton" Content="Steering Config" FontSize="11" Padding="8,4"
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleSteerConfigPanelCommand}"
-                            Background="{Binding IsSteerConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="General Config" FontSize="11" Padding="8,4"
+                            Background="{Binding IsSteerConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/AutoSteerConf.png" Width="16" Height="16"/>
+                            <TextBlock Text="Steering Config" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleGeneralConfigPanelCommand}"
-                            Background="{Binding IsGeneralConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Diagnostics" FontSize="11" Padding="8,4"
+                            Background="{Binding IsGeneralConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/Settings48.png" Width="16" Height="16"/>
+                            <TextBlock Text="General Config" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleDiagnosticsPanelCommand}"
-                            Background="{Binding IsDiagnosticsPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Roll Correction" FontSize="11" Padding="8,4"
+                            Background="{Binding IsDiagnosticsPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/Chart.png" Width="16" Height="16"/>
+                            <TextBlock Text="Diagnostics" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleRollCorrectionPanelCommand}"
-                            Background="{Binding IsRollCorrectionPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Vehicle Config" FontSize="11" Padding="8,4"
+                            Background="{Binding IsRollCorrectionPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/GridRotate.png" Width="16" Height="16"/>
+                            <TextBlock Text="Roll Correction" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleVehicleConfigPanelCommand}"
-                            Background="{Binding IsVehicleConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                            Background="{Binding IsVehicleConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/vehiclePageTractor.png" Width="16" Height="16"/>
+                            <TextBlock Text="Vehicle Config" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
 
                     <Separator Height="1" Background="#444" Margin="0,4"/>
 
                     <!-- Task Group 3: Field Management -->
-                    <Button Classes="ModernButton" Content="Flags" FontSize="11" Padding="8,4"
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleFlagsPanelCommand}"
-                            Background="{Binding IsFlagsPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Camera" FontSize="11" Padding="8,4"
+                            Background="{Binding IsFlagsPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/FlagYel.png" Width="16" Height="16"/>
+                            <TextBlock Text="Flags" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleCameraPanelCommand}"
-                            Background="{Binding IsCameraPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Boundary Editor" FontSize="11" Padding="8,4"
+                            Background="{Binding IsCameraPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/Webcam.png" Width="16" Height="16"/>
+                            <TextBlock Text="Camera" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleBoundaryEditorPanelCommand}"
-                            Background="{Binding IsBoundaryEditorPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Field Tools" FontSize="11" Padding="8,4"
+                            Background="{Binding IsBoundaryEditorPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/Boundary.png" Width="16" Height="16"/>
+                            <TextBlock Text="Boundary Editor" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleFieldToolsPanelCommand}"
-                            Background="{Binding IsFieldToolsPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
-                    <Button Classes="ModernButton" Content="Field Files" FontSize="11" Padding="8,4"
+                            Background="{Binding IsFieldToolsPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/FieldTools.png" Width="16" Height="16"/>
+                            <TextBlock Text="Field Tools" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
                             Command="{Binding ToggleFieldFileManagerPanelCommand}"
-                            Background="{Binding IsFieldFileManagerPanelVisible, Converter={StaticResource BoolToColorConverter}}"/>
+                            Background="{Binding IsFieldFileManagerPanelVisible, Converter={StaticResource BoolToColorConverter}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Image Source="/Assets/Icons/FileOpen.png" Width="16" Height="16"/>
+                            <TextBlock Text="Field Files" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -266,6 +336,13 @@
         </Canvas>
 
         <!-- ========== WAVE 10 OPERATIONAL PANELS ========== -->
+        <!-- Panel Positioning Design:
+             - Panels use fixed HorizontalAlignment/VerticalAlignment/Margin positioning
+             - Panels are NOT draggable (this is by design for consistent layout)
+             - Only the Section Control panel (above) is draggable via Canvas positioning
+             - Panels can be shown/hidden via toggle buttons in the left sidebar
+             - Panel close buttons (×) trigger CloseRequested events → MainViewModel visibility toggles
+        -->
 
         <!-- Task Group 1: Core Operations Panels -->
         <panelsFieldMgmt:FormFieldData

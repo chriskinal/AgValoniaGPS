@@ -10,6 +10,11 @@ using AgValoniaGPS.Services.Configuration;
 using AgValoniaGPS.Services.Session;
 using AgValoniaGPS.Services.Profile;
 using AgValoniaGPS.Services.UI;
+using AgValoniaGPS.ViewModels.Panels.Display;
+using AgValoniaGPS.ViewModels.Panels.FieldManagement;
+using AgValoniaGPS.ViewModels.Panels.FieldOperations;
+using AgValoniaGPS.ViewModels.Panels.Guidance;
+using AgValoniaGPS.ViewModels.Panels.Configuration;
 using Avalonia.Threading;
 
 namespace AgValoniaGPS.ViewModels;
@@ -79,7 +84,21 @@ public class MainViewModel : ObservableObject
         IConfigurationService configService,
         ISessionManagementService sessionService,
         IProfileManagementService profileService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        FormFieldDataViewModel fieldDataVM,
+        FormGPSDataViewModel gpsDataVM,
+        FormTramLineViewModel tramLineVM,
+        FormQuickABViewModel quickABVM,
+        FormSteerViewModel steerVM,
+        FormConfigViewModel configVM,
+        FormDiagnosticsViewModel diagnosticsVM,
+        FormRollCorrectionViewModel rollCorrectionVM,
+        FormVehicleConfigViewModel vehicleConfigVM,
+        FormFlagsViewModel flagsVM,
+        FormCameraViewModel cameraVM,
+        FormBoundaryEditorViewModel boundaryEditorVM,
+        FormFieldToolsViewModel fieldToolsVM,
+        FormFieldFileManagerViewModel fieldFileManagerVM)
     {
         _udpService = udpService;
         _gpsService = gpsService;
@@ -107,6 +126,22 @@ public class MainViewModel : ObservableObject
         // Subscribe to Wave 1 service events
         _positionService.PositionUpdated += OnPositionUpdated;
         _headingService.HeadingChanged += OnHeadingChanged;
+
+        // Subscribe to panel CloseRequested events
+        fieldDataVM.CloseRequested += (_, _) => IsFieldDataPanelVisible = false;
+        gpsDataVM.CloseRequested += (_, _) => IsGPSDataPanelVisible = false;
+        tramLineVM.CloseRequested += (_, _) => IsTramLinePanelVisible = false;
+        quickABVM.CloseRequested += (_, _) => IsQuickABPanelVisible = false;
+        steerVM.CloseRequested += (_, _) => IsSteerConfigPanelVisible = false;
+        configVM.CloseRequested += (_, _) => IsGeneralConfigPanelVisible = false;
+        diagnosticsVM.CloseRequested += (_, _) => IsDiagnosticsPanelVisible = false;
+        rollCorrectionVM.CloseRequested += (_, _) => IsRollCorrectionPanelVisible = false;
+        vehicleConfigVM.CloseRequested += (_, _) => IsVehicleConfigPanelVisible = false;
+        flagsVM.CloseRequested += (_, _) => IsFlagsPanelVisible = false;
+        cameraVM.CloseRequested += (_, _) => IsCameraPanelVisible = false;
+        boundaryEditorVM.CloseRequested += (_, _) => IsBoundaryEditorPanelVisible = false;
+        fieldToolsVM.CloseRequested += (_, _) => IsFieldToolsPanelVisible = false;
+        fieldFileManagerVM.CloseRequested += (_, _) => IsFieldFileManagerPanelVisible = false;
 
         // Initialize panel toggle commands
         InitializePanelToggleCommands();
