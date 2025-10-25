@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AgValoniaGPS.Desktop.Views.Controls.DockButtons.FormRollCorrectionButton"
+             Width="60" Height="60">
+    <Button Classes="DockButton" Width="60" Height="60" Click="OnButtonClick">
+        <StackPanel>
+            <Image Source="/Assets/Icons/Con_SourcesGPSDual.png" Width="48" Height="48"/>
+            <TextBlock Text="Roll" FontSize="10" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Button>
+</UserControl>

@@ -3,12 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AgValoniaGPS.ViewModels"
-        xmlns:controls="using:AgValoniaGPS.Desktop.Controls"
-        xmlns:panelsFieldMgmt="using:AgValoniaGPS.Desktop.Views.Panels.FieldManagement"
-        xmlns:panelsDisplay="using:AgValoniaGPS.Desktop.Views.Panels.Display"
-        xmlns:panelsFieldOps="using:AgValoniaGPS.Desktop.Views.Panels.FieldOperations"
-        xmlns:panelsGuidance="using:AgValoniaGPS.Desktop.Views.Panels.Guidance"
-        xmlns:panelsConfig="using:AgValoniaGPS.Desktop.Views.Panels.Configuration"
         mc:Ignorable="d" d:DesignWidth="1366" d:DesignHeight="768"
         x:Class="AgValoniaGPS.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
@@ -18,466 +12,385 @@
         WindowState="Maximized"
         Background="#1a1a1a">
 
-    <Window.Styles>
-        <!-- Floating Panel Style -->
-        <Style Selector="Border.FloatingPanel">
-            <Setter Property="Background" Value="#DD2C3E50"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="BoxShadow" Value="0 4 16 2 #40000000"/>
-        </Style>
+    <!-- Main Layout: Custom Status Bar + Content Area -->
+    <Grid RowDefinitions="Auto,*">
 
-        <!-- Modern Button Style -->
-        <Style Selector="Button.ModernButton">
-            <Setter Property="Background" Value="#3498DB"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-        <Style Selector="Button.ModernButton:pointerover">
-            <Setter Property="Background" Value="#2980B9"/>
-        </Style>
-        <Style Selector="Button.ModernButton:pressed">
-            <Setter Property="Background" Value="#21618C"/>
-        </Style>
+        <!-- Custom Top Status Bar (matches old AgOpenGPS) -->
+        <Border Grid.Row="0" Background="#B0B0D0" Height="60" BorderBrush="#808080" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
 
-        <!-- Icon Button Style -->
-        <Style Selector="Button.IconButton">
-            <Setter Property="Background" Value="#DD34495E"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Width" Value="48"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="20"/>
-        </Style>
-        <Style Selector="Button.IconButton:pointerover">
-            <Setter Property="Background" Value="#DD475A6E"/>
-        </Style>
+                <!-- Section Control Indicator (3 colored bars) -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0,12,0" VerticalAlignment="Center">
+                    <Rectangle Width="40" Height="8" Fill="#90EE90" Margin="0,0,2,0"/>
+                    <Rectangle Width="40" Height="8" Fill="#FFD700" Margin="0,0,2,0"/>
+                    <Rectangle Width="40" Height="8" Fill="#FF6B6B"/>
+                </StackPanel>
 
-        <!-- Status Indicator Style -->
-        <Style Selector="Border.StatusBox">
-            <Setter Property="Background" Value="#DD1E2930"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="10"/>
-        </Style>
-    </Window.Styles>
+                <!-- GPS Status -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0" VerticalAlignment="Center">
+                    <Image Source="/Assets/Icons/GPSQuality.png" Width="28" Height="28" Margin="0,0,6,0"/>
+                    <TextBlock Text="RTK fix: Age: 0.0" VerticalAlignment="Center" FontSize="13" Foreground="Black"/>
+                </StackPanel>
 
-    <!-- Main Grid with OpenGL as background -->
-    <Grid>
-        <!-- OpenGL Map Render Area (fills entire window) -->
-        <controls:OpenGLMapControl x:Name="MapControl" ZIndex="0" />
+                <!-- Rotating Information Display with Play/Pause Button -->
+                <Border Grid.Column="2" Background="White" BorderBrush="#808080" BorderThickness="1"
+                        Padding="10,6" Margin="6,0" CornerRadius="2">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="▶" FontSize="14" VerticalAlignment="Center" Foreground="Black"/>
+                        <TextBlock Text="Line: No Guidance Lines" FontSize="13" VerticalAlignment="Center"
+                                   Foreground="Black" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Border>
 
-        <!-- Transparent overlay to capture mouse events for OpenGL control -->
-        <Panel ZIndex="1" Background="Transparent"
-               PointerPressed="MapOverlay_PointerPressed"
-               PointerMoved="MapOverlay_PointerMoved"
-               PointerReleased="MapOverlay_PointerReleased"
-               PointerWheelChanged="MapOverlay_PointerWheelChanged" />
+                <!-- Center Icon Buttons (4 quick-access icons) -->
+                <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
+                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
+                            ToolTip.Tip="AB Line">
+                        <Image Source="/Assets/Icons/ABLineCycleBk.png" Width="32" Height="32"/>
+                    </Button>
+                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
+                            ToolTip.Tip="Headland">
+                        <Image Source="/Assets/Icons/HeadlandBuild.png" Width="32" Height="32"/>
+                    </Button>
+                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
+                            ToolTip.Tip="Brightness">
+                        <Image Source="/Assets/Icons/BrightnessUp.png" Width="32" Height="32"/>
+                    </Button>
+                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
+                            ToolTip.Tip="Display Mode">
+                        <Image Source="/Assets/Icons/WindowDayMode.png" Width="32" Height="32"/>
+                    </Button>
+                </StackPanel>
 
-        <!-- FormGPS: Main GPS View Overlay Controls (Section Control, Vehicle Status, Camera Controls) -->
-        <panelsDisplay:FormGPS x:Name="GPSOverlay"
-                               ZIndex="2"
-                               DataContext="{Binding GPSVM}"
-                               IsHitTestVisible="False" />
+                <!-- Speed Display -->
+                <Border Grid.Column="4" Background="#FFE4B5" Padding="14,8" Margin="6,0" CornerRadius="2">
+                    <TextBlock Text="{Binding Speed, StringFormat={}{0:F2}}" FontSize="18" FontWeight="Bold"
+                               Foreground="Black" VerticalAlignment="Center"/>
+                </Border>
 
-        <!-- TOP STATUS BAR: RTK Status -->
-        <Border Classes="FloatingPanel"
-                ZIndex="10"
-                Margin="20"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                IsHitTestVisible="True">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="RTK Status" Foreground="#3498DB" FontSize="14" FontWeight="Bold"/>
-                <Ellipse Width="12" Height="12"
-                         Fill="{Binding FixQuality, Converter={StaticResource FixQualityToColorConverter}}"/>
-                <TextBlock Text="{Binding FixQuality}" Foreground="White" FontSize="14" FontWeight="Bold"/>
-            </StackPanel>
+                <!-- GPS Signal Strength / Satellite Count -->
+                <Border Grid.Column="5" Background="White" Padding="10,6" Margin="6,0" CornerRadius="2">
+                    <TextBlock Text="{Binding SatelliteCount}" FontSize="15" FontWeight="Bold"
+                               Foreground="Black" VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Orange Progress Bar -->
+                <ProgressBar Grid.Column="6" Width="100" Height="8" Value="65" Maximum="100"
+                             Foreground="#FF8C00" Background="#E0E0E0" Margin="6,0" VerticalAlignment="Center"/>
+
+                <!-- Minimize Button -->
+                <Button Grid.Column="7" Width="44" Height="44" Background="Transparent"
+                        BorderThickness="0" Margin="4,0,0,0"
+                        Content="−" FontSize="24" FontWeight="Bold" Foreground="Black"/>
+
+                <!-- Close Button -->
+                <Button Grid.Column="8" Width="44" Height="44" Background="#DC3545"
+                        BorderThickness="0" Margin="4,0,8,0"
+                        Content="✕" FontSize="20" FontWeight="Bold" Foreground="White"/>
+            </Grid>
         </Border>
 
-        <!-- TOP-RIGHT PANEL: Quick Actions -->
-        <Border Classes="FloatingPanel"
-                ZIndex="10"
-                Margin="20"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                IsHitTestVisible="True">
-            <StackPanel Spacing="8">
-                <!-- GPS Status Button (shows fix quality color) -->
-                <Button Width="48" Height="48"
-                        CornerRadius="8"
-                        Padding="0"
-                        BorderThickness="0"
-                        Background="{Binding FixQuality, Converter={StaticResource FixQualityToColorConverter}}"
-                        ToolTip.Tip="Data I/O Configuration"
-                        Click="BtnDataIO_Click">
-                    <TextBlock Text="GPS" FontSize="12" FontWeight="Bold" Foreground="Black"/>
+        <!-- Main Content Area: Docking Panels + OpenGL Map -->
+        <Grid Grid.Row="1" ColumnDefinitions="72,*,70" RowDefinitions="*,62">
+
+            <!-- Panel Left: Vertical toolbar (7 icons matching original AgOpenGPS) -->
+            <StackPanel Grid.Column="0" Grid.Row="0"
+                       x:Name="PanelLeft"
+                       Background="#C0C0D0"
+                       Spacing="8"
+                       VerticalAlignment="Top"
+                       Margin="0,8,0,0">
+
+                <!-- 1. Navigation Settings icon -->
+                <Button Width="68" Height="62" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Navigation Settings">
+                    <Image Source="/Assets/Icons/NavigationSettings.png" Width="52" Height="46"/>
                 </Button>
 
-                <Separator Height="1" Background="#444" Margin="4,4"/>
-                <Button Classes="IconButton" Content="⚙️" ToolTip.Tip="Settings - Wave 8 Services" Click="BtnSettings_Click"/>
-                <Button Classes="IconButton" Content="📁" ToolTip.Tip="Fields" Click="BtnFields_Click"/>
-                <Button Classes="IconButton" Content="🎬" ToolTip.Tip="Toggle 2D/3D View (F3)" Click="Btn3DToggle_Click"/>
-                <Separator Height="1" Background="#444" Margin="4,4"/>
-                <Button Classes="IconButton" Content="+" ToolTip.Tip="Zoom In"/>
-                <Button Classes="IconButton" Content="-" ToolTip.Tip="Zoom Out"/>
-            </StackPanel>
-        </Border>
+                <!-- 2. Wizards/Special Functions menu icon -->
+                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Wizards Menu">
+                    <Image Source="/Assets/Icons/SpecialFunctions.png" Width="52" Height="52"/>
+                </Button>
 
-        <!-- LEFT SIDEBAR: Navigation Menu (vertical) -->
-        <Border Classes="FloatingPanel"
-                ZIndex="10"
-                Margin="20"
+                <!-- 3. Configuration menu icon -->
+                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Configuration">
+                    <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
+                </Button>
+
+                <!-- 4. Field/Job menu icon -->
+                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Field Manager">
+                    <Image Source="/Assets/Icons/JobActive.png" Width="52" Height="52"/>
+                </Button>
+
+                <!-- 5. Field Tools menu icon -->
+                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Field Tools Menu">
+                    <Image Source="/Assets/Icons/FieldTools.png" Width="52" Height="52"/>
+                </Button>
+
+                <!-- 6. Autosteer config button with live steer angle display -->
+                <Button Width="68" Height="76" Background="Transparent" BorderThickness="0" Padding="4"
+                        ToolTip.Tip="Auto Steer Configuration">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="Black"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="Black"
+                                   HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- 7. Data I/O status button (module status and RTCM) -->
+                <Button Width="68" Height="82" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Data I/O Status">
+                    <Image Source="/Assets/Icons/AgIO.png" Width="52" Height="66"/>
+                </Button>
+            </StackPanel>
+
+            <!-- OpenGL Map Placeholder (Column 1, Row 0) -->
+            <Border Grid.Column="1" Grid.Row="0"
+                    x:Name="MapContainer"
+                    Background="Black">
+                <!-- OpenGL map control will be rendered here in Wave 11 -->
+                <TextBlock Text="OpenGL Map Area (Wave 11)"
+                          Foreground="#555"
+                          FontSize="24"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+            </Border>
+
+            <!-- Panel Right: Vertical toolbar (bottom-aligned, reversed order for BottomUp flow) -->
+            <StackPanel Grid.Column="2" Grid.Row="0"
+                       x:Name="PanelRight"
+                       Background="#C0C0D0"
+                       VerticalAlignment="Bottom"
+                       Spacing="6">
+
+                <!-- 9. Contour Lock toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Contour Lock">
+                    <Image Source="/Assets/Icons/ColorUnlocked.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 8. Contour toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Contour Mode">
+                    <Image Source="/Assets/Icons/ContourOff.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 7. Cycle Lines Forward -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Cycle Lines Forward">
+                    <Image Source="/Assets/Icons/ABLineCycle.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 6. Cycle Lines Backward -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Cycle Lines Backward">
+                    <Image Source="/Assets/Icons/ABLineCycleBk.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 5. Auto Track toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Auto Track">
+                    <Image Source="/Assets/Icons/AutoTrackOff.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 4. Section Master Manual toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Section Control Manual">
+                    <Image Source="/Assets/Icons/ManualOff.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 3. Section Master Auto toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Section Control Auto">
+                    <Image Source="/Assets/Icons/SectionMasterOff.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 2. Auto YouTurn toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Auto YouTurn">
+                    <Image Source="/Assets/Icons/YouTurnNo.png" Width="54" Height="54"/>
+                </Button>
+
+                <!-- 1. Auto Steer toggle -->
+                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
+                        ToolTip.Tip="Auto Steer">
+                    <Image Source="/Assets/Icons/AutoSteerOff.png" Width="54" Height="54"/>
+                </Button>
+            </StackPanel>
+
+            <!-- Panel Bottom: Horizontal toolbar (right-aligned, reversed order for RightToLeft flow) -->
+            <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
+                       x:Name="PanelBottom"
+                       Background="#C0C0D0"
+                       Orientation="Horizontal"
+                       HorizontalAlignment="Right"
+                       Spacing="6">
+
+                <!-- 11. YouTurn Skip Enable toggle -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="YouTurn Skip">
+                    <Image Source="/Assets/Icons/YouSkipOff.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 10. Change Mapping Color -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Section Mapping Color">
+                    <Image Source="/Assets/Icons/SectionMapping.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 9. Reset Tool Heading -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Reset Tool Heading">
+                    <Image Source="/Assets/Icons/ResetTool.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 8. Tram Display Mode toggle -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Tram Display">
+                    <Image Source="/Assets/Icons/TramOff.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 7. Hydraulic Lift toggle -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Hydraulic Lift">
+                    <Image Source="/Assets/Icons/HydraulicLiftOff.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 6. Headland On/Off toggle -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Headland Mode">
+                    <Image Source="/Assets/Icons/HeadlandOff.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 5. Flag/Marker -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Drop Marker Flags">
+                    <Image Source="/Assets/Icons/FlagRed.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 4. Adjust Left -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Snap Left">
+                    <Image Source="/Assets/Icons/SnapLeft.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 3. Adjust Right -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Snap Right">
+                    <Image Source="/Assets/Icons/SnapRight.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 2. Snap to Pivot -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Snap to Pivot">
+                    <Image Source="/Assets/Icons/SnapToPivot.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- 1. Track mode toggle -->
+                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
+                        ToolTip.Tip="Track Mode">
+                    <Image Source="/Assets/Icons/TrackOn.png" Width="48" Height="48"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Panel Navigation: Floating Border (179×460px, initially hidden) -->
+        <Border Grid.Row="1"
+                x:Name="PanelNavigation"
+                IsVisible="False"
+                Background="WhiteSmoke"
+                Width="179" Height="460"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                IsHitTestVisible="True">
-            <StackPanel Spacing="8">
-                <Button Classes="IconButton" Content="🗺️" ToolTip.Tip="Display"/>
-                <Button Classes="IconButton" Content="🔧" ToolTip.Tip="Config"/>
-                <Button Classes="IconButton" Content="📐" ToolTip.Tip="Boundaries"/>
-                <Button Classes="IconButton" Content="🚜" ToolTip.Tip="Vehicle"/>
-            </StackPanel>
+                VerticalAlignment="Top"
+                Margin="100,80,0,0"
+                CornerRadius="4"
+                BoxShadow="0 4 8 0 #40000000">
+            <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*">
+
+                <!-- Row 0: Camera Tilt Controls -->
+                <Button Grid.Row="0" Grid.Column="0"
+                        Classes="NavButton"
+                        Command="{Binding TiltDownCommand}"
+                        ToolTip.Tip="Tilt camera down">
+                    <Image Source="/Assets/Icons/TiltDown.png" Width="48" Height="48"/>
+                </Button>
+                <Button Grid.Row="0" Grid.Column="1"
+                        Classes="NavButton"
+                        Command="{Binding TiltUpCommand}"
+                        ToolTip.Tip="Tilt camera up">
+                    <Image Source="/Assets/Icons/TiltUp.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- Row 1: 2D/3D View Controls -->
+                <Button Grid.Row="1" Grid.Column="0"
+                        Classes="NavButton"
+                        Command="{Binding Camera2DCommand}"
+                        ToolTip.Tip="Switch to 2D overhead view">
+                    <Image Source="/Assets/Icons/Camera2D64.png" Width="48" Height="48"/>
+                </Button>
+                <Button Grid.Row="1" Grid.Column="1"
+                        Classes="NavButton"
+                        Command="{Binding Camera3DCommand}"
+                        ToolTip.Tip="Switch to 3D perspective view">
+                    <Image Source="/Assets/Icons/Camera3D64.png" Width="48" Height="48"/>
+                </Button>
+
+                <!-- Row 2: North Lock and Grid Controls -->
+                <Button Grid.Row="2" Grid.Column="0"
+                        Classes="NavButton"
+                        Command="{Binding CameraNorth2DCommand}"
+                        ToolTip.Tip="Switch to North-locked 2D view">
+                    <Image Source="/Assets/Icons/CameraNorth2D.png" Width="48" Height="48"/>
+                </Button>
+                <Button Grid.Row="2" Grid.Column="1"
+                        Classes="NavButton"
+                        Command="{Binding ToggleGridCommand}"
+                        ToolTip.Tip="Toggle grid display">
+                    <Image Source="/Assets/Icons/GridRotate.png" Width="64" Height="64"/>
+                </Button>
+
+                <!-- Row 3: Day/Night Mode and Hz Display -->
+                <Button Grid.Row="3" Grid.Column="0"
+                        Classes="NavButton"
+                        Command="{Binding ToggleDayNightCommand}"
+                        ToolTip.Tip="Toggle day/night display mode">
+                    <Image Source="/Assets/Icons/WindowNightMode.png" Width="48" Height="48"/>
+                </Button>
+                <TextBlock Grid.Row="3" Grid.Column="1"
+                          Text="60 Hz"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          FontSize="14"
+                          FontWeight="Bold"
+                          Foreground="#333"/>
+
+                <!-- Row 4: Brightness Controls -->
+                <Button Grid.Row="4" Grid.Column="0"
+                        Classes="NavButton"
+                        Command="{Binding BrightnessDownCommand}"
+                        ToolTip.Tip="Decrease brightness">
+                    <StackPanel>
+                        <Image Source="/Assets/Icons/BrightnessDn.png" Width="48" Height="48"/>
+                        <TextBlock Text="20%"
+                                  HorizontalAlignment="Center"
+                                  FontSize="10"
+                                  FontWeight="Bold"
+                                  Foreground="#333"
+                                  Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Row="4" Grid.Column="1"
+                        Classes="NavButton"
+                        Command="{Binding BrightnessUpCommand}"
+                        ToolTip.Tip="Increase brightness">
+                    <Image Source="/Assets/Icons/BrightnessUp.png" Width="48" Height="48"/>
+                </Button>
+            </Grid>
         </Border>
-
-        <!-- PANEL TOGGLES: Show/Hide Wave 10 Panels -->
-        <Border Classes="FloatingPanel"
-                ZIndex="10"
-                Margin="20,20,20,200"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                MaxWidth="250"
-                IsHitTestVisible="True">
-            <ScrollViewer MaxHeight="500">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="PANELS" Foreground="#3498DB" FontSize="12" FontWeight="Bold" Margin="0,0,0,6"/>
-
-                    <!-- Task Group 1: Core Operations -->
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleFieldDataPanelCommand}"
-                            Background="{Binding IsFieldDataPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/FieldStats.png" Width="16" Height="16"/>
-                            <TextBlock Text="Field Data" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleGPSDataPanelCommand}"
-                            Background="{Binding IsGPSDataPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/GPSQuality.png" Width="16" Height="16"/>
-                            <TextBlock Text="GPS Data" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleTramLinePanelCommand}"
-                            Background="{Binding IsTramLinePanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/TramLines.png" Width="16" Height="16"/>
-                            <TextBlock Text="Tram Lines" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleQuickABPanelCommand}"
-                            Background="{Binding IsQuickABPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/ABLineCycle.png" Width="16" Height="16"/>
-                            <TextBlock Text="Quick A-B" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Separator Height="1" Background="#444" Margin="0,4"/>
-
-                    <!-- Task Group 2: Configuration -->
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleSteerConfigPanelCommand}"
-                            Background="{Binding IsSteerConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/AutoSteerConf.png" Width="16" Height="16"/>
-                            <TextBlock Text="Steering Config" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleGeneralConfigPanelCommand}"
-                            Background="{Binding IsGeneralConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/Settings48.png" Width="16" Height="16"/>
-                            <TextBlock Text="General Config" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleDiagnosticsPanelCommand}"
-                            Background="{Binding IsDiagnosticsPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/Chart.png" Width="16" Height="16"/>
-                            <TextBlock Text="Diagnostics" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleRollCorrectionPanelCommand}"
-                            Background="{Binding IsRollCorrectionPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/GridRotate.png" Width="16" Height="16"/>
-                            <TextBlock Text="Roll Correction" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleVehicleConfigPanelCommand}"
-                            Background="{Binding IsVehicleConfigPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/vehiclePageTractor.png" Width="16" Height="16"/>
-                            <TextBlock Text="Vehicle Config" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Separator Height="1" Background="#444" Margin="0,4"/>
-
-                    <!-- Task Group 3: Field Management -->
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleFlagsPanelCommand}"
-                            Background="{Binding IsFlagsPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/FlagYel.png" Width="16" Height="16"/>
-                            <TextBlock Text="Flags" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleCameraPanelCommand}"
-                            Background="{Binding IsCameraPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/Webcam.png" Width="16" Height="16"/>
-                            <TextBlock Text="Camera" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleBoundaryEditorPanelCommand}"
-                            Background="{Binding IsBoundaryEditorPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/Boundary.png" Width="16" Height="16"/>
-                            <TextBlock Text="Boundary Editor" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleFieldToolsPanelCommand}"
-                            Background="{Binding IsFieldToolsPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/FieldTools.png" Width="16" Height="16"/>
-                            <TextBlock Text="Field Tools" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Classes="ModernButton" FontSize="11" Padding="8,4"
-                            Command="{Binding ToggleFieldFileManagerPanelCommand}"
-                            Background="{Binding IsFieldFileManagerPanelVisible, Converter={StaticResource BoolToColorConverter}}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/FileOpen.png" Width="16" Height="16"/>
-                            <TextBlock Text="Field Files" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
-
-        <!-- BOTTOM BAR: Function Buttons (horizontal) -->
-        <Border Classes="FloatingPanel"
-                ZIndex="10"
-                Margin="20"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                IsHitTestVisible="True">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <Button Classes="ModernButton" Content="🎯 Auto" Width="80"/>
-                <Button Classes="ModernButton" Content="📍 Mark" Width="80"/>
-                <Button Classes="ModernButton" Content="🔄 Reset" Width="80"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Draggable Section Control (using Canvas for absolute positioning) -->
-        <Canvas ZIndex="10">
-        <Border x:Name="SectionControlPanel"
-                Canvas.Left="900" Canvas.Top="600"
-                Classes="FloatingPanel"
-                Cursor="Hand"
-                PointerPressed="SectionControl_PointerPressed"
-                PointerMoved="SectionControl_PointerMoved"
-                PointerReleased="SectionControl_PointerReleased">
-            <StackPanel Orientation="Horizontal" Spacing="6">
-                <TextBlock Text="≡" Foreground="#888" FontSize="16" FontWeight="Bold"
-                           VerticalAlignment="Center" Margin="0,0,4,0" ToolTip.Tip="Drag to move"/>
-                <TextBlock Text="Sections" Foreground="White" FontSize="12" FontWeight="Bold"
-                           VerticalAlignment="Center" Margin="0,0,8,0"/>
-
-                <!-- Section Buttons in single horizontal row -->
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Border Background="#E74C3C" CornerRadius="4" Height="32" Width="45">
-                        <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    </Border>
-                    <Border Background="#E74C3C" CornerRadius="4" Height="32" Width="45">
-                        <TextBlock Text="2" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    </Border>
-                    <Border Background="#E74C3C" CornerRadius="4" Height="32" Width="45">
-                        <TextBlock Text="3" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    </Border>
-                    <Border Background="#E74C3C" CornerRadius="4" Height="32" Width="45">
-                        <TextBlock Text="4" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    </Border>
-                    <Border Background="#E74C3C" CornerRadius="4" Height="32" Width="45">
-                        <TextBlock Text="5" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    </Border>
-                    <Border Background="#E74C3C" CornerRadius="4" Height="32" Width="45">
-                        <TextBlock Text="6" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    </Border>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-        </Canvas>
-
-        <!-- ========== WAVE 10 OPERATIONAL PANELS (DRAGGABLE) ========== -->
-        <!-- Panel Positioning Design:
-             - All panels are draggable via Canvas positioning
-             - Panels can be shown/hidden via toggle buttons in the left sidebar
-             - Panel close buttons (×) trigger CloseRequested events → MainViewModel visibility toggles
-             - Drag the ≡ handle or any part of the header to move panels
-        -->
-        <Canvas ZIndex="15">
-            <!-- Task Group 1: Core Operations Panels (Right side) -->
-            <panelsFieldMgmt:FormFieldData x:Name="FieldDataPanel"
-                Canvas.Left="1000" Canvas.Top="20"
-                DataContext="{Binding FieldDataVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsFieldDataPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsDisplay:FormGPSData x:Name="GPSDataPanel"
-                Canvas.Left="1000" Canvas.Top="100"
-                DataContext="{Binding GPSDataVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsGPSDataPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsFieldOps:FormTramLine x:Name="TramLinePanel"
-                Canvas.Left="1000" Canvas.Top="180"
-                DataContext="{Binding TramLineVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsTramLinePanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsGuidance:FormQuickAB x:Name="QuickABPanel"
-                Canvas.Left="1000" Canvas.Top="260"
-                DataContext="{Binding QuickABVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsQuickABPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <!-- Task Group 2: Configuration Panels (Center) -->
-            <panelsConfig:FormSteer x:Name="SteerPanel"
-                Canvas.Left="500" Canvas.Top="200"
-                DataContext="{Binding SteerVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsSteerConfigPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsConfig:FormConfig x:Name="ConfigPanel"
-                Canvas.Left="500" Canvas.Top="200"
-                DataContext="{Binding ConfigVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsGeneralConfigPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsConfig:FormDiagnostics x:Name="DiagnosticsPanel"
-                Canvas.Left="500" Canvas.Top="200"
-                DataContext="{Binding DiagnosticsVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsDiagnosticsPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsConfig:FormRollCorrection x:Name="RollCorrectionPanel"
-                Canvas.Left="500" Canvas.Top="200"
-                DataContext="{Binding RollCorrectionVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsRollCorrectionPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsConfig:FormVehicleConfig x:Name="VehicleConfigPanel"
-                Canvas.Left="500" Canvas.Top="200"
-                DataContext="{Binding VehicleConfigVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsVehicleConfigPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <!-- Task Group 3: Field Management Panels (Left side) -->
-            <panelsFieldMgmt:FormFlags x:Name="FlagsPanel"
-                Canvas.Left="300" Canvas.Top="20"
-                DataContext="{Binding FlagsVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsFlagsPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsFieldMgmt:FormCamera x:Name="CameraPanel"
-                Canvas.Left="300" Canvas.Top="100"
-                DataContext="{Binding CameraVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsCameraPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsFieldMgmt:FormBoundaryEditor x:Name="BoundaryEditorPanel"
-                Canvas.Left="300" Canvas.Top="180"
-                DataContext="{Binding BoundaryEditorVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsBoundaryEditorPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsFieldMgmt:FormFieldTools x:Name="FieldToolsPanel"
-                Canvas.Left="300" Canvas.Top="260"
-                DataContext="{Binding FieldToolsVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsFieldToolsPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-
-            <panelsFieldMgmt:FormFieldFileManager x:Name="FieldFileManagerPanel"
-                Canvas.Left="500" Canvas.Top="200"
-                DataContext="{Binding FieldFileManagerVM}"
-                IsVisible="{Binding $parent[Window].DataContext.IsFieldFileManagerPanelVisible}"
-                PointerPressed="Panel_PointerPressed"
-                PointerMoved="Panel_PointerMoved"
-                PointerReleased="Panel_PointerReleased"
-                Cursor="Hand" />
-        </Canvas>
-
     </Grid>
 </Window>

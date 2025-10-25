@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AgValoniaGPS.Desktop.Views.Controls.DockButtons.FormQuickABButton"
+             Width="60" Height="60">
+    <Button Classes="DockButton" Width="60" Height="60" Click="OnButtonClick">
+        <StackPanel>
+            <Image Source="/Assets/Icons/ABDraw.png" Width="48" Height="48"/>
+            <TextBlock Text="Quick AB" FontSize="9" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Button>
+</UserControl>

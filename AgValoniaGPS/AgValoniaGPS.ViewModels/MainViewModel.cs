@@ -181,6 +181,9 @@ public class MainViewModel : ObservableObject
         // Initialize panel toggle commands
         InitializePanelToggleCommands();
 
+        // Initialize menu commands
+        InitializeMenuCommands();
+
         // Start UDP communication
         InitializeAsync();
     }
@@ -1048,6 +1051,77 @@ public class MainViewModel : ObservableObject
         ToggleBoundaryEditorPanelCommand = new RelayCommand(() => IsBoundaryEditorPanelVisible = !IsBoundaryEditorPanelVisible);
         ToggleFieldToolsPanelCommand = new RelayCommand(() => IsFieldToolsPanelVisible = !IsFieldToolsPanelVisible);
         ToggleFieldFileManagerPanelCommand = new RelayCommand(() => IsFieldFileManagerPanelVisible = !IsFieldFileManagerPanelVisible);
+    }
+
+    // ========== Wave 10.5 Menu Commands ==========
+
+    // Menu command properties
+    public ICommand NewProfileCommand { get; private set; } = null!;
+    public ICommand LoadProfileCommand { get; private set; } = null!;
+    public ICommand LanguageCommand { get; private set; } = null!;
+    public ICommand ToggleSimulatorCommand { get; private set; } = null!;
+    public ICommand EnterSimCoordsCommand { get; private set; } = null!;
+    public ICommand KioskModeCommand { get; private set; } = null!;
+    public ICommand ResetToDefaultCommand { get; private set; } = null!;
+    public ICommand AboutCommand { get; private set; } = null!;
+    public ICommand AgShareApiCommand { get; private set; } = null!;
+
+    /// <summary>
+    /// Initialize menu commands (Wave 10.5 Task 1.2)
+    /// Stubs for now - full implementation will come in later task groups
+    /// </summary>
+    private void InitializeMenuCommands()
+    {
+        // File Menu commands
+        NewProfileCommand = new RelayCommand(() => StatusMessage = "New Profile - Not yet implemented");
+        LoadProfileCommand = new RelayCommand(() => StatusMessage = "Load Profile - Not yet implemented");
+        LanguageCommand = new RelayCommand(() => StatusMessage = "Language - Not yet implemented");
+        ToggleSimulatorCommand = new RelayCommand(() => StatusMessage = "Toggle Simulator - Not yet implemented");
+        EnterSimCoordsCommand = new RelayCommand(() => StatusMessage = "Enter Sim Coords - Not yet implemented");
+        KioskModeCommand = new RelayCommand(() => StatusMessage = "Kiosk Mode - Not yet implemented");
+        ResetToDefaultCommand = new RelayCommand(() => StatusMessage = "Reset To Default - Not yet implemented");
+        AboutCommand = new RelayCommand(() => StatusMessage = "About - Not yet implemented");
+        AgShareApiCommand = new RelayCommand(() => StatusMessage = "AgShare API - Not yet implemented");
+
+        InitializeNavigationCommands();
+    }
+
+
+    // ========== Wave 10.5 Task Group 5: Navigation Panel Commands ==========
+
+    // Navigation Panel Commands
+    public ICommand TiltDownCommand { get; private set; } = null!;
+    public ICommand TiltUpCommand { get; private set; } = null!;
+    public ICommand Camera2DCommand { get; private set; } = null!;
+    public ICommand Camera3DCommand { get; private set; } = null!;
+    public ICommand CameraNorth2DCommand { get; private set; } = null!;
+    public ICommand ToggleGridCommand { get; private set; } = null!;
+    public ICommand ToggleDayNightCommand { get; private set; } = null!;
+    public ICommand BrightnessDownCommand { get; private set; } = null!;
+    public ICommand BrightnessUpCommand { get; private set; } = null!;
+
+    /// <summary>
+    /// Initialize navigation panel commands (Wave 10.5 Task Group 5)
+    /// Stubs for now - full implementation will come in Wave 11 (OpenGL)
+    /// </summary>
+    private void InitializeNavigationCommands()
+    {
+        // Camera tilt controls
+        TiltDownCommand = new RelayCommand(() => StatusMessage = "Camera Tilt Down - Not yet implemented (Wave 11)");
+        TiltUpCommand = new RelayCommand(() => StatusMessage = "Camera Tilt Up - Not yet implemented (Wave 11)");
+
+        // Camera view mode controls
+        Camera2DCommand = new RelayCommand(() => StatusMessage = "2D View Mode - Not yet implemented (Wave 11)");
+        Camera3DCommand = new RelayCommand(() => StatusMessage = "3D View Mode - Not yet implemented (Wave 11)");
+        CameraNorth2DCommand = new RelayCommand(() => StatusMessage = "North-Locked 2D View - Not yet implemented (Wave 11)");
+
+        // Display controls
+        ToggleGridCommand = new RelayCommand(() => StatusMessage = "Toggle Grid Display - Not yet implemented (Wave 11)");
+        ToggleDayNightCommand = new RelayCommand(() => StatusMessage = "Toggle Day/Night Mode - Not yet implemented (Wave 11)");
+
+        // Brightness controls
+        BrightnessDownCommand = new RelayCommand(() => StatusMessage = "Decrease Brightness - Not yet implemented (Wave 11)");
+        BrightnessUpCommand = new RelayCommand(() => StatusMessage = "Increase Brightness - Not yet implemented (Wave 11)");
     }
 
     // ========== Wave 9 Task 8.1: Dialog Launching Methods ==========

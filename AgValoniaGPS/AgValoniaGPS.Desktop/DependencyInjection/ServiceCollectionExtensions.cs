@@ -98,6 +98,9 @@ public static class ServiceCollectionExtensions
         // UI Services (Wave 9)
         services.AddSingleton<IDialogService, DialogService>();
 
+        // UI Services (Wave 10.5) - Panel Docking System
+        services.AddSingleton<IPanelHostingService, PanelHostingService>();
+
         // Vehicle Configuration
         services.AddSingleton<VehicleConfiguration>();
 
