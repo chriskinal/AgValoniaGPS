@@ -16,7 +16,7 @@
     <Grid RowDefinitions="Auto,*">
 
         <!-- Custom Top Status Bar (matches old AgOpenGPS) -->
-        <Border Grid.Row="0" Background="#B0B0D0" Height="60" BorderBrush="#808080" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="#1a1a1a" Height="60" BorderThickness="0">
             <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
 
                 <!-- Section Control Indicator (3 colored bars) -->
@@ -29,38 +29,18 @@
                 <!-- GPS Status -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0" VerticalAlignment="Center">
                     <Image Source="/Assets/Icons/GPSQuality.png" Width="28" Height="28" Margin="0,0,6,0"/>
-                    <TextBlock Text="RTK fix: Age: 0.0" VerticalAlignment="Center" FontSize="13" Foreground="Black"/>
+                    <TextBlock Text="RTK fix: Age: 0.0" VerticalAlignment="Center" FontSize="13" Foreground="White"/>
                 </StackPanel>
 
                 <!-- Rotating Information Display with Play/Pause Button -->
-                <Border Grid.Column="2" Background="White" BorderBrush="#808080" BorderThickness="1"
+                <Border Grid.Column="2" Background="#2a2a2a" BorderBrush="#808080" BorderThickness="1"
                         Padding="10,6" Margin="6,0" CornerRadius="2">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="▶" FontSize="14" VerticalAlignment="Center" Foreground="Black"/>
+                        <TextBlock Text="▶" FontSize="14" VerticalAlignment="Center" Foreground="White"/>
                         <TextBlock Text="Line: No Guidance Lines" FontSize="13" VerticalAlignment="Center"
-                                   Foreground="Black" FontWeight="SemiBold"/>
+                                   Foreground="White" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Border>
-
-                <!-- Center Icon Buttons (4 quick-access icons) -->
-                <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
-                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
-                            ToolTip.Tip="AB Line">
-                        <Image Source="/Assets/Icons/ABLineCycleBk.png" Width="32" Height="32"/>
-                    </Button>
-                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
-                            ToolTip.Tip="Headland">
-                        <Image Source="/Assets/Icons/HeadlandBuild.png" Width="32" Height="32"/>
-                    </Button>
-                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
-                            ToolTip.Tip="Brightness">
-                        <Image Source="/Assets/Icons/BrightnessUp.png" Width="32" Height="32"/>
-                    </Button>
-                    <Button Width="44" Height="44" Background="Transparent" BorderThickness="0" Padding="4"
-                            ToolTip.Tip="Display Mode">
-                        <Image Source="/Assets/Icons/WindowDayMode.png" Width="32" Height="32"/>
-                    </Button>
-                </StackPanel>
 
                 <!-- Speed Display -->
                 <Border Grid.Column="4" Background="#FFE4B5" Padding="14,8" Margin="6,0" CornerRadius="2">
@@ -94,12 +74,11 @@
         <Grid Grid.Row="1" ColumnDefinitions="72,*,70" RowDefinitions="*,62">
 
             <!-- Panel Left: Vertical toolbar (7 icons matching original AgOpenGPS) -->
-            <StackPanel Grid.Column="0" Grid.Row="0"
-                       x:Name="PanelLeft"
-                       Background="#C0C0D0"
-                       Spacing="8"
-                       VerticalAlignment="Top"
-                       Margin="0,8,0,0">
+            <Border Grid.Column="0" Grid.Row="0" Background="#1a1a1a">
+                <StackPanel x:Name="PanelLeft"
+                           Spacing="8"
+                           VerticalAlignment="Top"
+                           Margin="0,8,0,0">
 
                 <!-- 1. Navigation Settings icon -->
                 <Button Width="68" Height="62" Background="Transparent" BorderThickness="0" Padding="8"
@@ -135,9 +114,9 @@
                 <Button Width="68" Height="76" Background="Transparent" BorderThickness="0" Padding="4"
                         ToolTip.Tip="Auto Steer Configuration">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="Black"
+                        <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
                                    HorizontalAlignment="Center"/>
-                        <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="Black"
+                        <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
                                    HorizontalAlignment="Center" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Button>
@@ -147,7 +126,8 @@
                         ToolTip.Tip="Data I/O Status">
                     <Image Source="/Assets/Icons/AgIO.png" Width="52" Height="66"/>
                 </Button>
-            </StackPanel>
+                </StackPanel>
+            </Border>
 
             <!-- OpenGL Map Placeholder (Column 1, Row 0) -->
             <Border Grid.Column="1" Grid.Row="0"
@@ -162,11 +142,9 @@
             </Border>
 
             <!-- Panel Right: Vertical toolbar (bottom-aligned, reversed order for BottomUp flow) -->
-            <StackPanel Grid.Column="2" Grid.Row="0"
-                       x:Name="PanelRight"
-                       Background="#C0C0D0"
-                       VerticalAlignment="Bottom"
-                       Spacing="6">
+            <Border Grid.Column="2" Grid.Row="0" Background="#1a1a1a" VerticalAlignment="Bottom">
+                <StackPanel x:Name="PanelRight"
+                           Spacing="6">
 
                 <!-- 9. Contour Lock toggle -->
                 <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
@@ -221,15 +199,14 @@
                         ToolTip.Tip="Auto Steer">
                     <Image Source="/Assets/Icons/AutoSteerOff.png" Width="54" Height="54"/>
                 </Button>
-            </StackPanel>
+                </StackPanel>
+            </Border>
 
             <!-- Panel Bottom: Horizontal toolbar (right-aligned, reversed order for RightToLeft flow) -->
-            <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
-                       x:Name="PanelBottom"
-                       Background="#C0C0D0"
-                       Orientation="Horizontal"
-                       HorizontalAlignment="Right"
-                       Spacing="6">
+            <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#1a1a1a" HorizontalAlignment="Right">
+                <StackPanel x:Name="PanelBottom"
+                           Orientation="Horizontal"
+                           Spacing="6">
 
                 <!-- 11. YouTurn Skip Enable toggle -->
                 <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
@@ -296,14 +273,15 @@
                         ToolTip.Tip="Track Mode">
                     <Image Source="/Assets/Icons/TrackOn.png" Width="48" Height="48"/>
                 </Button>
-            </StackPanel>
+                </StackPanel>
+            </Border>
         </Grid>
 
         <!-- Panel Navigation: Floating Border (179×460px, initially hidden) -->
         <Border Grid.Row="1"
                 x:Name="PanelNavigation"
                 IsVisible="False"
-                Background="WhiteSmoke"
+                Background="#1a1a1a"
                 Width="179" Height="460"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"

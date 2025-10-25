@@ -1,17 +1,30 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Dock Panel Container Styles - One shade lighter than original -->
+    <!-- Dock Panel Container Styles - Match bar background (#C0C0D0 lavender) -->
     <Style Selector="Grid.DockPanel, StackPanel.DockPanel">
-        <Setter Property="Background" Value="#3A3A3A"/>
+        <Setter Property="Background" Value="#C0C0D0"/>
     </Style>
 
-    <!-- Dock Button Base Style (60x60px with icon + text) - Transparent, no visible box -->
+    <!-- Static Icon Bar Button Styles - Override Fluent theme with #1a1a1a background -->
+    <Style Selector="Border > StackPanel > Button">
+        <Setter Property="Background" Value="#1a1a1a"/>
+    </Style>
+
+    <Style Selector="Border > StackPanel > Button:pointerover">
+        <Setter Property="Background" Value="#2a2a2a"/>
+    </Style>
+
+    <Style Selector="Border > StackPanel > Button:pressed">
+        <Setter Property="Background" Value="#0a0a0a"/>
+    </Style>
+
+    <!-- Dock Button Base Style (60x60px with icon + text) - Match bar background -->
     <Style Selector="Button.DockButton">
         <Setter Property="Width" Value="60"/>
         <Setter Property="Height" Value="60"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="#C0C0D0"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="4"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -19,12 +32,12 @@
 
     <!-- Dock Button Hover State - Subtle highlight -->
     <Style Selector="Button.DockButton:pointerover">
-        <Setter Property="Background" Value="#4A4A4A"/>
+        <Setter Property="Background" Value="#D0D0E0"/>
     </Style>
 
     <!-- Dock Button Pressed State -->
     <Style Selector="Button.DockButton:pressed">
-        <Setter Property="Background" Value="#303030"/>
+        <Setter Property="Background" Value="#B0B0C0"/>
     </Style>
 
     <!-- Dock Button Active/Selected State - Blue highlight like old AgOpen -->
@@ -70,7 +83,7 @@
     <Style Selector="Button.DockButton TextBlock">
         <Setter Property="FontSize" Value="10"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="Black"/>
     </Style>
 
     <!-- Disabled Button State -->
