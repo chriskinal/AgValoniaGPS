@@ -30,6 +30,17 @@ public partial class MainWindow : Window
     private bool _isDraggingFieldToolsPanel;
     private Avalonia.Point _dragStartPointFieldTools;
 
+    // Drag support for Floating Toolbar
+    private bool _isDraggingFloatingToolbar;
+    private Avalonia.Point _dragStartPointFloatingToolbar;
+
+    // Rotation state for Floating Toolbar (0, 90, 180, 270 degrees)
+    private int _toolbarRotation = 0;
+
+    // Track toolbar position separately from transform
+    private double _toolbarOffsetX = 0;
+    private double _toolbarOffsetY = 0;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -53,6 +64,9 @@ public partial class MainWindow : Window
 
         // Subscribe to Loaded event to initialize PanelHostingService
         this.Loaded += MainWindow_Loaded;
+
+        // Subscribe to SizeChanged event to keep toolbar in bounds
+        this.SizeChanged += MainWindow_SizeChanged;
     }
 
     private void MainWindow_Loaded(object? sender, RoutedEventArgs e)
@@ -477,5 +491,154 @@ public partial class MainWindow : Window
     private void PanelFieldToolsHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         _isDraggingFieldToolsPanel = false;
+    }
+
+    /// <summary>
+    /// Handle pointer pressed on Floating Toolbar header to start dragging
+    /// </summary>
+    private void FloatingToolbarHeader_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            _isDraggingFloatingToolbar = true;
+            _dragStartPointFloatingToolbar = e.GetPosition(this);
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer moved to drag the Floating Toolbar
+    /// </summary>
+    private void FloatingToolbarHeader_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isDraggingFloatingToolbar)
+        {
+            var currentPoint = e.GetPosition(this);
+            var offsetX = currentPoint.X - _dragStartPointFloatingToolbar.X;
+            var offsetY = currentPoint.Y - _dragStartPointFloatingToolbar.Y;
+
+            _toolbarOffsetX += offsetX;
+            _toolbarOffsetY += offsetY;
+
+            _dragStartPointFloatingToolbar = currentPoint;
+
+            // Rebuild combined transform
+            UpdateToolbarTransform();
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer released to stop dragging Floating Toolbar
+    /// </summary>
+    private void FloatingToolbarHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isDraggingFloatingToolbar = false;
+    }
+
+    /// <summary>
+    /// Toggle the floating toolbar between vertical and horizontal
+    /// </summary>
+    private void RotateToolbar_Click(object? sender, RoutedEventArgs e)
+    {
+        // Toggle between vertical (0) and horizontal (90)
+        _toolbarRotation = _toolbarRotation == 0 ? 90 : 0;
+
+        // Update layout based on rotation
+        UpdateToolbarLayout();
+    }
+
+    /// <summary>
+    /// Update the toolbar layout based on current rotation state
+    /// Vertical (0°): Tall and narrow
+    /// Horizontal (90°): Wide and short
+    /// </summary>
+    private void UpdateToolbarLayout()
+    {
+        // Change layout orientation and dimensions based on rotation
+        if (_toolbarRotation == 0)
+        {
+            // Vertical layout: StackPanel with vertical orientation
+            PanelLeft.Orientation = Avalonia.Layout.Orientation.Vertical;
+            FloatingToolbar.Width = 110;
+            FloatingToolbar.Height = double.NaN; // Auto height
+            FloatingToolbar.MaxHeight = 600;
+            FloatingToolbar.MaxWidth = double.PositiveInfinity;
+        }
+        else
+        {
+            // Horizontal layout: StackPanel with horizontal orientation
+            PanelLeft.Orientation = Avalonia.Layout.Orientation.Horizontal;
+            FloatingToolbar.Width = double.NaN; // Auto width
+            FloatingToolbar.Height = double.NaN; // Auto height
+            FloatingToolbar.MaxWidth = 700;
+            FloatingToolbar.MaxHeight = 100;
+        }
+
+        // Update the combined transform
+        UpdateToolbarTransform();
+    }
+
+    /// <summary>
+    /// Apply combined translation transform to toolbar (no visual rotation)
+    /// </summary>
+    private void UpdateToolbarTransform()
+    {
+        // Only apply translation, not rotation
+        // Rotation is handled by changing the StackPanel orientation
+        FloatingToolbar.RenderTransform = new Avalonia.Media.TranslateTransform(_toolbarOffsetX, _toolbarOffsetY);
+    }
+
+    /// <summary>
+    /// Handle window resize to keep toolbar within visible bounds
+    /// </summary>
+    private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        // Only check if toolbar exists
+        if (FloatingToolbar == null)
+            return;
+
+        // Get window dimensions
+        var windowWidth = e.NewSize.Width;
+        var windowHeight = e.NewSize.Height;
+
+        // Get toolbar dimensions (accounting for rotation)
+        var toolbarWidth = FloatingToolbar.Bounds.Width;
+        var toolbarHeight = FloatingToolbar.Bounds.Height;
+
+        // Calculate toolbar's current position (initial margin + transform offset)
+        var currentX = 8 + _toolbarOffsetX; // 8 is the initial margin
+        var currentY = 8 + _toolbarOffsetY;
+
+        // Check if toolbar is out of bounds and adjust
+        var maxX = windowWidth - toolbarWidth - 8; // Leave 8px margin
+        var maxY = windowHeight - toolbarHeight - 8;
+
+        var needsUpdate = false;
+
+        if (currentX < 8)
+        {
+            _toolbarOffsetX = 0;
+            needsUpdate = true;
+        }
+        else if (currentX > maxX)
+        {
+            _toolbarOffsetX = maxX - 8;
+            needsUpdate = true;
+        }
+
+        if (currentY < 8)
+        {
+            _toolbarOffsetY = 0;
+            needsUpdate = true;
+        }
+        else if (currentY > maxY)
+        {
+            _toolbarOffsetY = maxY - 8;
+            needsUpdate = true;
+        }
+
+        if (needsUpdate)
+        {
+            UpdateToolbarTransform();
+        }
     }
 }
