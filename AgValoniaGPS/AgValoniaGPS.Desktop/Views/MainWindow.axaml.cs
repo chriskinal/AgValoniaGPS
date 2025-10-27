@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using AgValoniaGPS.ViewModels;
@@ -12,6 +13,22 @@ public partial class MainWindow : Window
 {
     private MainViewModel? ViewModel => DataContext as MainViewModel;
     private readonly IPanelHostingService _panelHostingService;
+
+    // Drag support for Navigation panel
+    private bool _isDraggingNavigationPanel;
+    private Avalonia.Point _dragStartPointNavigation;
+
+    // Drag support for Tools panel
+    private bool _isDraggingToolsPanel;
+    private Avalonia.Point _dragStartPoint;
+
+    // Drag support for Configuration panel
+    private bool _isDraggingConfigurationPanel;
+    private Avalonia.Point _dragStartPointConfiguration;
+
+    // Drag support for Field Tools panel
+    private bool _isDraggingFieldToolsPanel;
+    private Avalonia.Point _dragStartPointFieldTools;
 
     public MainWindow()
     {
@@ -142,5 +159,323 @@ public partial class MainWindow : Window
     {
         // Handle property changes from ViewModel if needed
         // For now, this is a placeholder for future functionality
+    }
+
+    /// <summary>
+    /// Toggle Navigation Panel visibility when button #1 is clicked
+    /// </summary>
+    private void BtnNavigation_Click(object? sender, RoutedEventArgs e)
+    {
+        // If Navigation panel is already open, just close it
+        if (PanelNavigation.IsVisible)
+        {
+            PanelNavigation.IsVisible = false;
+        }
+        else
+        {
+            // Close all other panels first
+            CloseAllOverlayPanels();
+            // Open Navigation panel
+            PanelNavigation.IsVisible = true;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer pressed on Navigation panel header to start dragging
+    /// </summary>
+    private void PanelNavigationHeader_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            _isDraggingNavigationPanel = true;
+            // Store the initial mouse position relative to the window
+            _dragStartPointNavigation = e.GetPosition(this);
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer moved to drag the Navigation panel
+    /// </summary>
+    private void PanelNavigationHeader_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isDraggingNavigationPanel)
+        {
+            // Get current mouse position relative to the window
+            var currentPoint = e.GetPosition(this);
+
+            // Calculate offset from the start point
+            var offsetX = currentPoint.X - _dragStartPointNavigation.X;
+            var offsetY = currentPoint.Y - _dragStartPointNavigation.Y;
+
+            // Get existing transform or create new one
+            var existingTransform = PanelNavigation.RenderTransform as Avalonia.Media.TranslateTransform;
+            var currentOffsetX = existingTransform?.X ?? 0;
+            var currentOffsetY = existingTransform?.Y ?? 0;
+
+            // Apply cumulative offset
+            PanelNavigation.RenderTransform = new Avalonia.Media.TranslateTransform(
+                currentOffsetX + offsetX,
+                currentOffsetY + offsetY
+            );
+
+            // Update drag start point for next move
+            _dragStartPointNavigation = currentPoint;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer released to stop dragging Navigation panel
+    /// </summary>
+    private void PanelNavigationHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isDraggingNavigationPanel = false;
+    }
+
+    /// <summary>
+    /// Close all overlay panels
+    /// </summary>
+    private void CloseAllOverlayPanels()
+    {
+        PanelNavigation.IsVisible = false;
+        PanelTools.IsVisible = false;
+        PanelConfiguration.IsVisible = false;
+        PanelFieldTools.IsVisible = false;
+    }
+
+    /// <summary>
+    /// Toggle Tools Panel visibility when button #2 is clicked
+    /// </summary>
+    private void BtnTools_Click(object? sender, RoutedEventArgs e)
+    {
+        // If Tools panel is already open, just close it
+        if (PanelTools.IsVisible)
+        {
+            PanelTools.IsVisible = false;
+        }
+        else
+        {
+            // Close all other panels first
+            CloseAllOverlayPanels();
+            // Open Tools panel
+            PanelTools.IsVisible = true;
+        }
+    }
+
+    /// <summary>
+    /// Button #4: Field Manager menu
+    /// </summary>
+    private void BtnFieldManager_Click(object? sender, RoutedEventArgs e)
+    {
+        // TODO: Implement Field Manager menu (later wave)
+        // Will show field management options (New Field, Open Field, etc.)
+    }
+
+    /// <summary>
+    /// Button #6: Auto Steer Configuration panel
+    /// </summary>
+    private void BtnAutoSteerConfig_Click(object? sender, RoutedEventArgs e)
+    {
+        // TODO: Implement Auto Steer Configuration panel (later wave)
+        // Will show dockable panel with steer settings, gains, etc.
+    }
+
+    /// <summary>
+    /// Button #7: Data I/O Status panel
+    /// </summary>
+    private void BtnDataIO_Click(object? sender, RoutedEventArgs e)
+    {
+        // TODO: Implement Data I/O Status panel (later wave)
+        // Will show AgIO connection status, module status, RTCM data, etc.
+    }
+
+    /// <summary>
+    /// Handle pointer pressed on Tools panel header to start dragging
+    /// </summary>
+    private void PanelToolsHeader_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            _isDraggingToolsPanel = true;
+            // Store the initial mouse position relative to the window
+            _dragStartPoint = e.GetPosition(this);
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer moved to drag the Tools panel
+    /// </summary>
+    private void PanelToolsHeader_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isDraggingToolsPanel)
+        {
+            // Get current mouse position relative to the window
+            var currentPoint = e.GetPosition(this);
+
+            // Calculate offset from the start point
+            var offsetX = currentPoint.X - _dragStartPoint.X;
+            var offsetY = currentPoint.Y - _dragStartPoint.Y;
+
+            // Get existing transform or create new one
+            var existingTransform = PanelTools.RenderTransform as Avalonia.Media.TranslateTransform;
+            var currentOffsetX = existingTransform?.X ?? 0;
+            var currentOffsetY = existingTransform?.Y ?? 0;
+
+            // Apply cumulative offset
+            PanelTools.RenderTransform = new Avalonia.Media.TranslateTransform(
+                currentOffsetX + offsetX,
+                currentOffsetY + offsetY
+            );
+
+            // Update drag start point for next move
+            _dragStartPoint = currentPoint;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer released to stop dragging
+    /// </summary>
+    private void PanelToolsHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isDraggingToolsPanel = false;
+    }
+
+    /// <summary>
+    /// Toggle Configuration Panel visibility when button #3 is clicked
+    /// </summary>
+    private void BtnConfiguration_Click(object? sender, RoutedEventArgs e)
+    {
+        // If Configuration panel is already open, just close it
+        if (PanelConfiguration.IsVisible)
+        {
+            PanelConfiguration.IsVisible = false;
+        }
+        else
+        {
+            // Close all other panels first
+            CloseAllOverlayPanels();
+            // Open Configuration panel
+            PanelConfiguration.IsVisible = true;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer pressed on Configuration panel header to start dragging
+    /// </summary>
+    private void PanelConfigurationHeader_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            _isDraggingConfigurationPanel = true;
+            // Store the initial mouse position relative to the window
+            _dragStartPointConfiguration = e.GetPosition(this);
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer moved to drag the Configuration panel
+    /// </summary>
+    private void PanelConfigurationHeader_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isDraggingConfigurationPanel)
+        {
+            // Get current mouse position relative to the window
+            var currentPoint = e.GetPosition(this);
+
+            // Calculate offset from the start point
+            var offsetX = currentPoint.X - _dragStartPointConfiguration.X;
+            var offsetY = currentPoint.Y - _dragStartPointConfiguration.Y;
+
+            // Get existing transform or create new one
+            var existingTransform = PanelConfiguration.RenderTransform as Avalonia.Media.TranslateTransform;
+            var currentOffsetX = existingTransform?.X ?? 0;
+            var currentOffsetY = existingTransform?.Y ?? 0;
+
+            // Apply cumulative offset
+            PanelConfiguration.RenderTransform = new Avalonia.Media.TranslateTransform(
+                currentOffsetX + offsetX,
+                currentOffsetY + offsetY
+            );
+
+            // Update drag start point for next move
+            _dragStartPointConfiguration = currentPoint;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer released to stop dragging Configuration panel
+    /// </summary>
+    private void PanelConfigurationHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isDraggingConfigurationPanel = false;
+    }
+
+    /// <summary>
+    /// Toggle Field Tools Panel visibility when button #5 is clicked
+    /// </summary>
+    private void BtnFieldTools_Click(object? sender, RoutedEventArgs e)
+    {
+        // If Field Tools panel is already open, just close it
+        if (PanelFieldTools.IsVisible)
+        {
+            PanelFieldTools.IsVisible = false;
+        }
+        else
+        {
+            // Close all other panels first
+            CloseAllOverlayPanels();
+            // Open Field Tools panel
+            PanelFieldTools.IsVisible = true;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer pressed on Field Tools panel header to start dragging
+    /// </summary>
+    private void PanelFieldToolsHeader_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            _isDraggingFieldToolsPanel = true;
+            // Store the initial mouse position relative to the window
+            _dragStartPointFieldTools = e.GetPosition(this);
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer moved to drag the Field Tools panel
+    /// </summary>
+    private void PanelFieldToolsHeader_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isDraggingFieldToolsPanel)
+        {
+            // Get current mouse position relative to the window
+            var currentPoint = e.GetPosition(this);
+
+            // Calculate offset from the start point
+            var offsetX = currentPoint.X - _dragStartPointFieldTools.X;
+            var offsetY = currentPoint.Y - _dragStartPointFieldTools.Y;
+
+            // Get existing transform or create new one
+            var existingTransform = PanelFieldTools.RenderTransform as Avalonia.Media.TranslateTransform;
+            var currentOffsetX = existingTransform?.X ?? 0;
+            var currentOffsetY = existingTransform?.Y ?? 0;
+
+            // Apply cumulative offset
+            PanelFieldTools.RenderTransform = new Avalonia.Media.TranslateTransform(
+                currentOffsetX + offsetX,
+                currentOffsetY + offsetY
+            );
+
+            // Update drag start point for next move
+            _dragStartPointFieldTools = currentPoint;
+        }
+    }
+
+    /// <summary>
+    /// Handle pointer released to stop dragging Field Tools panel
+    /// </summary>
+    private void PanelFieldToolsHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isDraggingFieldToolsPanel = false;
     }
 }

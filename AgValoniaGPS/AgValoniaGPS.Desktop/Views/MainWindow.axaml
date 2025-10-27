@@ -81,38 +81,50 @@
                            Margin="0,8,0,0">
 
                 <!-- 1. Navigation Settings icon -->
-                <Button Width="68" Height="62" Background="Transparent" BorderThickness="0" Padding="8"
-                        ToolTip.Tip="Navigation Settings">
+                <Button x:Name="BtnNavigation"
+                        Width="68" Height="62" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Navigation Settings"
+                        Click="BtnNavigation_Click">
                     <Image Source="/Assets/Icons/NavigationSettings.png" Width="52" Height="46"/>
                 </Button>
 
                 <!-- 2. Wizards/Special Functions menu icon -->
-                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
-                        ToolTip.Tip="Wizards Menu">
+                <Button x:Name="BtnTools"
+                        Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Wizards Menu"
+                        Click="BtnTools_Click">
                     <Image Source="/Assets/Icons/SpecialFunctions.png" Width="52" Height="52"/>
                 </Button>
 
                 <!-- 3. Configuration menu icon -->
-                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
-                        ToolTip.Tip="Configuration">
+                <Button x:Name="BtnConfiguration"
+                        Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Configuration"
+                        Click="BtnConfiguration_Click">
                     <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
                 </Button>
 
                 <!-- 4. Field/Job menu icon -->
-                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
-                        ToolTip.Tip="Field Manager">
-                    <Image Source="/Assets/Icons/JobActive.png" Width="52" Height="52"/>
+                <Button x:Name="BtnFieldManager"
+                        Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Field Manager"
+                        Click="BtnFieldManager_Click">
+                    <Image Source="/Assets/Icons/JobActive.png" Width="32" Height="32"/>
                 </Button>
 
                 <!-- 5. Field Tools menu icon -->
-                <Button Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
-                        ToolTip.Tip="Field Tools Menu">
+                <Button x:Name="BtnFieldTools"
+                        Width="68" Height="68" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Field Tools Menu"
+                        Click="BtnFieldTools_Click">
                     <Image Source="/Assets/Icons/FieldTools.png" Width="52" Height="52"/>
                 </Button>
 
                 <!-- 6. Autosteer config button with live steer angle display -->
-                <Button Width="68" Height="76" Background="Transparent" BorderThickness="0" Padding="4"
-                        ToolTip.Tip="Auto Steer Configuration">
+                <Button x:Name="BtnAutoSteerConfig"
+                        Width="68" Height="76" Background="Transparent" BorderThickness="0" Padding="4"
+                        ToolTip.Tip="Auto Steer Configuration"
+                        Click="BtnAutoSteerConfig_Click">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
                                    HorizontalAlignment="Center"/>
@@ -122,8 +134,10 @@
                 </Button>
 
                 <!-- 7. Data I/O status button (module status and RTCM) -->
-                <Button Width="68" Height="82" Background="Transparent" BorderThickness="0" Padding="8"
-                        ToolTip.Tip="Data I/O Status">
+                <Button x:Name="BtnDataIO"
+                        Width="68" Height="82" Background="Transparent" BorderThickness="0" Padding="8"
+                        ToolTip.Tip="Data I/O Status"
+                        Click="BtnDataIO_Click">
                     <Image Source="/Assets/Icons/AgIO.png" Width="52" Height="66"/>
                 </Button>
                 </StackPanel>
@@ -135,7 +149,7 @@
                     Background="Black">
                 <!-- OpenGL map control will be rendered here in Wave 11 -->
                 <TextBlock Text="OpenGL Map Area (Wave 11)"
-                          Foreground="#555"
+                          Foreground="White"
                           FontSize="24"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"/>
@@ -277,97 +291,451 @@
             </Border>
         </Grid>
 
-        <!-- Panel Navigation: Floating Border (179×460px, initially hidden) -->
+        <!-- Navigation Overlay: Touch-Friendly Transparent Panel -->
         <Border Grid.Row="1"
                 x:Name="PanelNavigation"
                 IsVisible="False"
-                Background="#1a1a1a"
-                Width="179" Height="460"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Margin="100,80,0,0"
-                CornerRadius="4"
-                BoxShadow="0 4 8 0 #40000000">
-            <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*">
+                Background="#CC1a1a1a"
+                Width="650" Height="450"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="8"
+                BoxShadow="0 8 16 0 #80000000">
+            <Grid RowDefinitions="Auto,*">
+                <!-- Draggable Header with title and close button -->
+                <Border Grid.Row="0" Background="#402a2a2a" Padding="16,12" CornerRadius="8,8,0,0"
+                        x:Name="PanelNavigationHeader"
+                        PointerPressed="PanelNavigationHeader_PointerPressed"
+                        PointerMoved="PanelNavigationHeader_PointerMoved"
+                        PointerReleased="PanelNavigationHeader_PointerReleased"
+                        Cursor="Hand">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="Navigation &amp; Display" FontSize="20" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Width="40" Height="40" Background="Transparent" BorderThickness="0"
+                                Content="✕" FontSize="20" Foreground="White" Click="BtnNavigation_Click"
+                                ToolTip.Tip="Close"/>
+                    </Grid>
+                </Border>
 
-                <!-- Row 0: Camera Tilt Controls -->
-                <Button Grid.Row="0" Grid.Column="0"
-                        Classes="NavButton"
-                        Command="{Binding TiltDownCommand}"
-                        ToolTip.Tip="Tilt camera down">
-                    <Image Source="/Assets/Icons/TiltDown.png" Width="48" Height="48"/>
-                </Button>
-                <Button Grid.Row="0" Grid.Column="1"
-                        Classes="NavButton"
-                        Command="{Binding TiltUpCommand}"
-                        ToolTip.Tip="Tilt camera up">
-                    <Image Source="/Assets/Icons/TiltUp.png" Width="48" Height="48"/>
-                </Button>
+                <!-- 2-column grid layout -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" Margin="8">
+                        <!-- Row 0, Col 0: Tilt Down -->
+                        <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding TiltDownCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/TiltDown.png" Width="52" Height="52"/>
+                                <TextBlock Text="Tilt Down" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                <!-- Row 1: 2D/3D View Controls -->
-                <Button Grid.Row="1" Grid.Column="0"
-                        Classes="NavButton"
-                        Command="{Binding Camera2DCommand}"
-                        ToolTip.Tip="Switch to 2D overhead view">
-                    <Image Source="/Assets/Icons/Camera2D64.png" Width="48" Height="48"/>
-                </Button>
-                <Button Grid.Row="1" Grid.Column="1"
-                        Classes="NavButton"
-                        Command="{Binding Camera3DCommand}"
-                        ToolTip.Tip="Switch to 3D perspective view">
-                    <Image Source="/Assets/Icons/Camera3D64.png" Width="48" Height="48"/>
-                </Button>
+                        <!-- Row 0, Col 1: Tilt Up -->
+                        <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding TiltUpCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/TiltUp.png" Width="52" Height="52"/>
+                                <TextBlock Text="Tilt Up" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                <!-- Row 2: North Lock and Grid Controls -->
-                <Button Grid.Row="2" Grid.Column="0"
-                        Classes="NavButton"
-                        Command="{Binding CameraNorth2DCommand}"
-                        ToolTip.Tip="Switch to North-locked 2D view">
-                    <Image Source="/Assets/Icons/CameraNorth2D.png" Width="48" Height="48"/>
-                </Button>
-                <Button Grid.Row="2" Grid.Column="1"
-                        Classes="NavButton"
-                        Command="{Binding ToggleGridCommand}"
-                        ToolTip.Tip="Toggle grid display">
-                    <Image Source="/Assets/Icons/GridRotate.png" Width="64" Height="64"/>
-                </Button>
+                        <!-- Row 1, Col 0: Camera 2D -->
+                        <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding Camera2DCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Camera2D64.png" Width="52" Height="52"/>
+                                <TextBlock Text="Camera 2D" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                <!-- Row 3: Day/Night Mode and Hz Display -->
-                <Button Grid.Row="3" Grid.Column="0"
-                        Classes="NavButton"
-                        Command="{Binding ToggleDayNightCommand}"
-                        ToolTip.Tip="Toggle day/night display mode">
-                    <Image Source="/Assets/Icons/WindowNightMode.png" Width="48" Height="48"/>
-                </Button>
-                <TextBlock Grid.Row="3" Grid.Column="1"
-                          Text="60 Hz"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          FontSize="14"
-                          FontWeight="Bold"
-                          Foreground="#333"/>
+                        <!-- Row 1, Col 1: Camera 3D -->
+                        <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding Camera3DCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Camera3D64.png" Width="52" Height="52"/>
+                                <TextBlock Text="Camera 3D" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
-                <!-- Row 4: Brightness Controls -->
-                <Button Grid.Row="4" Grid.Column="0"
-                        Classes="NavButton"
-                        Command="{Binding BrightnessDownCommand}"
-                        ToolTip.Tip="Decrease brightness">
-                    <StackPanel>
-                        <Image Source="/Assets/Icons/BrightnessDn.png" Width="48" Height="48"/>
-                        <TextBlock Text="20%"
-                                  HorizontalAlignment="Center"
-                                  FontSize="10"
-                                  FontWeight="Bold"
-                                  Foreground="#333"
-                                  Margin="0,4,0,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Row="4" Grid.Column="1"
-                        Classes="NavButton"
-                        Command="{Binding BrightnessUpCommand}"
-                        ToolTip.Tip="Increase brightness">
-                    <Image Source="/Assets/Icons/BrightnessUp.png" Width="48" Height="48"/>
-                </Button>
+                        <!-- Row 2, Col 0: North Lock 2D -->
+                        <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding CameraNorth2DCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/CameraNorth2D.png" Width="52" Height="52"/>
+                                <TextBlock Text="North Lock 2D" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 1: Toggle Grid -->
+                        <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding ToggleGridCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/GridRotate.png" Width="52" Height="52"/>
+                                <TextBlock Text="Toggle Grid" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 0: Day/Night Mode -->
+                        <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding ToggleDayNightCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/WindowNightMode.png" Width="52" Height="52"/>
+                                <TextBlock Text="Day/Night Mode" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 1: Hz Display (non-interactive) -->
+                        <Border Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" CornerRadius="4" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="12,0">
+                                <TextBlock Text="Display Rate" FontSize="18" Foreground="White" VerticalAlignment="Center"/>
+                                <TextBlock Text="60 Hz" FontSize="20" FontWeight="Bold" Foreground="#4CAF50" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Row 4, Col 0: Brightness Down -->
+                        <Button Grid.Row="4" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding BrightnessDownCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/BrightnessDn.png" Width="52" Height="52"/>
+                                <TextBlock VerticalAlignment="Center" FontSize="18" Foreground="White">
+                                    <Run Text="Brightness"/>
+                                    <Run Text="20%" FontWeight="Bold" Foreground="#FFA500"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 4, Col 1: Brightness Up -->
+                        <Button Grid.Row="4" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
+                                Command="{Binding BrightnessUpCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/BrightnessUp.png" Width="52" Height="52"/>
+                                <TextBlock Text="Brightness Up" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Tools Overlay: Touch-Friendly Transparent Panel -->
+        <Border Grid.Row="1"
+                x:Name="PanelTools"
+                IsVisible="False"
+                Background="#CC1a1a1a"
+                Width="900" Height="400"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="8"
+                BoxShadow="0 8 16 0 #80000000">
+            <Grid RowDefinitions="Auto,*">
+                <!-- Draggable Header with title and close button -->
+                <Border Grid.Row="0" Background="#402a2a2a" Padding="16,12" CornerRadius="8,8,0,0"
+                        x:Name="PanelToolsHeader"
+                        PointerPressed="PanelToolsHeader_PointerPressed"
+                        PointerMoved="PanelToolsHeader_PointerMoved"
+                        PointerReleased="PanelToolsHeader_PointerReleased"
+                        Cursor="Hand">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="Tools &amp; Wizards" FontSize="20" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Width="40" Height="40" Background="Transparent" BorderThickness="0"
+                                Content="✕" FontSize="20" Foreground="White" Click="BtnTools_Click"
+                                ToolTip.Tip="Close"/>
+                    </Grid>
+                </Border>
+
+                <!-- 3-column grid layout -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="8">
+                        <!-- Row 0, Col 0: Steer Wizard -->
+                        <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/AutoSteerOn.png" Width="52" Height="52"/>
+                                <TextBlock Text="Steer Wizard" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 0, Col 1: Steer Chart -->
+                        <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/AutoSteerOn.png" Width="52" Height="52"/>
+                                <TextBlock Text="Steer Chart" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 0, Col 2: Heading Chart -->
+                        <Button Grid.Row="0" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ConS_SourcesHeading.png" Width="52" Height="52"/>
+                                <TextBlock Text="Heading Chart" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 0: XTE Chart -->
+                        <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/AutoManualIsAuto.png" Width="52" Height="52"/>
+                                <TextBlock Text="XTE Chart" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 1: Roll Check -->
+                        <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ConS_SourcesRoll.png" Width="52" Height="52"/>
+                                <TextBlock Text="Roll Check" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 2: Boundary Tool -->
+                        <Button Grid.Row="1" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Boundary.png" Width="52" Height="52"/>
+                                <TextBlock Text="Boundary Tool" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 0: Event Viewer -->
+                        <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ABTracks.png" Width="52" Height="52"/>
+                                <TextBlock Text="Event Viewer" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 1: Extra Guidelines -->
+                        <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ConD_ExtraGuides.png" Width="52" Height="52"/>
+                                <TextBlock Text="Extra Guidelines" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 2: Smooth AB Curve -->
+                        <Button Grid.Row="2" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ABSmooth.png" Width="52" Height="52"/>
+                                <TextBlock Text="Smooth AB Curve" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 0: Delete Contour Paths -->
+                        <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/TrashContourRef.png" Width="52" Height="52"/>
+                                <TextBlock Text="Delete Contour Paths" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 1: Webcam -->
+                        <Button Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Webcam.png" Width="52" Height="52"/>
+                                <TextBlock Text="Webcam" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 2: Offset Fix -->
+                        <Button Grid.Row="3" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/YouTurnReverse.png" Width="52" Height="52"/>
+                                <TextBlock Text="Offset Fix" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Configuration Overlay: Touch-Friendly Transparent Panel -->
+        <Border Grid.Row="1"
+                x:Name="PanelConfiguration"
+                IsVisible="False"
+                Background="#CC1a1a1a"
+                Width="650" Height="400"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="8"
+                BoxShadow="0 8 16 0 #80000000">
+            <Grid RowDefinitions="Auto,*">
+                <!-- Draggable Header with title and close button -->
+                <Border Grid.Row="0" Background="#402a2a2a" Padding="16,12" CornerRadius="8,8,0,0"
+                        x:Name="PanelConfigurationHeader"
+                        PointerPressed="PanelConfigurationHeader_PointerPressed"
+                        PointerMoved="PanelConfigurationHeader_PointerMoved"
+                        PointerReleased="PanelConfigurationHeader_PointerReleased"
+                        Cursor="Hand">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="Configuration" FontSize="20" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Width="40" Height="40" Background="Transparent" BorderThickness="0"
+                                Content="✕" FontSize="20" Foreground="White" Click="BtnConfiguration_Click"
+                                ToolTip.Tip="Close"/>
+                    </Grid>
+                </Border>
+
+                <!-- 2-column grid layout -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="8">
+                        <!-- Row 0, Col 0: Configuration -->
+                        <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
+                                <TextBlock Text="Configuration" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 0, Col 1: Auto Steer -->
+                        <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/AutoSteerOff.png" Width="52" Height="52"/>
+                                <TextBlock Text="Auto Steer" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 0: View All Settings -->
+                        <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ScreenShot.png" Width="52" Height="52"/>
+                                <TextBlock Text="View All Settings" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 1: Working Directories -->
+                        <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/FileOpen.png" Width="52" Height="52"/>
+                                <TextBlock Text="Working Directories" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 0: GPS Data -->
+                        <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/GPSQuality.png" Width="52" Height="52"/>
+                                <TextBlock Text="GPS Data" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 1: Colors -->
+                        <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ColourPick.png" Width="52" Height="52"/>
+                                <TextBlock Text="Colors" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 0: Section Colors -->
+                        <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/SectionMapping.png" Width="52" Height="52"/>
+                                <TextBlock Text="Section Colors" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 1: Hotkeys -->
+                        <Button Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/ConD_KeyBoard.png" Width="52" Height="52"/>
+                                <TextBlock Text="Hotkeys" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Field Tools Overlay: Touch-Friendly Transparent Panel -->
+        <Border Grid.Row="1"
+                x:Name="PanelFieldTools"
+                IsVisible="False"
+                Background="#CC1a1a1a"
+                Width="650" Height="400"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="8"
+                BoxShadow="0 8 16 0 #80000000">
+            <Grid RowDefinitions="Auto,*">
+                <!-- Draggable Header with title and close button -->
+                <Border Grid.Row="0" Background="#402a2a2a" Padding="16,12" CornerRadius="8,8,0,0"
+                        x:Name="PanelFieldToolsHeader"
+                        PointerPressed="PanelFieldToolsHeader_PointerPressed"
+                        PointerMoved="PanelFieldToolsHeader_PointerMoved"
+                        PointerReleased="PanelFieldToolsHeader_PointerReleased"
+                        Cursor="Hand">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="Field Tools" FontSize="20" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Width="40" Height="40" Background="Transparent" BorderThickness="0"
+                                Content="✕" FontSize="20" Foreground="White" Click="BtnFieldTools_Click"
+                                ToolTip.Tip="Close"/>
+                    </Grid>
+                </Border>
+
+                <!-- 2-column grid layout -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="8">
+                        <!-- Row 0, Col 0: Boundary -->
+                        <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Boundary.png" Width="52" Height="52"/>
+                                <TextBlock Text="Boundary" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 0, Col 1: Headland -->
+                        <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/HeadlandBuild.png" Width="52" Height="52"/>
+                                <TextBlock Text="Headland" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 0: Headland Build -->
+                        <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/Headache.png" Width="52" Height="52"/>
+                                <TextBlock Text="Headland Build" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 1, Col 1: TramLines All -->
+                        <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/TramAll.png" Width="52" Height="52"/>
+                                <TextBlock Text="TramLines All" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 0: Tramlines Multi -->
+                        <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/TramMulti.png" Width="52" Height="52"/>
+                                <TextBlock Text="Tramlines Multi" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 2, Col 1: Delete Applied -->
+                        <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/TrashApplied.png" Width="52" Height="52"/>
+                                <TextBlock Text="Delete Applied" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 0: Flag By Lat Lon -->
+                        <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/FlagRed.png" Width="52" Height="52"/>
+                                <TextBlock Text="Flag By Lat Lon" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Row 3, Col 1: Recorded Path -->
+                        <Button Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Image Source="/Assets/Icons/RecPath.png" Width="52" Height="52"/>
+                                <TextBlock Text="Recorded Path" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>
