@@ -30,16 +30,18 @@ public partial class MainWindow : Window
     private bool _isDraggingFieldToolsPanel;
     private Avalonia.Point _dragStartPointFieldTools;
 
-    // Drag support for Floating Toolbar
-    private bool _isDraggingFloatingToolbar;
-    private Avalonia.Point _dragStartPointFloatingToolbar;
+    // Drag support for individual floating buttons
+    private bool _isDraggingBtn1, _isDraggingBtn2, _isDraggingBtn3, _isDraggingBtn4;
+    private bool _isDraggingBtn5, _isDraggingBtn6, _isDraggingBtn7;
+    private bool _isPressedBtn1, _isPressedBtn2, _isPressedBtn3, _isPressedBtn4;
+    private bool _isPressedBtn5, _isPressedBtn6, _isPressedBtn7;
+    private Avalonia.Point _dragStartBtn1, _dragStartBtn2, _dragStartBtn3, _dragStartBtn4;
+    private Avalonia.Point _dragStartBtn5, _dragStartBtn6, _dragStartBtn7;
+    private const double DragThreshold = 5.0; // pixels to move before considering it a drag
 
-    // Rotation state for Floating Toolbar (0, 90, 180, 270 degrees)
-    private int _toolbarRotation = 0;
-
-    // Track toolbar position separately from transform
-    private double _toolbarOffsetX = 0;
-    private double _toolbarOffsetY = 0;
+    // Track previous window size for proportional resize
+    private double _previousWindowWidth;
+    private double _previousWindowHeight;
 
     public MainWindow()
     {
@@ -64,13 +66,14 @@ public partial class MainWindow : Window
 
         // Subscribe to Loaded event to initialize PanelHostingService
         this.Loaded += MainWindow_Loaded;
-
-        // Subscribe to SizeChanged event to keep toolbar in bounds
-        this.SizeChanged += MainWindow_SizeChanged;
     }
 
     private void MainWindow_Loaded(object? sender, RoutedEventArgs e)
     {
+        // Initialize window size tracking for proportional button resize
+        _previousWindowWidth = this.Bounds.Width;
+        _previousWindowHeight = this.Bounds.Height;
+
         // Initialize PanelHostingService with panel containers
         // Note: All three bars (Left, Right, Bottom) now have static icons only
         // Create hidden containers for Wave 10 panel hosting
@@ -192,6 +195,21 @@ public partial class MainWindow : Window
             // Open Navigation panel
             PanelNavigation.IsVisible = true;
         }
+    }
+
+    /// <summary>
+    /// Reset all floating buttons to their home positions
+    /// </summary>
+    private void BtnHomeButtons_Click(object? sender, RoutedEventArgs e)
+    {
+        // Reset all button transforms to return them to original Margin positions
+        FloatingBtn1.RenderTransform = null;
+        FloatingBtn2.RenderTransform = null;
+        FloatingBtn3.RenderTransform = null;
+        FloatingBtn4.RenderTransform = null;
+        FloatingBtn5.RenderTransform = null;
+        FloatingBtn6.RenderTransform = null;
+        FloatingBtn7.RenderTransform = null;
     }
 
     /// <summary>
@@ -493,152 +511,568 @@ public partial class MainWindow : Window
         _isDraggingFieldToolsPanel = false;
     }
 
-    /// <summary>
-    /// Handle pointer pressed on Floating Toolbar header to start dragging
-    /// </summary>
-    private void FloatingToolbarHeader_PointerPressed(object? sender, PointerPressedEventArgs e)
+    // ==================== Individual Floating Button Drag Handlers ====================
+
+    // Button 1 - Navigation
+    private void FloatingBtn1_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
         {
-            _isDraggingFloatingToolbar = true;
-            _dragStartPointFloatingToolbar = e.GetPosition(this);
+            _isPressedBtn1 = true;
+            _isDraggingBtn1 = false;
+            _dragStartBtn1 = e.GetPosition(this);
+            e.Pointer.Capture(border);
         }
     }
 
-    /// <summary>
-    /// Handle pointer moved to drag the Floating Toolbar
-    /// </summary>
-    private void FloatingToolbarHeader_PointerMoved(object? sender, PointerEventArgs e)
+    private void FloatingBtn1_PointerMoved(object? sender, PointerEventArgs e)
     {
-        if (_isDraggingFloatingToolbar)
+        if (_isPressedBtn1 && sender is Border border)
         {
             var currentPoint = e.GetPosition(this);
-            var offsetX = currentPoint.X - _dragStartPointFloatingToolbar.X;
-            var offsetY = currentPoint.Y - _dragStartPointFloatingToolbar.Y;
+            var deltaX = currentPoint.X - _dragStartBtn1.X;
+            var deltaY = currentPoint.Y - _dragStartBtn1.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
 
-            _toolbarOffsetX += offsetX;
-            _toolbarOffsetY += offsetY;
+            // If moved more than threshold, start dragging
+            if (!_isDraggingBtn1 && distance > DragThreshold)
+            {
+                _isDraggingBtn1 = true;
+            }
 
-            _dragStartPointFloatingToolbar = currentPoint;
+            if (_isDraggingBtn1)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
 
-            // Rebuild combined transform
-            UpdateToolbarTransform();
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                // Constrain to window bounds
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn1 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn1_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+
+        // If we were dragging, prevent the click
+        if (_isDraggingBtn1)
+        {
+            e.Handled = true;
+        }
+        else if (_isPressedBtn1)
+        {
+            // Was a click, not a drag - trigger the button action
+            BtnNavigation_Click(sender, new RoutedEventArgs());
+        }
+
+        _isPressedBtn1 = false;
+        _isDraggingBtn1 = false;
+    }
+
+    // Button 2 - Tools
+    private void FloatingBtn2_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
+        {
+            _isPressedBtn2 = true;
+            _isDraggingBtn2 = false;
+            _dragStartBtn2 = e.GetPosition(this);
+            e.Pointer.Capture(border);
+        }
+    }
+
+    private void FloatingBtn2_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isPressedBtn2 && sender is Border border)
+        {
+            var currentPoint = e.GetPosition(this);
+            var deltaX = currentPoint.X - _dragStartBtn2.X;
+            var deltaY = currentPoint.Y - _dragStartBtn2.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (!_isDraggingBtn2 && distance > DragThreshold)
+            {
+                _isDraggingBtn2 = true;
+            }
+
+            if (_isDraggingBtn2)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
+
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn2 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn2_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+        if (_isDraggingBtn2)
+        {
+            e.Handled = true;
+        }
+        else if (_isPressedBtn2)
+        {
+            BtnTools_Click(sender, new RoutedEventArgs());
+        }
+        _isPressedBtn2 = false;
+        _isDraggingBtn2 = false;
+    }
+
+    // Button 3 - Configuration
+    private void FloatingBtn3_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
+        {
+            _isPressedBtn3 = true;
+            _isDraggingBtn3 = false;
+            _dragStartBtn3 = e.GetPosition(this);
+            e.Pointer.Capture(border);
+        }
+    }
+
+    private void FloatingBtn3_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isPressedBtn3 && sender is Border border)
+        {
+            var currentPoint = e.GetPosition(this);
+            var deltaX = currentPoint.X - _dragStartBtn3.X;
+            var deltaY = currentPoint.Y - _dragStartBtn3.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (!_isDraggingBtn3 && distance > DragThreshold)
+            {
+                _isDraggingBtn3 = true;
+            }
+
+            if (_isDraggingBtn3)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
+
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn3 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn3_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+        if (_isDraggingBtn3)
+        {
+            e.Handled = true;
+        }
+        else if (_isPressedBtn3)
+        {
+            BtnConfiguration_Click(sender, new RoutedEventArgs());
+        }
+        _isPressedBtn3 = false;
+        _isDraggingBtn3 = false;
+    }
+
+    // Button 4 - Field Manager
+    private void FloatingBtn4_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
+        {
+            _isPressedBtn4 = true;
+            _isDraggingBtn4 = false;
+            _dragStartBtn4 = e.GetPosition(this);
+            e.Pointer.Capture(border);
+        }
+    }
+
+    private void FloatingBtn4_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isPressedBtn4 && sender is Border border)
+        {
+            var currentPoint = e.GetPosition(this);
+            var deltaX = currentPoint.X - _dragStartBtn4.X;
+            var deltaY = currentPoint.Y - _dragStartBtn4.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (!_isDraggingBtn4 && distance > DragThreshold)
+            {
+                _isDraggingBtn4 = true;
+            }
+
+            if (_isDraggingBtn4)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
+
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn4 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn4_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+        if (_isDraggingBtn4) e.Handled = true;
+        _isPressedBtn4 = false;
+        _isDraggingBtn4 = false;
+    }
+
+    // Button 5 - Field Tools
+    private void FloatingBtn5_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
+        {
+            _isPressedBtn5 = true;
+            _isDraggingBtn5 = false;
+            _dragStartBtn5 = e.GetPosition(this);
+            e.Pointer.Capture(border);
+        }
+    }
+
+    private void FloatingBtn5_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isPressedBtn5 && sender is Border border)
+        {
+            var currentPoint = e.GetPosition(this);
+            var deltaX = currentPoint.X - _dragStartBtn5.X;
+            var deltaY = currentPoint.Y - _dragStartBtn5.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (!_isDraggingBtn5 && distance > DragThreshold)
+            {
+                _isDraggingBtn5 = true;
+            }
+
+            if (_isDraggingBtn5)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
+
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn5 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn5_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+        if (_isDraggingBtn5) e.Handled = true;
+        _isPressedBtn5 = false;
+        _isDraggingBtn5 = false;
+    }
+
+    // Button 6 - Auto Steer Config
+    private void FloatingBtn6_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
+        {
+            _isPressedBtn6 = true;
+            _isDraggingBtn6 = false;
+            _dragStartBtn6 = e.GetPosition(this);
+            e.Pointer.Capture(border);
+        }
+    }
+
+    private void FloatingBtn6_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isPressedBtn6 && sender is Border border)
+        {
+            var currentPoint = e.GetPosition(this);
+            var deltaX = currentPoint.X - _dragStartBtn6.X;
+            var deltaY = currentPoint.Y - _dragStartBtn6.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (!_isDraggingBtn6 && distance > DragThreshold)
+            {
+                _isDraggingBtn6 = true;
+            }
+
+            if (_isDraggingBtn6)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
+
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn6 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn6_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+        if (_isDraggingBtn6) e.Handled = true;
+        _isPressedBtn6 = false;
+        _isDraggingBtn6 = false;
+    }
+
+    // Button 7 - Data I/O
+    private void FloatingBtn7_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && sender is Border border)
+        {
+            _isPressedBtn7 = true;
+            _isDraggingBtn7 = false;
+            _dragStartBtn7 = e.GetPosition(this);
+            e.Pointer.Capture(border);
+        }
+    }
+
+    private void FloatingBtn7_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (_isPressedBtn7 && sender is Border border)
+        {
+            var currentPoint = e.GetPosition(this);
+            var deltaX = currentPoint.X - _dragStartBtn7.X;
+            var deltaY = currentPoint.Y - _dragStartBtn7.Y;
+            var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (!_isDraggingBtn7 && distance > DragThreshold)
+            {
+                _isDraggingBtn7 = true;
+            }
+
+            if (_isDraggingBtn7)
+            {
+                var existingTransform = border.RenderTransform as Avalonia.Media.TranslateTransform;
+                var currentOffsetX = existingTransform?.X ?? 0;
+                var currentOffsetY = existingTransform?.Y ?? 0;
+
+                var newOffsetX = currentOffsetX + deltaX;
+                var newOffsetY = currentOffsetY + deltaY;
+
+                var constrained = GetConstrainedTransform(border, newOffsetX, newOffsetY);
+                border.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+
+                _dragStartBtn7 = currentPoint;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void FloatingBtn7_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Border border)
+        {
+            e.Pointer.Capture(null);
+        }
+        if (_isDraggingBtn7) e.Handled = true;
+        _isPressedBtn7 = false;
+        _isDraggingBtn7 = false;
+    }
+
+    /// <summary>
+    /// Handle window resize to move buttons proportionally
+    /// </summary>
+    private void Window_SizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        // Skip if previous size not initialized
+        if (_previousWindowWidth == 0 || _previousWindowHeight == 0) return;
+
+        var newWidth = this.Bounds.Width;
+        var newHeight = this.Bounds.Height;
+        var statusBarHeight = 60.0;
+        var availableHeight = newHeight - statusBarHeight;
+        var previousAvailableHeight = _previousWindowHeight - statusBarHeight;
+
+        // Calculate size change ratios
+        var widthRatio = newWidth / _previousWindowWidth;
+        var heightRatio = availableHeight / previousAvailableHeight;
+
+        // Move all floating buttons proportionally
+        MoveButtonProportionally(FloatingBtn1, widthRatio, heightRatio);
+        MoveButtonProportionally(FloatingBtn2, widthRatio, heightRatio);
+        MoveButtonProportionally(FloatingBtn3, widthRatio, heightRatio);
+        MoveButtonProportionally(FloatingBtn4, widthRatio, heightRatio);
+        MoveButtonProportionally(FloatingBtn5, widthRatio, heightRatio);
+        MoveButtonProportionally(FloatingBtn6, widthRatio, heightRatio);
+        MoveButtonProportionally(FloatingBtn7, widthRatio, heightRatio);
+
+        // Update previous size
+        _previousWindowWidth = newWidth;
+        _previousWindowHeight = newHeight;
+    }
+
+    /// <summary>
+    /// Move button proportionally based on window resize ratio
+    /// </summary>
+    private void MoveButtonProportionally(Border button, double widthRatio, double heightRatio)
+    {
+        if (button == null) return;
+
+        // Get button's base position from Margin
+        var margin = button.Margin;
+        var baseX = margin.Left;
+        var baseY = margin.Top;
+
+        // Get current transform (if any)
+        var transform = button.RenderTransform as Avalonia.Media.TranslateTransform;
+        var currentOffsetX = transform?.X ?? 0;
+        var currentOffsetY = transform?.Y ?? 0;
+
+        // Calculate current absolute position
+        var currentX = baseX + currentOffsetX;
+        var currentY = baseY + currentOffsetY;
+
+        // Calculate new position based on ratio
+        var newX = currentX * widthRatio;
+        var newY = currentY * heightRatio;
+
+        // Calculate new offset
+        var newOffsetX = newX - baseX;
+        var newOffsetY = newY - baseY;
+
+        // Constrain to window bounds
+        var constrained = GetConstrainedTransform(button, newOffsetX, newOffsetY);
+        button.RenderTransform = new Avalonia.Media.TranslateTransform(constrained.X, constrained.Y);
+    }
+
+    /// <summary>
+    /// Constrain a button's position to stay within the window bounds
+    /// </summary>
+    private void ConstrainButtonPosition(Border button)
+    {
+        if (button == null) return;
+
+        // Get the button's current transform
+        var transform = button.RenderTransform as Avalonia.Media.TranslateTransform;
+        if (transform == null) return; // Button hasn't been moved yet
+
+        // Get button's base position from Margin
+        var margin = button.Margin;
+        var baseX = margin.Left;
+        var baseY = margin.Top;
+
+        // Calculate actual position with transform
+        var actualX = baseX + transform.X;
+        var actualY = baseY + transform.Y;
+
+        // Get window content bounds (accounting for status bar at top)
+        var windowWidth = this.Bounds.Width;
+        var windowHeight = this.Bounds.Height;
+        var statusBarHeight = 60.0; // Top status bar height
+        var availableHeight = windowHeight - statusBarHeight;
+
+        // Constrain X position
+        var minX = 8.0; // Minimum margin from left
+        var maxX = windowWidth - button.Width - 8.0; // Maximum position (right edge)
+
+        var constrainedX = Math.Max(minX, Math.Min(maxX, actualX));
+
+        // Constrain Y position
+        var minY = 8.0; // Minimum margin from top (within content area)
+        var maxY = availableHeight - button.Height - 8.0; // Maximum position (bottom edge)
+
+        var constrainedY = Math.Max(minY, Math.Min(maxY, actualY));
+
+        // Calculate new transform based on constrained position
+        var newTransformX = constrainedX - baseX;
+        var newTransformY = constrainedY - baseY;
+
+        // Only update if position changed
+        if (Math.Abs(newTransformX - transform.X) > 0.1 || Math.Abs(newTransformY - transform.Y) > 0.1)
+        {
+            button.RenderTransform = new Avalonia.Media.TranslateTransform(newTransformX, newTransformY);
         }
     }
 
     /// <summary>
-    /// Handle pointer released to stop dragging Floating Toolbar
+    /// Calculate constrained transform offsets during dragging
     /// </summary>
-    private void FloatingToolbarHeader_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    private (double X, double Y) GetConstrainedTransform(Border button, double newOffsetX, double newOffsetY)
     {
-        _isDraggingFloatingToolbar = false;
-    }
+        if (button == null) return (newOffsetX, newOffsetY);
 
-    /// <summary>
-    /// Toggle the floating toolbar between vertical and horizontal
-    /// </summary>
-    private void RotateToolbar_Click(object? sender, RoutedEventArgs e)
-    {
-        // Toggle between vertical (0) and horizontal (90)
-        _toolbarRotation = _toolbarRotation == 0 ? 90 : 0;
+        // Get button's base position from Margin
+        var margin = button.Margin;
+        var baseX = margin.Left;
+        var baseY = margin.Top;
 
-        // Update layout based on rotation
-        UpdateToolbarLayout();
-    }
+        // Calculate what the actual position would be
+        var actualX = baseX + newOffsetX;
+        var actualY = baseY + newOffsetY;
 
-    /// <summary>
-    /// Update the toolbar layout based on current rotation state
-    /// Vertical (0°): Tall and narrow
-    /// Horizontal (90°): Wide and short
-    /// </summary>
-    private void UpdateToolbarLayout()
-    {
-        // Change layout orientation and dimensions based on rotation
-        if (_toolbarRotation == 0)
-        {
-            // Vertical layout: StackPanel with vertical orientation
-            PanelLeft.Orientation = Avalonia.Layout.Orientation.Vertical;
-            FloatingToolbar.Width = 110;
-            FloatingToolbar.Height = double.NaN; // Auto height
-            FloatingToolbar.MaxHeight = 600;
-            FloatingToolbar.MaxWidth = double.PositiveInfinity;
-        }
-        else
-        {
-            // Horizontal layout: StackPanel with horizontal orientation
-            PanelLeft.Orientation = Avalonia.Layout.Orientation.Horizontal;
-            FloatingToolbar.Width = double.NaN; // Auto width
-            FloatingToolbar.Height = double.NaN; // Auto height
-            FloatingToolbar.MaxWidth = 700;
-            FloatingToolbar.MaxHeight = 100;
-        }
+        // Get window content bounds
+        var windowWidth = this.Bounds.Width;
+        var windowHeight = this.Bounds.Height;
+        var statusBarHeight = 60.0;
+        var availableHeight = windowHeight - statusBarHeight;
 
-        // Update the combined transform
-        UpdateToolbarTransform();
-    }
+        // Constrain X position
+        var minX = 8.0;
+        var maxX = windowWidth - button.Width - 8.0;
+        var constrainedX = Math.Max(minX, Math.Min(maxX, actualX));
 
-    /// <summary>
-    /// Apply combined translation transform to toolbar (no visual rotation)
-    /// </summary>
-    private void UpdateToolbarTransform()
-    {
-        // Only apply translation, not rotation
-        // Rotation is handled by changing the StackPanel orientation
-        FloatingToolbar.RenderTransform = new Avalonia.Media.TranslateTransform(_toolbarOffsetX, _toolbarOffsetY);
-    }
+        // Constrain Y position
+        var minY = 8.0;
+        var maxY = availableHeight - button.Height - 8.0;
+        var constrainedY = Math.Max(minY, Math.Min(maxY, actualY));
 
-    /// <summary>
-    /// Handle window resize to keep toolbar within visible bounds
-    /// </summary>
-    private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        // Only check if toolbar exists
-        if (FloatingToolbar == null)
-            return;
-
-        // Get window dimensions
-        var windowWidth = e.NewSize.Width;
-        var windowHeight = e.NewSize.Height;
-
-        // Get toolbar dimensions (accounting for rotation)
-        var toolbarWidth = FloatingToolbar.Bounds.Width;
-        var toolbarHeight = FloatingToolbar.Bounds.Height;
-
-        // Calculate toolbar's current position (initial margin + transform offset)
-        var currentX = 8 + _toolbarOffsetX; // 8 is the initial margin
-        var currentY = 8 + _toolbarOffsetY;
-
-        // Check if toolbar is out of bounds and adjust
-        var maxX = windowWidth - toolbarWidth - 8; // Leave 8px margin
-        var maxY = windowHeight - toolbarHeight - 8;
-
-        var needsUpdate = false;
-
-        if (currentX < 8)
-        {
-            _toolbarOffsetX = 0;
-            needsUpdate = true;
-        }
-        else if (currentX > maxX)
-        {
-            _toolbarOffsetX = maxX - 8;
-            needsUpdate = true;
-        }
-
-        if (currentY < 8)
-        {
-            _toolbarOffsetY = 0;
-            needsUpdate = true;
-        }
-        else if (currentY > maxY)
-        {
-            _toolbarOffsetY = maxY - 8;
-            needsUpdate = true;
-        }
-
-        if (needsUpdate)
-        {
-            UpdateToolbarTransform();
-        }
+        // Return constrained offsets
+        return (constrainedX - baseX, constrainedY - baseY);
     }
 }
