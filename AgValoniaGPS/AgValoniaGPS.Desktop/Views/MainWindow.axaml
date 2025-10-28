@@ -10,14 +10,15 @@
         Title="AgValoniaGPS"
         Width="1366" Height="768"
         WindowState="Maximized"
-        Background="#1a1a1a">
+        Background="#1a1a1a"
+        SizeChanged="Window_SizeChanged">
 
     <!-- Main Layout: Custom Status Bar + Content Area -->
     <Grid RowDefinitions="Auto,*">
 
         <!-- Custom Top Status Bar (matches old AgOpenGPS) -->
         <Border Grid.Row="0" Background="#1a1a1a" Height="60" BorderThickness="0">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
 
                 <!-- Section Control Indicator (3 colored bars) -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0,12,0" VerticalAlignment="Center">
@@ -33,7 +34,7 @@
                 </StackPanel>
 
                 <!-- Rotating Information Display with Play/Pause Button -->
-                <Border Grid.Column="2" Background="#2a2a2a" BorderBrush="#808080" BorderThickness="1"
+                <Border Grid.Column="2" Background="Transparent" BorderBrush="#808080" BorderThickness="1"
                         Padding="10,6" Margin="6,0" CornerRadius="2">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBlock Text="▶" FontSize="14" VerticalAlignment="Center" Foreground="White"/>
@@ -58,13 +59,22 @@
                 <ProgressBar Grid.Column="6" Width="100" Height="8" Value="65" Maximum="100"
                              Foreground="#FF8C00" Background="#E0E0E0" Margin="6,0" VerticalAlignment="Center"/>
 
+                <!-- Home Button (Reset Buttons) -->
+                <Button Grid.Column="7" Width="50" Height="44" Background="#4CAF50"
+                        BorderThickness="0" Margin="4,0,0,0"
+                        ToolTip.Tip="Reset all buttons to home position"
+                        Click="BtnHomeButtons_Click"
+                        CornerRadius="4">
+                    <TextBlock Text="🏠" FontSize="20" VerticalAlignment="Center"/>
+                </Button>
+
                 <!-- Minimize Button -->
-                <Button Grid.Column="7" Width="44" Height="44" Background="Transparent"
+                <Button Grid.Column="8" Width="44" Height="44" Background="Transparent"
                         BorderThickness="0" Margin="4,0,0,0"
                         Content="−" FontSize="24" FontWeight="Bold" Foreground="Black"/>
 
                 <!-- Close Button -->
-                <Button Grid.Column="8" Width="44" Height="44" Background="#DC3545"
+                <Button Grid.Column="9" Width="44" Height="44" Background="#DC3545"
                         BorderThickness="0" Margin="4,0,8,0"
                         Content="✕" FontSize="20" FontWeight="Bold" Foreground="White"/>
             </Grid>
@@ -669,102 +679,195 @@
             </Grid>
         </Border>
 
-        <!-- Floating Left Toolbar (Draggable & Rotatable) -->
-        <Border x:Name="FloatingToolbar"
+        <!-- Individual Floating Buttons (Each independently draggable) -->
+
+        <!-- 1. Navigation Settings Button -->
+        <Border x:Name="FloatingBtn1"
                 Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
-                Background="#E01a1a1a"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
                 CornerRadius="8"
-                BoxShadow="0 8 16 0 #80000000"
+                BoxShadow="0 4 8 0 #80000000"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="8,8,0,0"
-                Width="110"
-                MaxHeight="600"
-                ZIndex="100">
-            <Grid RowDefinitions="Auto,*">
-                <!-- Header with Drag Area and Rotation Button -->
-                <Border Grid.Row="0" Background="#2a2a2a" Padding="12,8" CornerRadius="8,8,0,0"
-                        x:Name="FloatingToolbarHeader"
-                        PointerPressed="FloatingToolbarHeader_PointerPressed"
-                        PointerMoved="FloatingToolbarHeader_PointerMoved"
-                        PointerReleased="FloatingToolbarHeader_PointerReleased"
-                        Cursor="Hand">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Grid.Column="0" Text="Tools" FontSize="16" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
-                        <Button Grid.Column="1" Width="32" Height="32" Background="#402a2a2a" BorderThickness="0"
-                                CornerRadius="4" Margin="8,0,0,0"
-                                ToolTip.Tip="Rotate Toolbar"
-                                Click="RotateToolbar_Click">
-                            <TextBlock Text="⟲" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Button>
-                    </Grid>
-                </Border>
+                Width="76"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtn1_PointerPressed"
+                PointerMoved="FloatingBtn1_PointerMoved"
+                PointerReleased="FloatingBtn1_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnNavigation"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Navigation Settings"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/NavigationSettings.png" Width="52" Height="46"/>
+            </Button>
+        </Border>
 
-                <!-- Toolbar Buttons Container -->
-                <StackPanel x:Name="PanelLeft" Grid.Row="1" Spacing="4" Margin="4">
+        <!-- 2. Wizards/Tools Button -->
+        <Border x:Name="FloatingBtn2"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,86,0,0"
+                Width="76"
+                Height="76"
+                ZIndex="100"
+                PointerPressed="FloatingBtn2_PointerPressed"
+                PointerMoved="FloatingBtn2_PointerMoved"
+                PointerReleased="FloatingBtn2_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnTools"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Wizards Menu"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/SpecialFunctions.png" Width="52" Height="52"/>
+            </Button>
+        </Border>
 
-                    <!-- 1. Navigation Settings icon -->
-                    <Button x:Name="BtnNavigation"
-                            Width="68" Height="62" Background="#2a2a2a" BorderThickness="0" Padding="8"
-                            ToolTip.Tip="Navigation Settings"
-                            Click="BtnNavigation_Click">
-                        <Image Source="/Assets/Icons/NavigationSettings.png" Width="52" Height="46"/>
-                    </Button>
+        <!-- 3. Configuration Button -->
+        <Border x:Name="FloatingBtn3"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,170,0,0"
+                Width="76"
+                Height="76"
+                ZIndex="100"
+                PointerPressed="FloatingBtn3_PointerPressed"
+                PointerMoved="FloatingBtn3_PointerMoved"
+                PointerReleased="FloatingBtn3_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnConfiguration"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Configuration"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
+            </Button>
+        </Border>
 
-                    <!-- 2. Wizards/Special Functions menu icon -->
-                    <Button x:Name="BtnTools"
-                            Width="68" Height="68" Background="#2a2a2a" BorderThickness="0" Padding="8"
-                            ToolTip.Tip="Wizards Menu"
-                            Click="BtnTools_Click">
-                        <Image Source="/Assets/Icons/SpecialFunctions.png" Width="52" Height="52"/>
-                    </Button>
+        <!-- 4. Field Manager Button -->
+        <Border x:Name="FloatingBtn4"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,254,0,0"
+                Width="76"
+                Height="76"
+                ZIndex="100"
+                PointerPressed="FloatingBtn4_PointerPressed"
+                PointerMoved="FloatingBtn4_PointerMoved"
+                PointerReleased="FloatingBtn4_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnFieldManager"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Field Manager"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/JobActive.png" Width="52" Height="52"/>
+            </Button>
+        </Border>
 
-                    <!-- 3. Configuration menu icon -->
-                    <Button x:Name="BtnConfiguration"
-                            Width="68" Height="68" Background="#2a2a2a" BorderThickness="0" Padding="8"
-                            ToolTip.Tip="Configuration"
-                            Click="BtnConfiguration_Click">
-                        <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
-                    </Button>
+        <!-- 5. Field Tools Button -->
+        <Border x:Name="FloatingBtn5"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,338,0,0"
+                Width="76"
+                Height="76"
+                ZIndex="100"
+                PointerPressed="FloatingBtn5_PointerPressed"
+                PointerMoved="FloatingBtn5_PointerMoved"
+                PointerReleased="FloatingBtn5_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnFieldTools"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Field Tools Menu"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/FieldTools.png" Width="52" Height="52"/>
+            </Button>
+        </Border>
 
-                    <!-- 4. Field/Job menu icon -->
-                    <Button x:Name="BtnFieldManager"
-                            Width="68" Height="68" Background="#2a2a2a" BorderThickness="0" Padding="8"
-                            ToolTip.Tip="Field Manager"
-                            Click="BtnFieldManager_Click">
-                        <Image Source="/Assets/Icons/JobActive.png" Width="32" Height="32"/>
-                    </Button>
-
-                    <!-- 5. Field Tools menu icon -->
-                    <Button x:Name="BtnFieldTools"
-                            Width="68" Height="68" Background="#2a2a2a" BorderThickness="0" Padding="8"
-                            ToolTip.Tip="Field Tools Menu"
-                            Click="BtnFieldTools_Click">
-                        <Image Source="/Assets/Icons/FieldTools.png" Width="52" Height="52"/>
-                    </Button>
-
-                    <!-- 6. Autosteer config button with live steer angle display -->
-                    <Button x:Name="BtnAutoSteerConfig"
-                            Width="68" Height="76" Background="#2a2a2a" BorderThickness="0" Padding="4"
-                            ToolTip.Tip="Auto Steer Configuration"
-                            Click="BtnAutoSteerConfig_Click">
-                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
-                                       HorizontalAlignment="Center" Margin="0,4,0,0"/>
-                        </StackPanel>
-                    </Button>
-
-                    <!-- 7. Data I/O status button (module status and RTCM) -->
-                    <Button x:Name="BtnDataIO"
-                            Width="68" Height="82" Background="#2a2a2a" BorderThickness="0" Padding="8"
-                            ToolTip.Tip="Data I/O Status"
-                            Click="BtnDataIO_Click">
-                        <Image Source="/Assets/Icons/AgIO.png" Width="52" Height="66"/>
-                    </Button>
+        <!-- 6. Auto Steer Config Button -->
+        <Border x:Name="FloatingBtn6"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,422,0,0"
+                Width="76"
+                Height="84"
+                ZIndex="100"
+                PointerPressed="FloatingBtn6_PointerPressed"
+                PointerMoved="FloatingBtn6_PointerMoved"
+                PointerReleased="FloatingBtn6_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnAutoSteerConfig"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                    ToolTip.Tip="Auto Steer Configuration"
+                    IsHitTestVisible="False">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
+                               HorizontalAlignment="Center" TextAlignment="Center"/>
+                    <TextBlock Text="0.0" FontSize="16" FontWeight="Bold" Foreground="White"
+                               HorizontalAlignment="Center" TextAlignment="Center" Margin="0,4,0,0"/>
                 </StackPanel>
-            </Grid>
+            </Button>
+        </Border>
+
+        <!-- 7. Data I/O Status Button -->
+        <Border x:Name="FloatingBtn7"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,514,0,0"
+                Width="76"
+                Height="90"
+                ZIndex="100"
+                PointerPressed="FloatingBtn7_PointerPressed"
+                PointerMoved="FloatingBtn7_PointerMoved"
+                PointerReleased="FloatingBtn7_PointerReleased"
+                Cursor="Hand">
+            <Button x:Name="BtnDataIO"
+                    Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Data I/O Status"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/AgIO.png" Width="52" Height="66"/>
+            </Button>
         </Border>
     </Grid>
 </Window>
