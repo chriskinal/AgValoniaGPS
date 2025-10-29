@@ -80,12 +80,11 @@
             </Grid>
         </Border>
 
-        <!-- Main Content Area: Docking Panels + OpenGL Map -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,70" RowDefinitions="*,62">
+        <!-- Main Content Area: OpenGL Map (full screen) -->
+        <Grid Grid.Row="1">
 
-            <!-- OpenGL Map Placeholder (Column 0, Row 0) -->
-            <Border Grid.Column="0" Grid.Row="0"
-                    x:Name="MapContainer"
+            <!-- OpenGL Map Placeholder (full area) -->
+            <Border x:Name="MapContainer"
                     Background="Black">
                 <!-- OpenGL map control will be rendered here in Wave 11 -->
                 <TextBlock Text="OpenGL Map Area (Wave 11)"
@@ -95,140 +94,6 @@
                           VerticalAlignment="Center"/>
             </Border>
 
-            <!-- Panel Right: Vertical toolbar (bottom-aligned, reversed order for BottomUp flow) -->
-            <Border Grid.Column="1" Grid.Row="0" Background="#1a1a1a" VerticalAlignment="Bottom">
-                <StackPanel x:Name="PanelRight"
-                           Spacing="6">
-
-                <!-- 9. Contour Lock toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Contour Lock">
-                    <Image Source="/Assets/Icons/ColorUnlocked.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 8. Contour toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Contour Mode">
-                    <Image Source="/Assets/Icons/ContourOff.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 7. Cycle Lines Forward -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Cycle Lines Forward">
-                    <Image Source="/Assets/Icons/ABLineCycle.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 6. Cycle Lines Backward -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Cycle Lines Backward">
-                    <Image Source="/Assets/Icons/ABLineCycleBk.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 5. Auto Track toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Auto Track">
-                    <Image Source="/Assets/Icons/AutoTrackOff.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 4. Section Master Manual toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Section Control Manual">
-                    <Image Source="/Assets/Icons/ManualOff.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 3. Section Master Auto toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Section Control Auto">
-                    <Image Source="/Assets/Icons/SectionMasterOff.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 2. Auto YouTurn toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Auto YouTurn">
-                    <Image Source="/Assets/Icons/YouTurnNo.png" Width="54" Height="54"/>
-                </Button>
-
-                <!-- 1. Auto Steer toggle -->
-                <Button Width="66" Height="66" Background="Transparent" BorderThickness="0" Padding="6"
-                        ToolTip.Tip="Auto Steer">
-                    <Image Source="/Assets/Icons/AutoSteerOff.png" Width="54" Height="54"/>
-                </Button>
-                </StackPanel>
-            </Border>
-
-            <!-- Panel Bottom: Horizontal toolbar (right-aligned, reversed order for RightToLeft flow) -->
-            <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Background="#1a1a1a" HorizontalAlignment="Right">
-                <StackPanel x:Name="PanelBottom"
-                           Orientation="Horizontal"
-                           Spacing="6">
-
-                <!-- 11. YouTurn Skip Enable toggle -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="YouTurn Skip">
-                    <Image Source="/Assets/Icons/YouSkipOff.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 10. Change Mapping Color -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Section Mapping Color">
-                    <Image Source="/Assets/Icons/SectionMapping.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 9. Reset Tool Heading -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Reset Tool Heading">
-                    <Image Source="/Assets/Icons/ResetTool.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 8. Tram Display Mode toggle -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Tram Display">
-                    <Image Source="/Assets/Icons/TramOff.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 7. Hydraulic Lift toggle -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Hydraulic Lift">
-                    <Image Source="/Assets/Icons/HydraulicLiftOff.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 6. Headland On/Off toggle -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Headland Mode">
-                    <Image Source="/Assets/Icons/HeadlandOff.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 5. Flag/Marker -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Drop Marker Flags">
-                    <Image Source="/Assets/Icons/FlagRed.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 4. Adjust Left -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Snap Left">
-                    <Image Source="/Assets/Icons/SnapLeft.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 3. Adjust Right -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Snap Right">
-                    <Image Source="/Assets/Icons/SnapRight.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 2. Snap to Pivot -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Snap to Pivot">
-                    <Image Source="/Assets/Icons/SnapToPivot.png" Width="48" Height="48"/>
-                </Button>
-
-                <!-- 1. Track mode toggle -->
-                <Button Width="58" Height="58" Background="Transparent" BorderThickness="0" Padding="5"
-                        ToolTip.Tip="Track Mode">
-                    <Image Source="/Assets/Icons/TrackOn.png" Width="48" Height="48"/>
-                </Button>
-                </StackPanel>
-            </Border>
         </Grid>
 
         <!-- Navigation Overlay: Touch-Friendly Transparent Panel -->
@@ -264,7 +129,7 @@
                         <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding TiltDownCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/TiltDown.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/TiltDown.png" Width="54" Height="54"/>
                                 <TextBlock Text="Tilt Down" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -273,7 +138,7 @@
                         <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding TiltUpCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/TiltUp.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/TiltUp.png" Width="54" Height="54"/>
                                 <TextBlock Text="Tilt Up" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -282,7 +147,7 @@
                         <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding Camera2DCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Camera2D64.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Camera2D64.png" Width="54" Height="54"/>
                                 <TextBlock Text="Camera 2D" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -291,7 +156,7 @@
                         <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding Camera3DCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Camera3D64.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Camera3D64.png" Width="54" Height="54"/>
                                 <TextBlock Text="Camera 3D" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -300,7 +165,7 @@
                         <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding CameraNorth2DCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/CameraNorth2D.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/CameraNorth2D.png" Width="54" Height="54"/>
                                 <TextBlock Text="North Lock 2D" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -309,7 +174,7 @@
                         <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding ToggleGridCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/GridRotate.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/GridRotate.png" Width="54" Height="54"/>
                                 <TextBlock Text="Toggle Grid" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -318,7 +183,7 @@
                         <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding ToggleDayNightCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/WindowNightMode.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/WindowNightMode.png" Width="54" Height="54"/>
                                 <TextBlock Text="Day/Night Mode" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -335,7 +200,7 @@
                         <Button Grid.Row="4" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding BrightnessDownCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/BrightnessDn.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/BrightnessDn.png" Width="54" Height="54"/>
                                 <TextBlock VerticalAlignment="Center" FontSize="18" Foreground="White">
                                     <Run Text="Brightness"/>
                                     <Run Text="20%" FontWeight="Bold" Foreground="#FFA500"/>
@@ -347,7 +212,7 @@
                         <Button Grid.Row="4" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2"
                                 Command="{Binding BrightnessUpCommand}">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/BrightnessUp.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/BrightnessUp.png" Width="54" Height="54"/>
                                 <TextBlock Text="Brightness Up" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -388,7 +253,7 @@
                         <!-- Row 0, Col 0: Steer Wizard -->
                         <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/AutoSteerOn.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/AutoSteerOn.png" Width="54" Height="54"/>
                                 <TextBlock Text="Steer Wizard" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -396,7 +261,7 @@
                         <!-- Row 0, Col 1: Steer Chart -->
                         <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/AutoSteerOn.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/AutoSteerOn.png" Width="54" Height="54"/>
                                 <TextBlock Text="Steer Chart" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -404,7 +269,7 @@
                         <!-- Row 0, Col 2: Heading Chart -->
                         <Button Grid.Row="0" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ConS_SourcesHeading.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ConS_SourcesHeading.png" Width="54" Height="54"/>
                                 <TextBlock Text="Heading Chart" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -412,7 +277,7 @@
                         <!-- Row 1, Col 0: XTE Chart -->
                         <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/AutoManualIsAuto.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/AutoManualIsAuto.png" Width="54" Height="54"/>
                                 <TextBlock Text="XTE Chart" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -420,7 +285,7 @@
                         <!-- Row 1, Col 1: Roll Check -->
                         <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ConS_SourcesRoll.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ConS_SourcesRoll.png" Width="54" Height="54"/>
                                 <TextBlock Text="Roll Check" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -428,7 +293,7 @@
                         <!-- Row 1, Col 2: Boundary Tool -->
                         <Button Grid.Row="1" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Boundary.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Boundary.png" Width="54" Height="54"/>
                                 <TextBlock Text="Boundary Tool" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -436,7 +301,7 @@
                         <!-- Row 2, Col 0: Event Viewer -->
                         <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ABTracks.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ABTracks.png" Width="54" Height="54"/>
                                 <TextBlock Text="Event Viewer" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -444,7 +309,7 @@
                         <!-- Row 2, Col 1: Extra Guidelines -->
                         <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ConD_ExtraGuides.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ConD_ExtraGuides.png" Width="54" Height="54"/>
                                 <TextBlock Text="Extra Guidelines" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -452,7 +317,7 @@
                         <!-- Row 2, Col 2: Smooth AB Curve -->
                         <Button Grid.Row="2" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ABSmooth.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ABSmooth.png" Width="54" Height="54"/>
                                 <TextBlock Text="Smooth AB Curve" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -460,7 +325,7 @@
                         <!-- Row 3, Col 0: Delete Contour Paths -->
                         <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/TrashContourRef.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/TrashContourRef.png" Width="54" Height="54"/>
                                 <TextBlock Text="Delete Contour Paths" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -468,7 +333,7 @@
                         <!-- Row 3, Col 1: Webcam -->
                         <Button Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Webcam.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Webcam.png" Width="54" Height="54"/>
                                 <TextBlock Text="Webcam" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -476,7 +341,7 @@
                         <!-- Row 3, Col 2: Offset Fix -->
                         <Button Grid.Row="3" Grid.Column="2" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/YouTurnReverse.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/YouTurnReverse.png" Width="54" Height="54"/>
                                 <TextBlock Text="Offset Fix" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -517,7 +382,7 @@
                         <!-- Row 0, Col 0: Configuration -->
                         <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Settings48.png" Width="54" Height="54"/>
                                 <TextBlock Text="Configuration" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -525,7 +390,7 @@
                         <!-- Row 0, Col 1: Auto Steer -->
                         <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/AutoSteerOff.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/AutoSteerOff.png" Width="54" Height="54"/>
                                 <TextBlock Text="Auto Steer" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -533,7 +398,7 @@
                         <!-- Row 1, Col 0: View All Settings -->
                         <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ScreenShot.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ScreenShot.png" Width="54" Height="54"/>
                                 <TextBlock Text="View All Settings" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -541,7 +406,7 @@
                         <!-- Row 1, Col 1: Working Directories -->
                         <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/FileOpen.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/FileOpen.png" Width="54" Height="54"/>
                                 <TextBlock Text="Working Directories" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -549,7 +414,7 @@
                         <!-- Row 2, Col 0: GPS Data -->
                         <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/GPSQuality.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/GPSQuality.png" Width="54" Height="54"/>
                                 <TextBlock Text="GPS Data" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -557,7 +422,7 @@
                         <!-- Row 2, Col 1: Colors -->
                         <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ColourPick.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ColourPick.png" Width="54" Height="54"/>
                                 <TextBlock Text="Colors" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -565,7 +430,7 @@
                         <!-- Row 3, Col 0: Section Colors -->
                         <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/SectionMapping.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/SectionMapping.png" Width="54" Height="54"/>
                                 <TextBlock Text="Section Colors" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -573,7 +438,7 @@
                         <!-- Row 3, Col 1: Hotkeys -->
                         <Button Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/ConD_KeyBoard.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/ConD_KeyBoard.png" Width="54" Height="54"/>
                                 <TextBlock Text="Hotkeys" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -614,7 +479,7 @@
                         <!-- Row 0, Col 0: Boundary -->
                         <Button Grid.Row="0" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Boundary.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Boundary.png" Width="54" Height="54"/>
                                 <TextBlock Text="Boundary" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -622,7 +487,7 @@
                         <!-- Row 0, Col 1: Headland -->
                         <Button Grid.Row="0" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/HeadlandBuild.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/HeadlandBuild.png" Width="54" Height="54"/>
                                 <TextBlock Text="Headland" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -630,7 +495,7 @@
                         <!-- Row 1, Col 0: Headland Build -->
                         <Button Grid.Row="1" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/Headache.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/Headache.png" Width="54" Height="54"/>
                                 <TextBlock Text="Headland Build" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -638,7 +503,7 @@
                         <!-- Row 1, Col 1: TramLines All -->
                         <Button Grid.Row="1" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/TramAll.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/TramAll.png" Width="54" Height="54"/>
                                 <TextBlock Text="TramLines All" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -646,7 +511,7 @@
                         <!-- Row 2, Col 0: Tramlines Multi -->
                         <Button Grid.Row="2" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/TramMulti.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/TramMulti.png" Width="54" Height="54"/>
                                 <TextBlock Text="Tramlines Multi" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -654,7 +519,7 @@
                         <!-- Row 2, Col 1: Delete Applied -->
                         <Button Grid.Row="2" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/TrashApplied.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/TrashApplied.png" Width="54" Height="54"/>
                                 <TextBlock Text="Delete Applied" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -662,7 +527,7 @@
                         <!-- Row 3, Col 0: Flag By Lat Lon -->
                         <Button Grid.Row="3" Grid.Column="0" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/FlagRed.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/FlagRed.png" Width="54" Height="54"/>
                                 <TextBlock Text="Flag By Lat Lon" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -670,7 +535,7 @@
                         <!-- Row 3, Col 1: Recorded Path -->
                         <Button Grid.Row="3" Grid.Column="1" Height="72" Background="#402a2a2a" BorderThickness="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" Padding="12" Margin="2">
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Image Source="/Assets/Icons/RecPath.png" Width="52" Height="52"/>
+                                <Image Source="/Assets/Icons/RecPath.png" Width="54" Height="54"/>
                                 <TextBlock Text="Recorded Path" VerticalAlignment="Center" FontSize="18" Foreground="White"/>
                             </StackPanel>
                         </Button>
@@ -692,7 +557,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="8,8,0,0"
-                Width="76"
+                Width="70"
                 Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn1_PointerPressed"
@@ -718,8 +583,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="8,86,0,0"
-                Width="76"
-                Height="76"
+                Width="70"
+                Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn2_PointerPressed"
                 PointerMoved="FloatingBtn2_PointerMoved"
@@ -729,7 +594,7 @@
                     Background="Transparent" BorderThickness="0" Padding="8"
                     ToolTip.Tip="Wizards Menu"
                     IsHitTestVisible="False">
-                <Image Source="/Assets/Icons/SpecialFunctions.png" Width="52" Height="52"/>
+                <Image Source="/Assets/Icons/SpecialFunctions.png" Width="54" Height="54"/>
             </Button>
         </Border>
 
@@ -743,9 +608,9 @@
                 BoxShadow="0 4 8 0 #80000000"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Margin="8,170,0,0"
-                Width="76"
-                Height="76"
+                Margin="8,164,0,0"
+                Width="70"
+                Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn3_PointerPressed"
                 PointerMoved="FloatingBtn3_PointerMoved"
@@ -755,7 +620,7 @@
                     Background="Transparent" BorderThickness="0" Padding="8"
                     ToolTip.Tip="Configuration"
                     IsHitTestVisible="False">
-                <Image Source="/Assets/Icons/Settings48.png" Width="52" Height="52"/>
+                <Image Source="/Assets/Icons/Settings48.png" Width="54" Height="54"/>
             </Button>
         </Border>
 
@@ -769,9 +634,9 @@
                 BoxShadow="0 4 8 0 #80000000"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Margin="8,254,0,0"
-                Width="76"
-                Height="76"
+                Margin="8,242,0,0"
+                Width="70"
+                Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn4_PointerPressed"
                 PointerMoved="FloatingBtn4_PointerMoved"
@@ -781,7 +646,7 @@
                     Background="Transparent" BorderThickness="0" Padding="8"
                     ToolTip.Tip="Field Manager"
                     IsHitTestVisible="False">
-                <Image Source="/Assets/Icons/JobActive.png" Width="52" Height="52"/>
+                <Image Source="/Assets/Icons/JobActive.png" Width="54" Height="54"/>
             </Button>
         </Border>
 
@@ -795,9 +660,9 @@
                 BoxShadow="0 4 8 0 #80000000"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Margin="8,338,0,0"
-                Width="76"
-                Height="76"
+                Margin="8,320,0,0"
+                Width="70"
+                Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn5_PointerPressed"
                 PointerMoved="FloatingBtn5_PointerMoved"
@@ -807,7 +672,7 @@
                     Background="Transparent" BorderThickness="0" Padding="8"
                     ToolTip.Tip="Field Tools Menu"
                     IsHitTestVisible="False">
-                <Image Source="/Assets/Icons/FieldTools.png" Width="52" Height="52"/>
+                <Image Source="/Assets/Icons/FieldTools.png" Width="54" Height="54"/>
             </Button>
         </Border>
 
@@ -821,9 +686,9 @@
                 BoxShadow="0 4 8 0 #80000000"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Margin="8,422,0,0"
-                Width="76"
-                Height="84"
+                Margin="8,398,0,0"
+                Width="70"
+                Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn6_PointerPressed"
                 PointerMoved="FloatingBtn6_PointerMoved"
@@ -854,9 +719,9 @@
                 BoxShadow="0 4 8 0 #80000000"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Margin="8,514,0,0"
-                Width="76"
-                Height="90"
+                Margin="8,476,0,0"
+                Width="70"
+                Height="70"
                 ZIndex="100"
                 PointerPressed="FloatingBtn7_PointerPressed"
                 PointerMoved="FloatingBtn7_PointerMoved"
@@ -869,5 +734,510 @@
                 <Image Source="/Assets/Icons/AgIO.png" Width="52" Height="66"/>
             </Button>
         </Border>
+
+        <!-- RIGHT PANEL FLOATING BUTTONS (FloatingBtnR1-R9) -->
+
+        <!-- R1. Auto Steer -->
+        <Border x:Name="FloatingBtnR1"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR1_PointerPressed"
+                PointerMoved="FloatingBtnR1_PointerMoved"
+                PointerReleased="FloatingBtnR1_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Auto Steer"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/AutoSteerOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R2. Auto YouTurn -->
+        <Border x:Name="FloatingBtnR2"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR2_PointerPressed"
+                PointerMoved="FloatingBtnR2_PointerMoved"
+                PointerReleased="FloatingBtnR2_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Auto YouTurn"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/YouTurnNo.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R3. Section Master Auto -->
+        <Border x:Name="FloatingBtnR3"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR3_PointerPressed"
+                PointerMoved="FloatingBtnR3_PointerMoved"
+                PointerReleased="FloatingBtnR3_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Section Control Auto"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/SectionMasterOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R4. Section Master Manual -->
+        <Border x:Name="FloatingBtnR4"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR4_PointerPressed"
+                PointerMoved="FloatingBtnR4_PointerMoved"
+                PointerReleased="FloatingBtnR4_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Section Control Manual"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/ManualOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R5. Auto Track -->
+        <Border x:Name="FloatingBtnR5"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR5_PointerPressed"
+                PointerMoved="FloatingBtnR5_PointerMoved"
+                PointerReleased="FloatingBtnR5_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Auto Track"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/AutoTrackOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R6. Cycle Lines Backward -->
+        <Border x:Name="FloatingBtnR6"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR6_PointerPressed"
+                PointerMoved="FloatingBtnR6_PointerMoved"
+                PointerReleased="FloatingBtnR6_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Cycle Lines Backward"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/ABLineCycleBk.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R7. Cycle Lines Forward -->
+        <Border x:Name="FloatingBtnR7"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR7_PointerPressed"
+                PointerMoved="FloatingBtnR7_PointerMoved"
+                PointerReleased="FloatingBtnR7_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Cycle Lines Forward"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/ABLineCycle.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R8. Contour Mode -->
+        <Border x:Name="FloatingBtnR8"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR8_PointerPressed"
+                PointerMoved="FloatingBtnR8_PointerMoved"
+                PointerReleased="FloatingBtnR8_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Contour Mode"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/ContourOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- R9. Contour Lock -->
+        <Border x:Name="FloatingBtnR9"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnR9_PointerPressed"
+                PointerMoved="FloatingBtnR9_PointerMoved"
+                PointerReleased="FloatingBtnR9_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Contour Lock"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/ColorUnlocked.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- BOTTOM PANEL FLOATING BUTTONS (FloatingBtnB1-B11) -->
+
+        <!-- B1. Track Mode -->
+        <Border x:Name="FloatingBtnB1"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB1_PointerPressed"
+                PointerMoved="FloatingBtnB1_PointerMoved"
+                PointerReleased="FloatingBtnB1_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Track Mode"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/TrackOn.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B2. Snap to Pivot -->
+        <Border x:Name="FloatingBtnB2"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB2_PointerPressed"
+                PointerMoved="FloatingBtnB2_PointerMoved"
+                PointerReleased="FloatingBtnB2_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Snap to Pivot"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/SnapToPivot.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B3. Snap Right -->
+        <Border x:Name="FloatingBtnB3"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB3_PointerPressed"
+                PointerMoved="FloatingBtnB3_PointerMoved"
+                PointerReleased="FloatingBtnB3_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Snap Right"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/SnapRight.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B4. Snap Left -->
+        <Border x:Name="FloatingBtnB4"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB4_PointerPressed"
+                PointerMoved="FloatingBtnB4_PointerMoved"
+                PointerReleased="FloatingBtnB4_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Snap Left"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/SnapLeft.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B5. Flag/Marker -->
+        <Border x:Name="FloatingBtnB5"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB5_PointerPressed"
+                PointerMoved="FloatingBtnB5_PointerMoved"
+                PointerReleased="FloatingBtnB5_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Drop Marker Flags"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/FlagRed.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B6. Headland Mode -->
+        <Border x:Name="FloatingBtnB6"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB6_PointerPressed"
+                PointerMoved="FloatingBtnB6_PointerMoved"
+                PointerReleased="FloatingBtnB6_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Headland Mode"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/HeadlandOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B7. Hydraulic Lift -->
+        <Border x:Name="FloatingBtnB7"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB7_PointerPressed"
+                PointerMoved="FloatingBtnB7_PointerMoved"
+                PointerReleased="FloatingBtnB7_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Hydraulic Lift"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/HydraulicLiftOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B8. Tram Display -->
+        <Border x:Name="FloatingBtnB8"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB8_PointerPressed"
+                PointerMoved="FloatingBtnB8_PointerMoved"
+                PointerReleased="FloatingBtnB8_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Tram Display"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/TramOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B9. Reset Tool Heading -->
+        <Border x:Name="FloatingBtnB9"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB9_PointerPressed"
+                PointerMoved="FloatingBtnB9_PointerMoved"
+                PointerReleased="FloatingBtnB9_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Reset Tool Heading"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/ResetTool.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B10. Section Mapping Color -->
+        <Border x:Name="FloatingBtnB10"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB10_PointerPressed"
+                PointerMoved="FloatingBtnB10_PointerMoved"
+                PointerReleased="FloatingBtnB10_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="Section Mapping Color"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/SectionMapping.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
+        <!-- B11. YouTurn Skip -->
+        <Border x:Name="FloatingBtnB11"
+                Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2"
+                Background="Transparent"
+                BorderBrush="#B0B0B0"
+                BorderThickness="2"
+                CornerRadius="8"
+                BoxShadow="0 4 8 0 #80000000"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="8,8,0,0"
+                Width="70"
+                Height="70"
+                ZIndex="100"
+                PointerPressed="FloatingBtnB11_PointerPressed"
+                PointerMoved="FloatingBtnB11_PointerMoved"
+                PointerReleased="FloatingBtnB11_PointerReleased"
+                Cursor="Hand">
+            <Button Background="Transparent" BorderThickness="0" Padding="8"
+                    ToolTip.Tip="YouTurn Skip"
+                    IsHitTestVisible="False">
+                <Image Source="/Assets/Icons/YouSkipOff.png" Width="54" Height="54"/>
+            </Button>
+        </Border>
+
     </Grid>
 </Window>

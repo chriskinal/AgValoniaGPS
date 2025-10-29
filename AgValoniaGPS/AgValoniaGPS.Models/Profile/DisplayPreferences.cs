@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace AgValoniaGPS.Models.Profile;
 
 /// <summary>
@@ -27,4 +29,25 @@ public class DisplayPreferences
     /// Only used when RotatingDisplayEnabled is true.
     /// </summary>
     public int RotatingDisplayInterval { get; set; } = 5;
+
+    /// <summary>
+    /// Gets or sets the saved positions of floating buttons.
+    /// Stores position offsets and visibility state for each button.
+    /// </summary>
+    public List<ButtonPosition> ButtonPositions { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the saved window width.
+    /// </summary>
+    public double WindowWidth { get; set; } = 1366;
+
+    /// <summary>
+    /// Gets or sets the saved window height.
+    /// </summary>
+    public double WindowHeight { get; set; } = 768;
+
+    /// <summary>
+    /// Gets or sets whether the window was maximized.
+    /// </summary>
+    public bool WindowMaximized { get; set; } = false;
 }
