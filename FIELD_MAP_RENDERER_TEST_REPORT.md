@@ -4,7 +4,12 @@
 2025-10-30
 
 ## Summary
-Successfully implemented a complete, working 2D field renderer for AgValoniaGPS using Avalonia's Canvas and DrawingContext API. The implementation replaces the placeholder "OpenGL Map Area (Wave 11)" text with a fully functional map renderer.
+Successfully implemented a complete, working 2D field renderer for AgValoniaGPS using Avalonia's DrawingContext API with Control base class. The implementation replaces the placeholder "OpenGL Map Area (Wave 11)" text with a fully functional map renderer.
+
+## Critical Fix Applied
+**Issue**: Initial implementation using `UserControl` base class prevented rendering from being visible.
+**Solution**: Changed base class from `UserControl` to `Control` to enable custom rendering via `Render(DrawingContext)` override.
+**Result**: Full rendering now works correctly with visible grid, vehicle placeholder, and text overlays.
 
 ## Files Created/Modified
 

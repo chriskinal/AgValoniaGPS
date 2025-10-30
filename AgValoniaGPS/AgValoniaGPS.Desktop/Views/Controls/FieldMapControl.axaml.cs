@@ -17,10 +17,10 @@ using AgValoniaGPS.Models.Guidance;
 namespace AgValoniaGPS.Desktop.Views.Controls;
 
 /// <summary>
-/// 2D Field Map renderer using Avalonia's Canvas and DrawingContext
+/// 2D Field Map renderer using Avalonia's DrawingContext
 /// Displays vehicle, boundaries, guidance lines, and coverage
 /// </summary>
-public partial class FieldMapControl : UserControl
+public partial class FieldMapControl : Control
 {
     // Services
     private readonly IPositionUpdateService? _positionService;
@@ -62,8 +62,8 @@ public partial class FieldMapControl : UserControl
     private readonly IBrush _coverageBrush = new SolidColorBrush(Color.FromArgb(128, 76, 175, 80));
     private readonly IBrush _overlapBrush = new SolidColorBrush(Color.FromArgb(128, 255, 152, 0));
 
-    // Grid rendering
-    private readonly IBrush _gridBrush = new SolidColorBrush(Color.FromArgb(40, 255, 255, 255));
+    // Grid rendering (made more visible)
+    private readonly IBrush _gridBrush = new SolidColorBrush(Color.FromArgb(80, 255, 255, 255));
     private readonly IPen _gridPen;
 
     public FieldMapControl()
@@ -166,7 +166,7 @@ public partial class FieldMapControl : UserControl
         // Clear background
         context.FillRectangle(_backgroundBrush, new Rect(0, 0, Bounds.Width, Bounds.Height));
 
-        // Draw grid
+        // Draw grid (with more visible lines)
         DrawGrid(context);
 
         // Update boundary if available
@@ -225,7 +225,7 @@ public partial class FieldMapControl : UserControl
         {
             // Draw a placeholder dot in the center
             var center = new Point(Bounds.Width / 2, Bounds.Height / 2);
-            context.FillRectangle(_vehicleBrush, new Rect(center.X - 3, center.Y - 3, 6, 6));
+            context.FillRectangle(_vehicleBrush, new Rect(center.X - 10, center.Y - 10, 20, 20));
             return;
         }
 
@@ -346,7 +346,7 @@ public partial class FieldMapControl : UserControl
             System.Globalization.CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
             Typeface.Default,
-            12,
+            14,
             Brushes.White);
 
         context.DrawText(formattedText, new Point(10, 10));
