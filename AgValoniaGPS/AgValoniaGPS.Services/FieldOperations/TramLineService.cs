@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Events;
+using AgValoniaGPS.Models.Guidance;
+using AgValoniaGPS.Services.Guidance;
 
 namespace AgValoniaGPS.Services.FieldOperations;
 
@@ -17,12 +20,19 @@ public class TramLineService : ITramLineService
     private const double RadiansToDegrees = 180.0 / Math.PI;
 
     private readonly object _lock = new object();
+    private readonly IABLineService _abLineService;
+
     private Position[][]? _tramLines;
     private double _spacing = 3.0; // Default spacing in meters
     private Position? _baseLineStart;
     private Position? _baseLineEnd;
 
     public event EventHandler<TramLineProximityEventArgs>? TramLineProximity;
+
+    public TramLineService(IABLineService abLineService)
+    {
+        _abLineService = abLineService ?? throw new ArgumentNullException(nameof(abLineService));
+    }
 
     /// <summary>
     /// Generate tram lines from a base line with specified spacing
@@ -74,18 +84,93 @@ public class TramLineService : ITramLineService
     }
 
     /// <summary>
-    /// Generate tram lines from an AB line by ID
-    /// Note: This is a simplified implementation. In a full integration,
-    /// this would use IABLineService to get the AB line by ID
+    /// Generate tram lines from an AB line with specified spacing
+    /// Uses IABLineService to generate parallel lines from the AB line
     /// </summary>
-    public void GenerateFromABLine(int abLineId, double spacing)
+    /// <param name="abLine">The AB line to generate tram lines from</param>
+    /// <param name="spacing">Spacing between tram lines in meters</param>
+    /// <param name="count">Number of tram lines to generate on each side of the AB line</param>
+    /// <param name="unitSystem">Unit system for spacing (Metric or Imperial)</param>
+    public void GenerateFromABLine(ABLine abLine, double spacing, int count, UnitSystem unitSystem = UnitSystem.Metric)
     {
-        // This is a placeholder for AB line integration
-        // In a full implementation, this would:
-        // 1. Inject IABLineService
-        // 2. Get AB line by ID
-        // 3. Generate tram lines from AB line geometry
-        throw new NotImplementedException("AB line integration not yet implemented in this basic version");
+        if (abLine == null)
+            throw new ArgumentNullException(nameof(abLine));
+        if (spacing < MinimumSpacing)
+            throw new ArgumentException($"Spacing must be at least {MinimumSpacing} meters");
+        if (count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count), "Count must be non-negative");
+
+        lock (_lock)
+        {
+            // Use ABLineService to generate parallel lines
+            var parallelLines = _abLineService.GenerateParallelLines(abLine, spacing, count, unitSystem);
+
+            // Convert ABLine objects to Position[][] format for tram lines
+            var tramLinesList = new List<Position[]>();
+
+            foreach (var line in parallelLines)
+            {
+                // Create a line segment from the ABLine
+                // ABLine extends infinitely, so we create a segment based on a reasonable length
+                var linePoints = new List<Position>();
+
+                // Use the AB line's origin and heading to create line points
+                // Generate points along the line (e.g., every 10 meters for 1000 meters)
+                double lineLength = 1000.0; // meters
+                double pointSpacing = 10.0; // meters between points
+                int numPoints = (int)(lineLength / pointSpacing);
+
+                for (int i = 0; i <= numPoints; i++)
+                {
+                    double distance = i * pointSpacing - (lineLength / 2.0); // Center the line
+
+                    // Use the line's midpoint as origin
+                    double easting = line.MidPoint.Easting + distance * Math.Sin(line.Heading);
+                    double northing = line.MidPoint.Northing + distance * Math.Cos(line.Heading);
+
+                    linePoints.Add(new Position
+                    {
+                        Easting = easting,
+                        Northing = northing,
+                        Heading = line.Heading * RadiansToDegrees,
+                        Latitude = line.MidPoint.Latitude,
+                        Longitude = line.MidPoint.Longitude,
+                        Zone = line.MidPoint.Zone,
+                        Hemisphere = line.MidPoint.Hemisphere
+                    });
+                }
+
+                tramLinesList.Add(linePoints.ToArray());
+            }
+
+            _tramLines = tramLinesList.ToArray();
+            _spacing = spacing;
+
+            // Store the original AB line geometry as base line
+            double halfLength = 500.0; // Half of 1000m line
+
+            _baseLineStart = new Position
+            {
+                Easting = abLine.MidPoint.Easting - halfLength * Math.Sin(abLine.Heading),
+                Northing = abLine.MidPoint.Northing - halfLength * Math.Cos(abLine.Heading),
+                Heading = abLine.Heading * RadiansToDegrees,
+                Latitude = abLine.MidPoint.Latitude,
+                Longitude = abLine.MidPoint.Longitude,
+                Zone = abLine.MidPoint.Zone,
+                Hemisphere = abLine.MidPoint.Hemisphere
+            };
+
+            _baseLineEnd = new Position
+            {
+                Easting = abLine.MidPoint.Easting + halfLength * Math.Sin(abLine.Heading),
+                Northing = abLine.MidPoint.Northing + halfLength * Math.Cos(abLine.Heading),
+                Heading = abLine.Heading * RadiansToDegrees,
+                Latitude = abLine.MidPoint.Latitude,
+                Longitude = abLine.MidPoint.Longitude,
+                Zone = abLine.MidPoint.Zone,
+                Hemisphere = abLine.MidPoint.Hemisphere
+            };
+        }
     }
 
     /// <summary>

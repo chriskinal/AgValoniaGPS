@@ -240,6 +240,51 @@ public class HeadingCalculatorService : IHeadingCalculatorService
     }
 
     /// <summary>
+    /// Apply steer angle compensation to heading for low-speed accuracy (Section 6E)
+    /// Based on AgOpenGPS Position.designer.cs lines 419-424
+    ///
+    /// At low speeds, the steering angle causes the antenna to swing laterally,
+    /// which affects the apparent heading. This compensation corrects for that swing.
+    ///
+    /// Formula: heading -= toRadians(antennaPivot * steerAngle * compensationFactor)
+    /// - Only applied when |steerAngle| > 0.1 degrees AND speed < 1.0 m/s
+    /// - Different compensation factors for forward vs reverse
+    /// </summary>
+    public double ApplySteerAngleCompensation(double heading, double steerAngleDegrees, double speed,
+        bool isReversing, double antennaPivotDistance, double forwardCompensation = 1.0,
+        double reverseCompensation = 1.0)
+    {
+        // Only apply compensation at low speeds when there is significant steer angle
+        // Threshold: speed < 1.0 m/s and |steerAngle| > 0.1 degrees
+        if (speed >= 1.0 || Math.Abs(steerAngleDegrees) <= 0.1)
+        {
+            // No compensation needed at higher speeds or when wheels are straight
+            return heading;
+        }
+
+        // Skip if antenna pivot distance is negligible (no physical swing effect)
+        if (Math.Abs(antennaPivotDistance) < 0.01)
+        {
+            return heading;
+        }
+
+        // Calculate compensation based on direction of travel
+        // Formula from AgOpenGPS: antennaPivot * steerAngle * compensationFactor
+        double compensationFactor = isReversing ? reverseCompensation : forwardCompensation;
+        double compensationDegrees = antennaPivotDistance * steerAngleDegrees * compensationFactor;
+
+        // Convert compensation to radians and subtract from heading
+        // Note: Division by 1.0 in legacy code (lines 420, 423) appears to be identity operation
+        double compensationRadians = DegreesToRadians(compensationDegrees);
+        double compensatedHeading = heading - compensationRadians;
+
+        // Normalize result to 0-2π range
+        compensatedHeading = NormalizeAngle(compensatedHeading);
+
+        return compensatedHeading;
+    }
+
+    /// <summary>
     /// Convert degrees to radians
     /// </summary>
     private double DegreesToRadians(double degrees)

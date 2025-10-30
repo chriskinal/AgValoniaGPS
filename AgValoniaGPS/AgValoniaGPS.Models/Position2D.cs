@@ -72,6 +72,38 @@ public readonly struct Position2D : IEquatable<Position2D>
         return !left.Equals(right);
     }
 
+    /// <summary>
+    /// Subtracts two positions to get a direction vector.
+    /// </summary>
+    public static Position2D operator -(Position2D left, Position2D right)
+    {
+        return new Position2D(left.Easting - right.Easting, left.Northing - right.Northing);
+    }
+
+    /// <summary>
+    /// Adds two positions/vectors.
+    /// </summary>
+    public static Position2D operator +(Position2D left, Position2D right)
+    {
+        return new Position2D(left.Easting + right.Easting, left.Northing + right.Northing);
+    }
+
+    /// <summary>
+    /// Multiplies a position/vector by a scalar.
+    /// </summary>
+    public static Position2D operator *(Position2D pos, double scalar)
+    {
+        return new Position2D(pos.Easting * scalar, pos.Northing * scalar);
+    }
+
+    /// <summary>
+    /// Multiplies a position/vector by a scalar (reverse order).
+    /// </summary>
+    public static Position2D operator *(double scalar, Position2D pos)
+    {
+        return new Position2D(pos.Easting * scalar, pos.Northing * scalar);
+    }
+
     public override string ToString()
     {
         return $"E: {Easting:F3}, N: {Northing:F3}";

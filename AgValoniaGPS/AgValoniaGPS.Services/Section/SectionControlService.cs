@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Events;
@@ -13,10 +14,12 @@ namespace AgValoniaGPS.Services.Section;
 /// Implements the section control finite state machine with timer management,
 /// boundary checking, manual override handling, and Machine hardware integration.
 /// Integrates with MachineCommunicationService for closed-loop section control.
+/// Now includes coverage triangle generation via SectionGeometryService and CoverageMapService.
 /// </summary>
 /// <remarks>
 /// Thread-safe implementation using lock object pattern.
 /// Performance optimized for &lt;5ms execution time for all 31 sections.
+/// Triangle generation adds ~1ms overhead per position update.
 /// </remarks>
 public class SectionControlService : ISectionControlService
 {
@@ -26,10 +29,15 @@ public class SectionControlService : ISectionControlService
     private readonly IAnalogSwitchStateService _switchService;
     private readonly ISectionConfigurationService _configService;
     private readonly IPositionUpdateService _positionService;
+    private readonly ISectionGeometryService _geometryService;
+    private readonly ICoverageMapService _coverageMapService;
     private readonly ILogger<SectionControlService>? _logger;
 
     private Models.Section.Section[] _sections = Array.Empty<Models.Section.Section>();
     private SectionConfiguration _config = new SectionConfiguration();
+
+    // Store previous boundary points for triangle strip generation
+    private (Position leftPoint, Position rightPoint)[]? _previousBoundaryPoints = null;
 
     private const double SectionSensorMismatchWarningTimeMs = 500;
 
@@ -43,6 +51,8 @@ public class SectionControlService : ISectionControlService
     /// <param name="switchService">Analog switch state service</param>
     /// <param name="configService">Section configuration service</param>
     /// <param name="positionService">Position update service</param>
+    /// <param name="geometryService">Section geometry service for triangle generation</param>
+    /// <param name="coverageMapService">Coverage map service for storing triangles</param>
     /// <param name="logger">Optional logger for diagnostics</param>
     public SectionControlService(
         ISectionSpeedService speedService,
@@ -50,6 +60,8 @@ public class SectionControlService : ISectionControlService
         IAnalogSwitchStateService switchService,
         ISectionConfigurationService configService,
         IPositionUpdateService positionService,
+        ISectionGeometryService geometryService,
+        ICoverageMapService coverageMapService,
         ILogger<SectionControlService>? logger = null)
     {
         _speedService = speedService ?? throw new ArgumentNullException(nameof(speedService));
@@ -57,6 +69,8 @@ public class SectionControlService : ISectionControlService
         _switchService = switchService ?? throw new ArgumentNullException(nameof(switchService));
         _configService = configService ?? throw new ArgumentNullException(nameof(configService));
         _positionService = positionService ?? throw new ArgumentNullException(nameof(positionService));
+        _geometryService = geometryService ?? throw new ArgumentNullException(nameof(geometryService));
+        _coverageMapService = coverageMapService ?? throw new ArgumentNullException(nameof(coverageMapService));
         _logger = logger;
 
         // Subscribe to configuration changes
@@ -82,6 +96,8 @@ public class SectionControlService : ISectionControlService
             if (workSwitchState == SwitchState.Inactive)
             {
                 TurnOffAllSections(immediate: true);
+                // Reset previous boundary points since we're not working
+                _previousBoundaryPoints = null;
                 return;
             }
 
@@ -90,6 +106,8 @@ public class SectionControlService : ISectionControlService
             if (isReversing)
             {
                 TurnOffAllSections(immediate: true);
+                // Reset previous boundary points since we're not working
+                _previousBoundaryPoints = null;
                 return;
             }
 
@@ -98,6 +116,8 @@ public class SectionControlService : ISectionControlService
             if (isBelowMinSpeed)
             {
                 TurnOffAllSections(immediate: false); // Use normal delay
+                // Reset previous boundary points since we're not working
+                _previousBoundaryPoints = null;
                 return;
             }
 
@@ -109,6 +129,9 @@ public class SectionControlService : ISectionControlService
 
             // Send section states to Machine module via Wave 6 communication service
             SendSectionStatesToMachine();
+
+            // Generate coverage triangles for active sections
+            GenerateCoverageTriangles(position, heading);
         }
     }
 
@@ -467,5 +490,68 @@ public class SectionControlService : ISectionControlService
     private void RaiseSectionStateChanged(int sectionId, SectionState oldState, SectionState newState, SectionStateChangeType changeType)
     {
         SectionStateChanged?.Invoke(this, new SectionStateChangedEventArgs(sectionId, oldState, newState, changeType));
+    }
+
+    /// <summary>
+    /// Generates coverage triangles for all active sections based on current and previous positions.
+    /// Uses triangle strip pattern: 2 triangles per position update per section.
+    /// </summary>
+    /// <param name="position">Current position (GeoCoord with UTM)</param>
+    /// <param name="heading">Current heading in radians</param>
+    private void GenerateCoverageTriangles(GeoCoord position, double heading)
+    {
+        // Convert GeoCoord to Position for geometry service
+        // GeoCoord only has Easting, Northing, Altitude
+        // We need to get additional fields from PositionUpdateService if needed
+        Position vehiclePosition = new Position
+        {
+            Easting = position.Easting,
+            Northing = position.Northing,
+            Altitude = position.Altitude
+        };
+
+        // Calculate current boundary points for all sections
+        var currentBoundaryPoints = _geometryService.CalculateAllSectionBoundaryPoints(vehiclePosition, heading);
+
+        // If this is the first position update, just store boundary points and return
+        if (_previousBoundaryPoints == null)
+        {
+            _previousBoundaryPoints = currentBoundaryPoints;
+            return;
+        }
+
+        // Generate triangles for each section that is actually working
+        var trianglesToAdd = new List<CoverageTriangle>();
+
+        for (int i = 0; i < _sections.Length; i++)
+        {
+            // Only generate triangles if section is actually ON (use ActualState from sensor feedback)
+            // This ensures we only map what was actually applied, not what was commanded
+            if (!_sections[i].ActualState)
+                continue;
+
+            // Get current and previous boundary points for this section
+            var (currentLeft, currentRight) = currentBoundaryPoints[i];
+            var (prevLeft, prevRight) = _previousBoundaryPoints[i];
+
+            // Create triangle strip (2 triangles forming a quad)
+            // Triangle 1: prevLeft -> currentLeft -> prevRight
+            var triangle1 = new CoverageTriangle(prevLeft, currentLeft, prevRight, i);
+
+            // Triangle 2: currentLeft -> currentRight -> prevRight
+            var triangle2 = new CoverageTriangle(currentLeft, currentRight, prevRight, i);
+
+            trianglesToAdd.Add(triangle1);
+            trianglesToAdd.Add(triangle2);
+        }
+
+        // Add all triangles to coverage map service (if any)
+        if (trianglesToAdd.Count > 0)
+        {
+            _coverageMapService.AddCoverageTriangles(trianglesToAdd);
+        }
+
+        // Store current boundary points for next update
+        _previousBoundaryPoints = currentBoundaryPoints;
     }
 }

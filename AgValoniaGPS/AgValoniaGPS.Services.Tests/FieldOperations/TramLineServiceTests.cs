@@ -4,6 +4,7 @@ using System.IO;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Events;
 using AgValoniaGPS.Services.FieldOperations;
+using AgValoniaGPS.Services.Guidance;
 using NUnit.Framework;
 
 namespace AgValoniaGPS.Services.Tests.FieldOperations;
@@ -17,12 +18,14 @@ public class TramLineServiceTests
 {
     private TramLineService? _service;
     private TramLineFileService? _fileService;
+    private IABLineService? _abLineService;
     private string? _testDirectory;
 
     [SetUp]
     public void SetUp()
     {
-        _service = new TramLineService();
+        _abLineService = new ABLineService();
+        _service = new TramLineService(_abLineService);
         _fileService = new TramLineFileService();
         _testDirectory = Path.Combine(Path.GetTempPath(), "TramLineTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_testDirectory);

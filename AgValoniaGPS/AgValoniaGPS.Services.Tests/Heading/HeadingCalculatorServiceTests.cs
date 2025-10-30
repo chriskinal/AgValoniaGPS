@@ -630,6 +630,262 @@ public class HeadingCalculatorServiceTests
 
     #endregion
 
+    #region Steer Angle Compensation Tests (Section 6E)
+
+    [Test]
+    public void ApplySteerAngleCompensation_LowSpeedWithSteerAngle_AppliesCompensation()
+    {
+        // Arrange - low speed (0.5 m/s), significant steer angle (10°), forward motion
+        double heading = Math.PI / 2; // East (90°)
+        double steerAngleDegrees = 10.0;
+        double speed = 0.5; // Low speed
+        bool isReversing = false;
+        double antennaPivotDistance = 2.0; // 2 meters
+        double forwardCompensation = 1.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing,
+            antennaPivotDistance, forwardCompensation);
+
+        // Assert - compensation should be applied (heading should change)
+        Assert.That(compensated, Is.Not.EqualTo(heading));
+
+        // Compensation formula: heading -= toRadians(antennaPivot * steerAngle * forwardComp)
+        // Expected: 2.0 * 10.0 * 1.0 = 20 degrees = ~0.349 radians
+        double expectedCompensation = 20.0 * Math.PI / 180.0;
+        double expectedHeading = heading - expectedCompensation;
+        if (expectedHeading < 0) expectedHeading += 2 * Math.PI;
+
+        Assert.That(compensated, Is.EqualTo(expectedHeading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_HighSpeed_NoCompensation()
+    {
+        // Arrange - high speed (2.0 m/s), compensation should NOT be applied
+        double heading = Math.PI / 2; // East
+        double steerAngleDegrees = 10.0;
+        double speed = 2.0; // High speed (>= 1.0 m/s)
+        bool isReversing = false;
+        double antennaPivotDistance = 2.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - heading should remain unchanged
+        Assert.That(compensated, Is.EqualTo(heading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_SmallSteerAngle_NoCompensation()
+    {
+        // Arrange - low speed but steer angle below threshold (0.1°)
+        double heading = Math.PI / 2;
+        double steerAngleDegrees = 0.05; // Below 0.1° threshold
+        double speed = 0.5;
+        bool isReversing = false;
+        double antennaPivotDistance = 2.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - heading should remain unchanged
+        Assert.That(compensated, Is.EqualTo(heading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_ZeroAntennaPivot_NoCompensation()
+    {
+        // Arrange - antenna pivot distance is zero (no physical swing)
+        double heading = Math.PI / 2;
+        double steerAngleDegrees = 10.0;
+        double speed = 0.5;
+        bool isReversing = false;
+        double antennaPivotDistance = 0.0; // No pivot distance
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - heading should remain unchanged
+        Assert.That(compensated, Is.EqualTo(heading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_ReverseMotion_UsesReverseCompensation()
+    {
+        // Arrange - reversing with different compensation factor
+        double heading = Math.PI; // South
+        double steerAngleDegrees = 10.0;
+        double speed = 0.5;
+        bool isReversing = true;
+        double antennaPivotDistance = 2.0;
+        double forwardCompensation = 1.0;
+        double reverseCompensation = 1.5; // Higher compensation in reverse
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing,
+            antennaPivotDistance, forwardCompensation, reverseCompensation);
+
+        // Assert - should use reverse compensation factor
+        // Expected: 2.0 * 10.0 * 1.5 = 30 degrees = ~0.524 radians
+        double expectedCompensation = 30.0 * Math.PI / 180.0;
+        double expectedHeading = heading - expectedCompensation;
+        if (expectedHeading < 0) expectedHeading += 2 * Math.PI;
+
+        Assert.That(compensated, Is.EqualTo(expectedHeading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_NegativeSteerAngle_AppliesCorrectly()
+    {
+        // Arrange - negative steer angle (left turn)
+        double heading = 0; // North
+        double steerAngleDegrees = -15.0; // Left turn
+        double speed = 0.5;
+        bool isReversing = false;
+        double antennaPivotDistance = 1.5;
+        double forwardCompensation = 1.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing,
+            antennaPivotDistance, forwardCompensation);
+
+        // Assert - compensation should be applied with negative value
+        // Expected: 1.5 * -15.0 * 1.0 = -22.5 degrees = ~-0.393 radians
+        double expectedCompensation = -22.5 * Math.PI / 180.0;
+        double expectedHeading = heading - expectedCompensation;
+        while (expectedHeading < 0) expectedHeading += 2 * Math.PI;
+        while (expectedHeading >= 2 * Math.PI) expectedHeading -= 2 * Math.PI;
+
+        Assert.That(compensated, Is.EqualTo(expectedHeading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_WraparoundCase_NormalizesCorrectly()
+    {
+        // Arrange - heading near 0, large positive compensation wraps around
+        double heading = 0.1; // Just past north
+        double steerAngleDegrees = 30.0; // Large steer angle
+        double speed = 0.8;
+        bool isReversing = false;
+        double antennaPivotDistance = 1.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - result should be normalized to 0-2π range
+        Assert.That(compensated, Is.GreaterThanOrEqualTo(0));
+        Assert.That(compensated, Is.LessThan(2 * Math.PI));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_SpeedAtThreshold_NoCompensation()
+    {
+        // Arrange - speed exactly at 1.0 m/s (threshold boundary)
+        double heading = Math.PI / 4;
+        double steerAngleDegrees = 10.0;
+        double speed = 1.0; // Exactly at threshold
+        bool isReversing = false;
+        double antennaPivotDistance = 2.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - no compensation at threshold (speed >= 1.0)
+        Assert.That(compensated, Is.EqualTo(heading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_SpeedJustBelowThreshold_AppliesCompensation()
+    {
+        // Arrange - speed just below 1.0 m/s threshold
+        double heading = Math.PI / 4;
+        double steerAngleDegrees = 10.0;
+        double speed = 0.99; // Just below threshold
+        bool isReversing = false;
+        double antennaPivotDistance = 2.0;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - compensation should be applied
+        Assert.That(compensated, Is.Not.EqualTo(heading));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_LargeSteerAngle_AppliesLargeCompensation()
+    {
+        // Arrange - very large steer angle (near max for agricultural equipment)
+        double heading = Math.PI / 2; // East
+        double steerAngleDegrees = 35.0; // Large angle
+        double speed = 0.3; // Very slow
+        bool isReversing = false;
+        double antennaPivotDistance = 2.5;
+        double forwardCompensation = 1.2;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing,
+            antennaPivotDistance, forwardCompensation);
+
+        // Assert - large compensation should be applied
+        // Expected: 2.5 * 35.0 * 1.2 = 105 degrees = ~1.833 radians
+        double expectedCompensation = 105.0 * Math.PI / 180.0;
+        double expectedHeading = heading - expectedCompensation;
+        while (expectedHeading < 0) expectedHeading += 2 * Math.PI;
+
+        Assert.That(compensated, Is.EqualTo(expectedHeading).Within(Tolerance));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_VeryLowSpeed_AppliesCompensation()
+    {
+        // Arrange - very slow speed (creeping forward)
+        double heading = 3 * Math.PI / 2; // West
+        double steerAngleDegrees = 5.0;
+        double speed = 0.1; // Very slow
+        bool isReversing = false;
+        double antennaPivotDistance = 1.8;
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing, antennaPivotDistance);
+
+        // Assert - compensation should still apply at very low speeds
+        Assert.That(compensated, Is.Not.EqualTo(heading));
+    }
+
+    [Test]
+    public void ApplySteerAngleCompensation_CompensationFactorZero_NoCompensation()
+    {
+        // Arrange - compensation factor set to 0 (disabled)
+        double heading = Math.PI;
+        double steerAngleDegrees = 10.0;
+        double speed = 0.5;
+        bool isReversing = false;
+        double antennaPivotDistance = 2.0;
+        double forwardCompensation = 0.0; // Compensation disabled
+
+        // Act
+        double compensated = _service.ApplySteerAngleCompensation(
+            heading, steerAngleDegrees, speed, isReversing,
+            antennaPivotDistance, forwardCompensation);
+
+        // Assert - heading should remain unchanged when factor is 0
+        Assert.That(compensated, Is.EqualTo(heading).Within(Tolerance));
+    }
+
+    #endregion
+
     #region State Tracking Tests
 
     [Test]

@@ -21,9 +21,14 @@ public enum TransportType
     BluetoothBLE,
 
     /// <summary>
-    /// CAN bus / ISOBUS communication
+    /// CAN bus communication
     /// </summary>
     CAN,
+
+    /// <summary>
+    /// ISOBUS (ISO 11783) agricultural equipment communication
+    /// </summary>
+    ISOBUS,
 
     /// <summary>
     /// Radio communication (LoRa, 900MHz, WiFi)

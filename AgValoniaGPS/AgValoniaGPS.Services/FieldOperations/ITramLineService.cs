@@ -1,5 +1,6 @@
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Events;
+using AgValoniaGPS.Models.Guidance;
 
 namespace AgValoniaGPS.Services.FieldOperations;
 
@@ -24,11 +25,13 @@ public interface ITramLineService
     void GenerateTramLines(Position lineStart, Position lineEnd, double spacing, int count);
 
     /// <summary>
-    /// Generate tram lines from an AB line by ID
+    /// Generate tram lines from an AB line with specified spacing
     /// </summary>
-    /// <param name="abLineId">ID of the AB line to use as base</param>
+    /// <param name="abLine">The AB line to generate tram lines from</param>
     /// <param name="spacing">Spacing between tram lines in meters</param>
-    void GenerateFromABLine(int abLineId, double spacing);
+    /// <param name="count">Number of tram lines to generate on each side of the AB line</param>
+    /// <param name="unitSystem">Unit system for spacing (Metric or Imperial)</param>
+    void GenerateFromABLine(ABLine abLine, double spacing, int count, UnitSystem unitSystem = UnitSystem.Metric);
 
     /// <summary>
     /// Load tram lines from a Position array

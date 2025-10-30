@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AgValoniaGPS.Models.FieldOperations;
 using AgValoniaGPS.Models.Guidance;
 
 namespace AgValoniaGPS.Models;
@@ -51,6 +52,11 @@ public class Field
     public BackgroundImage? BackgroundImage { get; set; }
 
     public List<ABLine> ABLines { get; set; } = new();
+
+    /// <summary>
+    /// Elevation grid for terrain elevation tracking
+    /// </summary>
+    public ElevationGrid? ElevationGrid { get; set; }
 
     /// <summary>
     /// Total area in hectares (calculated from boundary)

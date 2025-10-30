@@ -76,6 +76,23 @@ public interface IHeadingCalculatorService
     double CalculateAngularDelta(double angle1, double angle2);
 
     /// <summary>
+    /// Apply steer angle compensation to heading for low-speed accuracy (Section 6E)
+    /// Compensates for antenna swing during steering at low speeds
+    /// Based on AgOpenGPS Position.designer.cs lines 419-424
+    /// </summary>
+    /// <param name="heading">Current heading in radians</param>
+    /// <param name="steerAngleDegrees">Actual steer angle from wheel angle sensor (degrees)</param>
+    /// <param name="speed">Current vehicle speed (m/s)</param>
+    /// <param name="isReversing">Whether vehicle is moving in reverse</param>
+    /// <param name="antennaPivotDistance">Distance from rear axle to antenna (meters)</param>
+    /// <param name="forwardCompensation">Forward compensation factor (default 1.0)</param>
+    /// <param name="reverseCompensation">Reverse compensation factor (default 1.0)</param>
+    /// <returns>Compensated heading in radians (0 to 2π)</returns>
+    double ApplySteerAngleCompensation(double heading, double steerAngleDegrees, double speed,
+        bool isReversing, double antennaPivotDistance, double forwardCompensation = 1.0,
+        double reverseCompensation = 1.0);
+
+    /// <summary>
     /// Get current IMU-GPS offset for fusion
     /// </summary>
     double ImuGpsOffset { get; }

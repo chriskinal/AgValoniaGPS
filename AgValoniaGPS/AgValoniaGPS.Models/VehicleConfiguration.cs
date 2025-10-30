@@ -15,6 +15,15 @@ public class VehicleConfiguration
     public double Wheelbase { get; set; } = 2.5; // meters
     public double TrackWidth { get; set; } = 1.8; // meters
 
+    // Steer angle heading compensation parameters (Section 6E)
+    // Distance from rear axle to antenna for low-speed steering compensation
+    public double AntennaPivotDistance { get; set; } = 0.0; // meters
+
+    // Compensation factors for forward/reverse motion (default 1.0)
+    // Higher values increase compensation effect
+    public double ForwardCompensationFactor { get; set; } = 1.0;
+    public double ReverseCompensationFactor { get; set; } = 1.0;
+
     // Vehicle type (0=Tractor, 1=Harvester, 2=4WD)
     public VehicleType Type { get; set; } = VehicleType.Tractor;
 
