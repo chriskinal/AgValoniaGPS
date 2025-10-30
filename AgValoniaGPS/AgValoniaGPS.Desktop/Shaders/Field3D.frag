@@ -1,4 +1,6 @@
-#version 330 core
+#version 300 es
+
+precision highp float;
 
 // Input from vertex shader
 in vec3 vFragPos;       // Fragment position in world space

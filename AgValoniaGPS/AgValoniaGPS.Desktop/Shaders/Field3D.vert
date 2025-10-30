@@ -1,4 +1,6 @@
-#version 330 core
+#version 300 es
+
+precision highp float;
 
 // Input vertex attributes
 layout(location = 0) in vec3 aPosition;   // 3D position
