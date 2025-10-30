@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AgValoniaGPS.ViewModels"
+        xmlns:controls="using:AgValoniaGPS.Desktop.Views.Controls"
         mc:Ignorable="d" d:DesignWidth="1366" d:DesignHeight="768"
         x:Class="AgValoniaGPS.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
@@ -80,18 +81,13 @@
             </Grid>
         </Border>
 
-        <!-- Main Content Area: OpenGL Map (full screen) -->
+        <!-- Main Content Area: 2D Field Map (full screen) -->
         <Grid Grid.Row="1">
 
-            <!-- OpenGL Map Placeholder (full area) -->
+            <!-- 2D Field Map Control -->
             <Border x:Name="MapContainer"
                     Background="Black">
-                <!-- OpenGL map control will be rendered here in Wave 11 -->
-                <TextBlock Text="OpenGL Map Area (Wave 11)"
-                          Foreground="White"
-                          FontSize="24"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"/>
+                <controls:FieldMapControl />
             </Border>
 
         </Grid>
