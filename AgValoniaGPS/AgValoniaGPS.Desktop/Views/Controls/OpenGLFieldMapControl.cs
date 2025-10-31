@@ -196,7 +196,11 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
 
     protected override void OnOpenGlRender(GlInterface gl, int fb)
     {
-        if (_gl == null || _shader == null) return;
+        if (_gl == null || _shader == null)
+        {
+            Console.WriteLine("[OpenGL Render] Skipped - gl or shader is null");
+            return;
+        }
 
         try
         {
@@ -210,8 +214,11 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             // Set viewport
             _gl.Viewport(0, 0, (uint)Bounds.Width, (uint)Bounds.Height);
 
-            // Clear buffers
+            // Clear buffers (black background)
+            _gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            Console.WriteLine($"[OpenGL Render] Clearing screen, viewport: {Bounds.Width}x{Bounds.Height}");
 
             // Calculate matrices
             var viewMatrix = CalculateViewMatrix();
@@ -235,7 +242,12 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             // Render grid
             if (_gridMesh != null)
             {
+                Console.WriteLine("[OpenGL Render] Drawing grid mesh");
                 RenderMesh(_gridMesh, Matrix4x4.Identity);
+            }
+            else
+            {
+                Console.WriteLine("[OpenGL Render] Grid mesh is null!");
             }
 
             // Render coverage (lowest layer)

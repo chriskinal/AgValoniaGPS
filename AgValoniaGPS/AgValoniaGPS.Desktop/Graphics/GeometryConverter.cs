@@ -57,14 +57,14 @@ public static class GeometryConverter
     public static float[] CreateGridMesh(float size, float spacing, out int lineCount)
     {
         List<float> vertices = new List<float>();
-        Vector4 color = new Vector4(0.3f, 0.3f, 0.3f, 0.4f); // Gray, semi-transparent
+        Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 0.8f); // Bright white, more opaque
         Vector3 normal = new Vector3(0, 0, 1); // Up
 
         // Vertical lines
         for (float x = -size; x <= size; x += spacing)
         {
             // Brighter every 50m
-            float alpha = (Math.Abs(x % 50.0f) < 0.1f) ? 0.6f : 0.4f;
+            float alpha = (Math.Abs(x % 50.0f) < 0.1f) ? 1.0f : 0.8f;
             Vector4 lineColor = new Vector4(color.X, color.Y, color.Z, alpha);
 
             AddVertex(vertices, new Vector3(x, -size, 0), normal, lineColor, Vector2.Zero);
@@ -74,7 +74,7 @@ public static class GeometryConverter
         // Horizontal lines
         for (float y = -size; y <= size; y += spacing)
         {
-            float alpha = (Math.Abs(y % 50.0f) < 0.1f) ? 0.6f : 0.4f;
+            float alpha = (Math.Abs(y % 50.0f) < 0.1f) ? 1.0f : 0.8f;
             Vector4 lineColor = new Vector4(color.X, color.Y, color.Z, alpha);
 
             AddVertex(vertices, new Vector3(-size, y, 0), normal, lineColor, Vector2.Zero);
