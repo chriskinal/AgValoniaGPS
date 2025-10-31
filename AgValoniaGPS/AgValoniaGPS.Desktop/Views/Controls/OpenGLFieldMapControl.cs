@@ -39,6 +39,9 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     private Mesh? _guidanceMesh;
     private Mesh? _coverageMesh;
 
+    // Textures
+    private Graphics.Texture? _vehicleTexture;
+
     // Services
     private readonly ICameraService? _cameraService;
     private readonly IRenderingCoordinatorService? _renderingCoordinator;
@@ -225,6 +228,18 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
         {
             Console.WriteLine($"Simple3D shader compilation failed: {ex.Message}");
         }
+
+        // Load vehicle texture
+        try
+        {
+            string texturePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Images", "TractorAoG.png");
+            _vehicleTexture = new Graphics.Texture(_gl, texturePath);
+            Console.WriteLine($"[OpenGLFieldMapControl] Loaded vehicle texture: {_vehicleTexture.Width}x{_vehicleTexture.Height}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[OpenGLFieldMapControl] Failed to load vehicle texture: {ex.Message}");
+        }
     }
 
     private void InitializeGridMesh()
@@ -299,6 +314,7 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
 
                 // Set combined MVP matrix
                 _simple3DShader.SetUniform("uMVP", mvpMatrix);
+                _simple3DShader.SetUniform("uUseTexture", false);  // NO TEXTURE for grid
 
                 _gl.LineWidth(2.0f);
                 _gridMesh.Draw();
@@ -327,14 +343,30 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
                 _gl.LineWidth(1.0f);
             }
 
-            // Render vehicle (when position data available)
-            // Disabled for now since we're testing grid rendering
-            // if (_vehicleMesh != null && _vehiclePosition.HasValue)
-            // {
-            //     var vehicleTransform = Matrix4x4.CreateRotationZ(_vehicleHeading) *
-            //                           Matrix4x4.CreateTranslation(_vehiclePosition.Value.X, _vehiclePosition.Value.Y, 0);
-            //     RenderMesh(_vehicleMesh, vehicleTransform);
-            // }
+            // Render vehicle with Simple3D shader and texture
+            if (_vehicleMesh != null && _simple3DShader != null && _vehicleTexture != null)
+            {
+                // Use actual position if available, otherwise show at origin for testing
+                Vector2 pos = _vehiclePosition ?? Vector2.Zero;
+                var vehicleTransform = Matrix4x4.CreateRotationZ(_vehicleHeading) *
+                                      Matrix4x4.CreateTranslation(pos.X, pos.Y, 0);
+
+                var vehicleMVP = vehicleTransform * viewMatrix * projectionMatrix;
+
+                // Enable polygon offset to prevent Z-fighting with grid at all zoom levels
+                _gl.Enable(Silk.NET.OpenGL.EnableCap.PolygonOffsetFill);
+                _gl.PolygonOffset(-1.0f, -1.0f); // Negative values pull geometry closer to camera
+
+                _simple3DShader.Use();
+                _simple3DShader.SetUniform("uMVP", vehicleMVP);
+                _simple3DShader.SetUniform("uUseTexture", true);  // ENABLE TEXTURE
+                _vehicleTexture.Bind(Silk.NET.OpenGL.TextureUnit.Texture0);
+                _simple3DShader.SetUniform("uTexture", 0);  // Texture unit 0
+                _vehicleMesh.Draw();
+
+                // Disable polygon offset after rendering vehicle
+                _gl.Disable(Silk.NET.OpenGL.EnableCap.PolygonOffsetFill);
+            }
 
             // Force GPU to complete all commands (important for ANGLE)
             _gl.Flush();
@@ -421,13 +453,24 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
 
     private void UpdateVehicleMesh()
     {
-        if (_gl == null) return;
+        Console.WriteLine($"[UpdateVehicleMesh] Called - _gl={(_gl != null ? "valid" : "NULL")}");
+
+        if (_gl == null)
+        {
+            Console.WriteLine($"[UpdateVehicleMesh] _gl is null, returning early");
+            return;
+        }
 
         try
         {
             var renderData = _renderingCoordinator?.GetVehicleData();
-            if (renderData != null && renderData.Vertices != null && renderData.Vertices.Length > 0)
+            Console.WriteLine($"[UpdateVehicleMesh] renderData={renderData != null}, vertices={(renderData?.Vertices != null ? renderData.Vertices.Length : 0)}");
+
+            // TEMPORARY: Force use of default test mesh to debug color issues
+            // Ignore service data for now
+            if (false && renderData != null && renderData.Vertices != null && renderData.Vertices.Length > 0)
             {
+                Console.WriteLine($"[UpdateVehicleMesh] Using vehicle data from service: {renderData.Vertices.Length} floats");
                 // Convert 2D vertices to 3D
                 float[] vertices3D = GeometryConverter.Convert2DTo3D(renderData.Vertices);
 
@@ -440,21 +483,26 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             }
             else
             {
-                // Create default vehicle mesh
-                Vector4 vehicleColor = new Vector4(0.3f, 0.6f, 1.0f, 1.0f); // Blue
-                float[] vertices = GeometryConverter.CreateVehicleMesh(5.0f, 8.0f, vehicleColor);
+                Console.WriteLine($"[UpdateVehicleMesh] No vehicle data from service, creating textured quad");
+                // Create textured quad with square aspect ratio to match square texture (256x256)
+                // Use 40m x 40m for good visibility at camera distance
+                float[] vertices = GeometryConverter.CreateTexturedVehicleQuad(40.0f, 40.0f);
+                Console.WriteLine($"[UpdateVehicleMesh] Created {vertices.Length} floats from CreateTexturedVehicleQuad");
 
                 if (_vehicleMesh == null)
                 {
                     _vehicleMesh = new Mesh(_gl);
+                    Console.WriteLine($"[UpdateVehicleMesh] Created new Mesh object");
                 }
 
                 _vehicleMesh.SetVertexData(vertices, primitiveType: PrimitiveType.Triangles);
+                Console.WriteLine($"[UpdateVehicleMesh] SetVertexData called with {vertices.Length} floats");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error updating vehicle mesh: {ex.Message}");
+            Console.WriteLine($"[UpdateVehicleMesh] ERROR: {ex.Message}");
+            Console.WriteLine($"[UpdateVehicleMesh] Stack trace: {ex.StackTrace}");
         }
     }
 

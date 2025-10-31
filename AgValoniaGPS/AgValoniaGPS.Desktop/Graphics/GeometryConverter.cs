@@ -57,7 +57,7 @@ public static class GeometryConverter
     public static float[] CreateGridMesh(float size, float spacing, out int lineCount)
     {
         List<float> vertices = new List<float>();
-        Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 0.8f); // Bright white, more opaque
+        Vector4 color = new Vector4(0.35f, 0.35f, 0.35f, 0.8f); // Light gray to contrast with white UI buttons
         Vector3 normal = new Vector3(0, 0, 1); // Up
 
         // Vertical lines
@@ -107,6 +107,7 @@ public static class GeometryConverter
 
     /// <summary>
     /// Creates a simple vehicle mesh (rectangle with direction indicator).
+    /// Width = side-to-side (X), Length = front-to-back (Y), arrow points forward (+Y)
     /// </summary>
     public static float[] CreateVehicleMesh(float width, float length, Vector4 color)
     {
@@ -116,27 +117,43 @@ public static class GeometryConverter
         float halfWidth = width / 2;
         float halfLength = length / 2;
 
-        // Vehicle body (rectangle)
+        Console.WriteLine($"[CreateVehicleMesh] Creating vehicle: width={width}m, length={length}m, color=({color.X}, {color.Y}, {color.Z}, {color.W})");
+        Console.WriteLine($"[CreateVehicleMesh] Body: X={-halfWidth} to {halfWidth}, Y={-halfLength} to {halfLength}");
+        Console.WriteLine($"[CreateVehicleMesh] BODY COLOR: R={color.X}, G={color.Y}, B={color.Z}, A={color.W}");
+
+        // Vehicle body (rectangle) - raised to 2.0f above grid to avoid Z-fighting
         // Triangle 1
-        AddVertex(vertices, new Vector3(-halfWidth, -halfLength, 0.1f), normal, color, new Vector2(0, 0));
-        AddVertex(vertices, new Vector3(halfWidth, -halfLength, 0.1f), normal, color, new Vector2(1, 0));
-        AddVertex(vertices, new Vector3(halfWidth, halfLength, 0.1f), normal, color, new Vector2(1, 1));
+        AddVertex(vertices, new Vector3(-halfWidth, -halfLength, 2.0f), normal, color, new Vector2(0, 0));
+        AddVertex(vertices, new Vector3(halfWidth, -halfLength, 2.0f), normal, color, new Vector2(1, 0));
+        AddVertex(vertices, new Vector3(halfWidth, halfLength, 2.0f), normal, color, new Vector2(1, 1));
 
         // Triangle 2
-        AddVertex(vertices, new Vector3(-halfWidth, -halfLength, 0.1f), normal, color, new Vector2(0, 0));
-        AddVertex(vertices, new Vector3(halfWidth, halfLength, 0.1f), normal, color, new Vector2(1, 1));
-        AddVertex(vertices, new Vector3(-halfWidth, halfLength, 0.1f), normal, color, new Vector2(0, 1));
+        AddVertex(vertices, new Vector3(-halfWidth, -halfLength, 2.0f), normal, color, new Vector2(0, 0));
+        AddVertex(vertices, new Vector3(halfWidth, halfLength, 2.0f), normal, color, new Vector2(1, 1));
+        AddVertex(vertices, new Vector3(-halfWidth, halfLength, 2.0f), normal, color, new Vector2(0, 1));
 
-        // Direction indicator (arrow at front)
-        Vector4 arrowColor = new Vector4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow
+        // Direction indicator (arrow at front pointing in +Y direction)
+        Vector4 arrowColor = new Vector4(1.0f, 1.0f, 0.0f, 1.0f); // YELLOW arrow
         float arrowSize = width * 0.3f;
         float arrowY = halfLength + arrowSize;
 
-        AddVertex(vertices, new Vector3(0, arrowY, 0.1f), normal, arrowColor, Vector2.Zero);
-        AddVertex(vertices, new Vector3(-arrowSize, halfLength, 0.1f), normal, arrowColor, Vector2.Zero);
-        AddVertex(vertices, new Vector3(arrowSize, halfLength, 0.1f), normal, arrowColor, Vector2.Zero);
+        Console.WriteLine($"[CreateVehicleMesh] Arrow: tip at Y={arrowY}, base at Y={halfLength}, width={arrowSize * 2}m");
+        Console.WriteLine($"[CreateVehicleMesh] ARROW COLOR: R={arrowColor.X}, G={arrowColor.Y}, B={arrowColor.Z}, A={arrowColor.W}");
 
-        return vertices.ToArray();
+        AddVertex(vertices, new Vector3(0, arrowY, 2.0f), normal, arrowColor, Vector2.Zero);
+        AddVertex(vertices, new Vector3(-arrowSize, halfLength, 2.0f), normal, arrowColor, Vector2.Zero);
+        AddVertex(vertices, new Vector3(arrowSize, halfLength, 2.0f), normal, arrowColor, Vector2.Zero);
+
+        var result = vertices.ToArray();
+
+        // Print first vertex data to verify colors
+        Console.WriteLine($"[CreateVehicleMesh] First vertex (should be RED body):");
+        Console.WriteLine($"  Pos: ({result[0]}, {result[1]}, {result[2]})");
+        Console.WriteLine($"  Normal: ({result[3]}, {result[4]}, {result[5]})");
+        Console.WriteLine($"  Color: R={result[6]}, G={result[7]}, B={result[8]}, A={result[9]}");
+        Console.WriteLine($"  TexCoord: ({result[10]}, {result[11]})");
+
+        return result;
     }
 
     /// <summary>
@@ -218,6 +235,35 @@ public static class GeometryConverter
             Vector3 pos = new Vector3(lineVertices[srcIdx], lineVertices[srcIdx + 1], 0.06f); // Above boundaries
             AddVertex(vertices, pos, normal, color, Vector2.Zero);
         }
+
+        return vertices.ToArray();
+    }
+
+    /// <summary>
+    /// Creates a textured quad for the vehicle sprite.
+    /// Width = side-to-side (X), Height = front-to-back (Y)
+    /// </summary>
+    public static float[] CreateTexturedVehicleQuad(float width, float height)
+    {
+        List<float> vertices = new List<float>();
+        Vector3 normal = new Vector3(0, 0, 1);
+        Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f); // White to not tint texture
+
+        float halfWidth = width / 2;
+        float halfHeight = height / 2;
+
+        Console.WriteLine($"[CreateTexturedVehicleQuad] Creating textured quad: width={width}m, height={height}m");
+
+        // Two triangles forming a quad, raised above grid
+        // Triangle 1 (bottom-left, top-left, top-right)
+        AddVertex(vertices, new Vector3(-halfWidth, -halfHeight, 2.0f), normal, color, new Vector2(0, 0)); // Bottom-left
+        AddVertex(vertices, new Vector3(-halfWidth, halfHeight, 2.0f), normal, color, new Vector2(0, 1));  // Top-left
+        AddVertex(vertices, new Vector3(halfWidth, halfHeight, 2.0f), normal, color, new Vector2(1, 1));   // Top-right
+
+        // Triangle 2 (bottom-left, top-right, bottom-right)
+        AddVertex(vertices, new Vector3(-halfWidth, -halfHeight, 2.0f), normal, color, new Vector2(0, 0)); // Bottom-left
+        AddVertex(vertices, new Vector3(halfWidth, halfHeight, 2.0f), normal, color, new Vector2(1, 1));   // Top-right
+        AddVertex(vertices, new Vector3(halfWidth, -halfHeight, 2.0f), normal, color, new Vector2(1, 0));  // Bottom-right
 
         return vertices.ToArray();
     }
