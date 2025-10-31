@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using Avalonia;
@@ -204,6 +205,10 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
 
         try
         {
+            // Bind the framebuffer provided by Avalonia
+            Console.WriteLine($"[OpenGL Render] Binding framebuffer: {fb}");
+            _gl.BindFramebuffer(FramebufferTarget.Framebuffer, (uint)fb);
+
             // Update meshes if needed
             if (_meshesNeedUpdate)
             {
@@ -224,6 +229,9 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             var viewMatrix = CalculateViewMatrix();
             var projectionMatrix = CalculateProjectionMatrix();
 
+            Console.WriteLine($"[OpenGL Render] Camera position: {_cameraPosition}, target: {_cameraTarget}");
+            Console.WriteLine($"[OpenGL Render] Camera distance: {_cameraDistance}, pitch: {_cameraPitch}, yaw: {_cameraYaw}");
+
             // Set up shader
             _shader.Use();
 
@@ -239,11 +247,35 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             _shader.SetUniform("uView", viewMatrix);
             _shader.SetUniform("uProjection", projectionMatrix);
 
+            // TEST: Render a simple triangle at origin to verify rendering works
+            // Create test triangle if not exists
+            if (_vehicleMesh == null)
+            {
+                Console.WriteLine("[OpenGL Render] Creating test triangle");
+                var testVerts = new List<float>();
+                // Big triangle at origin, bright red
+                testVerts.AddRange(new float[] { 0f, 50f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f }); // Top (red)
+                testVerts.AddRange(new float[] { -50f, -50f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f }); // Bottom-left (red)
+                testVerts.AddRange(new float[] { 50f, -50f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f }); // Bottom-right (red)
+                _vehicleMesh = new Mesh(_gl);
+                _vehicleMesh.SetVertexData(testVerts.ToArray(), primitiveType: PrimitiveType.Triangles);
+                Console.WriteLine($"[OpenGL Render] Test triangle created with {testVerts.Count / 12} vertices");
+            }
+
+            // Render test triangle
+            if (_vehicleMesh != null)
+            {
+                Console.WriteLine("[OpenGL Render] Drawing TEST TRIANGLE");
+                RenderMesh(_vehicleMesh, Matrix4x4.Identity);
+            }
+
             // Render grid
             if (_gridMesh != null)
             {
                 Console.WriteLine("[OpenGL Render] Drawing grid mesh");
+                _gl.LineWidth(2.0f); // Make lines thicker
                 RenderMesh(_gridMesh, Matrix4x4.Identity);
+                _gl.LineWidth(1.0f);
             }
             else
             {
@@ -288,24 +320,34 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
 
     private void RenderMesh(Mesh mesh, Matrix4x4 modelMatrix)
     {
-        if (_shader == null) return;
+        if (_shader == null)
+        {
+            Console.WriteLine("[RenderMesh] Shader is null, skipping");
+            return;
+        }
+
+        Console.WriteLine($"[RenderMesh] START - Rendering mesh with {mesh.VertexCount} vertices");
 
         // Set model matrix
         _shader.SetUniform("uModel", modelMatrix);
+        Console.WriteLine($"[RenderMesh] Model matrix set");
 
         // Calculate normal matrix (transpose of inverse of model matrix)
         if (Matrix4x4.Invert(modelMatrix, out var invModel))
         {
             var normalMatrix = Matrix4x4.Transpose(invModel);
             _shader.SetUniformMat3("uNormalMatrix", normalMatrix);
+            Console.WriteLine($"[RenderMesh] Normal matrix set (from inverted model)");
         }
         else
         {
             _shader.SetUniformMat3("uNormalMatrix", Matrix4x4.Identity);
+            Console.WriteLine($"[RenderMesh] Normal matrix set (identity - inversion failed)");
         }
 
         // Draw
         mesh.Draw();
+        Console.WriteLine($"[RenderMesh] END");
     }
 
     private Matrix4x4 CalculateViewMatrix()

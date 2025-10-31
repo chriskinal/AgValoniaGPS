@@ -1,0 +1,183 @@
+{
+  "UserName": "Default",
+  "CreatedDate": "0001-01-01T00:00:00",
+  "LastModifiedDate": "2025-10-31T00:36:12.3850225Z",
+  "Preferences": {
+    "PreferredUnitSystem": 0,
+    "PreferredLanguage": "en",
+    "DisplayPreferences": {
+      "ShowSatelliteCount": true,
+      "ShowSpeedGauge": true,
+      "RotatingDisplayEnabled": false,
+      "RotatingDisplayInterval": 5,
+      "ButtonPositions": [
+        {
+          "ButtonId": "FloatingBtn1",
+          "OffsetX": 1,
+          "OffsetY": 554.7722289890378,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtn2",
+          "OffsetX": 0,
+          "OffsetY": 1.3617539585870873,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtn3",
+          "OffsetX": 0,
+          "OffsetY": 2.5968331303288608,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtn4",
+          "OffsetX": 0,
+          "OffsetY": 3.8319123020706343,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtn5",
+          "OffsetX": 0,
+          "OffsetY": 5.066991473812436,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtn6",
+          "OffsetX": 0,
+          "OffsetY": 6.302070645554181,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtn7",
+          "OffsetX": 0,
+          "OffsetY": 7.537149817295926,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR1",
+          "OffsetX": 1614,
+          "OffsetY": 634.0073081607795,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR2",
+          "OffsetX": 1614,
+          "OffsetY": 554.7722289890378,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR3",
+          "OffsetX": 1614,
+          "OffsetY": 475.5371498172959,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR4",
+          "OffsetX": 1614,
+          "OffsetY": 396.3020706455542,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR5",
+          "OffsetX": 1614,
+          "OffsetY": 317.06699147381244,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR6",
+          "OffsetX": 1614,
+          "OffsetY": 237.83191230207063,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR7",
+          "OffsetX": 1614,
+          "OffsetY": 158.59683313032886,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR8",
+          "OffsetX": 1614,
+          "OffsetY": 79.36175395858709,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnR9",
+          "OffsetX": 1614,
+          "OffsetY": 0.1266747868453102,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB1",
+          "OffsetX": 1197,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB2",
+          "OffsetX": 1119,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB3",
+          "OffsetX": 1041,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB4",
+          "OffsetX": 963,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB5",
+          "OffsetX": 885,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB6",
+          "OffsetX": 807,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB7",
+          "OffsetX": 729,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB8",
+          "OffsetX": 651,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB9",
+          "OffsetX": 573,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB10",
+          "OffsetX": 495,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        },
+        {
+          "ButtonId": "FloatingBtnB11",
+          "OffsetX": 417,
+          "OffsetY": 745.7490864799025,
+          "IsVisible": true
+        }
+      ],
+      "WindowWidth": 1700,
+      "WindowHeight": 894,
+      "WindowMaximized": false
+    },
+    "LastUsedVehicleProfile": ""
+  }
+}

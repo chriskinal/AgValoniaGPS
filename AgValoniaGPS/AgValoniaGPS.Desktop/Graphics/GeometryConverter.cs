@@ -93,6 +93,15 @@ public static class GeometryConverter
         AddVertex(vertices, new Vector3(0, size, 0), normal, yAxisColor, Vector2.Zero);
 
         lineCount = vertices.Count / 12; // 12 floats per vertex
+
+        // DEBUG: Print first few vertices to verify data
+        if (vertices.Count >= 24)
+        {
+            Console.WriteLine($"[GridMesh] Sample vertices:");
+            Console.WriteLine($"  Vertex 0: pos=({vertices[0]}, {vertices[1]}, {vertices[2]}), color=({vertices[6]}, {vertices[7]}, {vertices[8]}, {vertices[9]})");
+            Console.WriteLine($"  Vertex 1: pos=({vertices[12]}, {vertices[13]}, {vertices[14]}), color=({vertices[18]}, {vertices[19]}, {vertices[20]}, {vertices[21]})");
+        }
+
         return vertices.ToArray();
     }
 

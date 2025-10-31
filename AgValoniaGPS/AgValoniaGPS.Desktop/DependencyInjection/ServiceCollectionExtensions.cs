@@ -13,6 +13,7 @@ using AgValoniaGPS.Services.Communication;
 using AgValoniaGPS.Services.FieldOperations;
 using AgValoniaGPS.Services.Display;
 using AgValoniaGPS.Services.UndoRedo;
+using AgValoniaGPS.Services.Rendering;
 using AgValoniaGPS.Desktop.Services;
 using AgValoniaGPS.Models;
 using AgValoniaGPS.Models.Profile;
@@ -118,6 +119,19 @@ public static class ServiceCollectionExtensions
 
         // Undo/Redo Service (Wave 8)
         services.AddSingleton<IUndoRedoService, UndoRedoService>();
+
+        // Rendering Geometry Services (Wave 11 - Task Group 3)
+        services.AddSingleton<IVehicleGeometryService, VehicleGeometryService>();
+        services.AddSingleton<IBoundaryGeometryService, BoundaryGeometryService>();
+        services.AddSingleton<IGuidanceGeometryService, GuidanceGeometryService>();
+        services.AddSingleton<ICoverageGeometryService, CoverageGeometryService>();
+        // Note: ISectionGeometryService already registered above (line 72) with overlay mesh extension
+
+        // Rendering Coordinator Services (Wave 11 - Task Group 4)
+        services.AddSingleton<ICameraService, CameraService>();
+        services.AddSingleton<IRenderingCoordinatorService, RenderingCoordinatorService>();
+        // Note: ShaderManager, BufferManager, and RenderPassManager are created per OpenGL context
+        // in OpenGLMapControl and are not registered in DI since they require a GL instance at runtime.
 
         // Vehicle Configuration
         services.AddSingleton<VehicleConfiguration>();

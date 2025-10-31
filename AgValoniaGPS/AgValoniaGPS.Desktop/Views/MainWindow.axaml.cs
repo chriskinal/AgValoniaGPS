@@ -191,57 +191,32 @@ public partial class MainWindow : Window
     /// </summary>
     private void RegisterPanels()
     {
-        // Left Panel (5 panels)
-        // FormQuickAB - Default visible
-        var quickABButton = new FormQuickABButton();
-        _panelHostingService.RegisterPanel("quickAB", PanelDockLocation.Left, quickABButton);
+        // Get services from DI
+        var positionService = App.Services?.GetService<AgValoniaGPS.Services.GPS.IPositionUpdateService>();
 
-        var flagsButton = new FormFlagsButton();
-        _panelHostingService.RegisterPanel("flags", PanelDockLocation.Left, flagsButton);
+        // === Left Panel (5 panels) ===
+        // Register panel instances
+        _panelHostingService.RegisterPanel("quickAB", PanelDockLocation.Left, new Panels.Guidance.FormQuickAB());
+        _panelHostingService.RegisterPanel("flags", PanelDockLocation.Left, new Panels.FieldManagement.FormFlags());
+        _panelHostingService.RegisterPanel("boundaryEditor", PanelDockLocation.Left, new Panels.FieldManagement.FormBoundaryEditor());
+        _panelHostingService.RegisterPanel("fieldTools", PanelDockLocation.Left, new Panels.FieldManagement.FormFieldTools());
+        _panelHostingService.RegisterPanel("fieldFileManager", PanelDockLocation.Left, new Panels.FieldManagement.FormFieldFileManager());
 
-        var boundaryEditorButton = new FormBoundaryEditorButton();
-        _panelHostingService.RegisterPanel("boundaryEditor", PanelDockLocation.Left, boundaryEditorButton);
+        // === Right Panel (7 panels) ===
+        _panelHostingService.RegisterPanel("tramLine", PanelDockLocation.Right, new Panels.FieldOperations.FormTramLine());
+        _panelHostingService.RegisterPanel("steer", PanelDockLocation.Right, new Panels.Configuration.FormSteer());
+        _panelHostingService.RegisterPanel("config", PanelDockLocation.Right, new Panels.Configuration.FormConfig());
+        _panelHostingService.RegisterPanel("diagnostics", PanelDockLocation.Right, new Panels.Configuration.FormDiagnostics());
+        _panelHostingService.RegisterPanel("rollCorrection", PanelDockLocation.Right, new Panels.Configuration.FormRollCorrection());
+        _panelHostingService.RegisterPanel("vehicleConfig", PanelDockLocation.Right, new Panels.Configuration.FormVehicleConfig());
+        _panelHostingService.RegisterPanel("camera", PanelDockLocation.Right, new Panels.FieldManagement.FormCamera());
 
-        var fieldToolsButton = new FormFieldToolsButton();
-        _panelHostingService.RegisterPanel("fieldTools", PanelDockLocation.Left, fieldToolsButton);
+        // === Bottom Panel (2 panels) ===
+        _panelHostingService.RegisterPanel("fieldData", PanelDockLocation.Bottom, new Panels.FieldManagement.FormFieldData());
+        _panelHostingService.RegisterPanel("gpsData", PanelDockLocation.Bottom, new Panels.Display.FormGPSData());
 
-        var fieldFileManagerButton = new FormFieldFileManagerButton();
-        _panelHostingService.RegisterPanel("fieldFileManager", PanelDockLocation.Left, fieldFileManagerButton);
-
-        // Right Panel (7 panels)
-        var tramLineButton = new FormTramLineButton();
-        _panelHostingService.RegisterPanel("tramLine", PanelDockLocation.Right, tramLineButton);
-
-        var steerButton = new FormSteerButton();
-        _panelHostingService.RegisterPanel("steer", PanelDockLocation.Right, steerButton);
-
-        var configButton = new FormConfigButton();
-        _panelHostingService.RegisterPanel("config", PanelDockLocation.Right, configButton);
-
-        var diagnosticsButton = new FormDiagnosticsButton();
-        _panelHostingService.RegisterPanel("diagnostics", PanelDockLocation.Right, diagnosticsButton);
-
-        var rollCorrectionButton = new FormRollCorrectionButton();
-        _panelHostingService.RegisterPanel("rollCorrection", PanelDockLocation.Right, rollCorrectionButton);
-
-        var vehicleConfigButton = new FormVehicleConfigButton();
-        _panelHostingService.RegisterPanel("vehicleConfig", PanelDockLocation.Right, vehicleConfigButton);
-
-        // FormCamera - Default visible
-        var cameraButton = new FormCameraButton();
-        _panelHostingService.RegisterPanel("camera", PanelDockLocation.Right, cameraButton);
-
-        // Bottom Panel (2 panels)
-        var fieldDataButton = new FormFieldDataButton();
-        _panelHostingService.RegisterPanel("fieldData", PanelDockLocation.Bottom, fieldDataButton);
-
-        // FormGPSData - Default visible
-        var gpsDataButton = new FormGPSDataButton();
-        _panelHostingService.RegisterPanel("gpsData", PanelDockLocation.Bottom, gpsDataButton);
-
-        // Navigation Panel (1 panel)
-        var navigationButton = new NavigationButton();
-        _panelHostingService.RegisterPanel("navigation", PanelDockLocation.Navigation, navigationButton);
+        // === Navigation Panel (1 panel) ===
+        // Navigation panel is handled separately and doesn't need registration here
 
         // Show default-visible panels (as per Appendix C)
         // Default visibility: FormGPSData, FormQuickAB, FormCamera

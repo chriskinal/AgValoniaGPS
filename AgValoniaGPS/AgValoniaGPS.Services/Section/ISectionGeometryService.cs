@@ -1,4 +1,6 @@
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Configuration;
+using AgValoniaGPS.Models.Section;
 
 namespace AgValoniaGPS.Services.Section;
 
@@ -42,4 +44,26 @@ public interface ISectionGeometryService
     (Position leftPoint, Position rightPoint)[] CalculateAllSectionBoundaryPoints(
         Position vehiclePosition,
         double vehicleHeading);
+
+    /// <summary>
+    /// Generates section overlay mesh for OpenGL rendering (Wave 11).
+    /// Creates colored rectangles showing section ON/OFF states.
+    /// </summary>
+    /// <param name="vehiclePosition">Current vehicle position</param>
+    /// <param name="vehicleHeading">Current vehicle heading in radians</param>
+    /// <param name="sectionConfig">Section configuration with widths</param>
+    /// <param name="toolSettings">Tool settings with width and offset</param>
+    /// <param name="sectionStates">Array of section ON/OFF states</param>
+    /// <returns>Interleaved vertex array: [X, Y, R, G, B, A, ...] (6 vertices per section)</returns>
+    /// <remarks>
+    /// Output format: Vertex array with XYZRGBA interleaved
+    /// Each section = 2 triangles = 6 vertices
+    /// Colors: Green (0, 1, 0, 0.5) for ON, Red (1, 0, 0, 0.3) for OFF
+    /// </remarks>
+    float[] GenerateSectionOverlayMesh(
+        Position vehiclePosition,
+        double vehicleHeading,
+        SectionConfiguration sectionConfig,
+        ToolSettings toolSettings,
+        bool[] sectionStates);
 }

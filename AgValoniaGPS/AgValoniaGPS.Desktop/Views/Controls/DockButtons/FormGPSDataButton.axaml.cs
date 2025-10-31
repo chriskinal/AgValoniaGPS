@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using AgValoniaGPS.Desktop.Views.Panels.Display;
+using AgValoniaGPS.Desktop.Services;
 using AgValoniaGPS.Services.GPS;
 using AgValoniaGPS.Models.Enums;
 using System;
@@ -16,25 +16,23 @@ namespace AgValoniaGPS.Desktop.Views.Controls.DockButtons;
 /// </summary>
 public partial class FormGPSDataButton : UserControl
 {
-    private FormGPSData? _panel;
+    private readonly IPanelHostingService _panelHostingService;
     private readonly IPositionUpdateService? _gpsService;
-    private bool _isActive;
+    private const string PanelId = "gpsData";
 
-    public FormGPSDataButton()
+    public FormGPSDataButton(IPanelHostingService panelHostingService, IPositionUpdateService? gpsService = null)
     {
-        InitializeComponent();
-    }
-
-    /// <summary>
-    /// Constructor with GPS service for status indicators.
-    /// </summary>
-    public FormGPSDataButton(IPositionUpdateService? gpsService) : this()
-    {
+        _panelHostingService = panelHostingService ?? throw new ArgumentNullException(nameof(panelHostingService));
         _gpsService = gpsService;
 
+        InitializeComponent();
+
+        // Subscribe to panel visibility changes
+        _panelHostingService.PanelVisibilityChanged += OnPanelVisibilityChanged;
+
+        // Subscribe to GPS fix quality changes
         if (_gpsService != null)
         {
-            // Subscribe to GPS fix quality changes
             _gpsService.PositionUpdated += OnGpsPositionUpdated;
             UpdateGpsStatus(GpsFixQuality.NoFix); // Initial state
         }
@@ -42,54 +40,23 @@ public partial class FormGPSDataButton : UserControl
 
     private void OnButtonClick(object? sender, RoutedEventArgs e)
     {
-        if (_panel == null || !_panel.IsVisible)
-        {
-            ShowPanel();
-        }
-        else
-        {
-            HidePanel();
-        }
+        _panelHostingService.TogglePanel(PanelId);
     }
 
-    private void ShowPanel()
+    private void OnPanelVisibilityChanged(object? sender, PanelVisibilityChangedEventArgs e)
     {
-        if (_panel == null)
+        if (e.PanelId == PanelId)
         {
-            _panel = new FormGPSData();
-            // Wire up close event
-            if (_panel.DataContext is ViewModels.Base.PanelViewModelBase vm)
-            {
-                vm.CloseRequested += OnPanelCloseRequested;
-            }
+            UpdateButtonState(e.IsVisible);
         }
-
-        _panel.IsVisible = true;
-        _isActive = true;
-        UpdateButtonState();
     }
 
-    private void HidePanel()
-    {
-        if (_panel != null)
-        {
-            _panel.IsVisible = false;
-        }
-        _isActive = false;
-        UpdateButtonState();
-    }
-
-    private void OnPanelCloseRequested(object? sender, EventArgs e)
-    {
-        HidePanel();
-    }
-
-    private void UpdateButtonState()
+    private void UpdateButtonState(bool isActive)
     {
         var button = this.FindControl<Button>("DockButton");
         if (button != null)
         {
-            if (_isActive)
+            if (isActive)
             {
                 button.Classes.Add("Active");
             }

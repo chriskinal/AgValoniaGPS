@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AgValoniaGPS.Core -> C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.Core\bin\Debug\net8.0\AgValoniaGPS.Core.dll
+  AgValoniaGPS.Models -> C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.Models\bin\Debug\net8.0\AgValoniaGPS.Models.dll
+  AgValoniaGPS.Services -> C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.Services\bin\Debug\net8.0\AgValoniaGPS.Services.dll
+  AgValoniaGPS.ViewModels -> C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.ViewModels\bin\Debug\net8.0\AgValoniaGPS.ViewModels.dll
+  AgValoniaGPS.Desktop -> C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.Desktop\bin\Debug\net8.0\AgValoniaGPS.Desktop.dll
+C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.Services.Tests\Rendering\BufferManagerTests.cs(17,13): error CS0246: The type or namespace name 'BufferManager' could not be found (are you missing a using directive or an assembly reference?) [C:\Users\chrisk\Documents\AgValoniaGPS\AgValoniaGPS\AgValoniaGPS.Services.Tests\AgValoniaGPS.Services.Tests.csproj]
+
+Workload updates are available. Run `dotnet workload list` for more information.

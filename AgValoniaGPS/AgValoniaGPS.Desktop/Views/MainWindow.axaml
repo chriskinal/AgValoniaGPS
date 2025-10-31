@@ -81,13 +81,16 @@
             </Grid>
         </Border>
 
-        <!-- Main Content Area: 2D Field Map (full screen) -->
+        <!-- Main Content Area: Field Map (full screen) -->
         <Grid Grid.Row="1">
 
-            <!-- 2D Field Map Control -->
+            <!-- 2D Field Map Control (Default) -->
+            <!-- To use OpenGL 3D renderer, uncomment the line below and comment out the 2D control -->
             <Border x:Name="MapContainer"
                     Background="Black">
-                <controls:FieldMapControl />
+                <!-- <controls:FieldMapControl /> -->
+                <!-- 3D OpenGL Renderer (uncomment to use): -->
+                <controls:OpenGLFieldMapControl />
             </Border>
 
         </Grid>

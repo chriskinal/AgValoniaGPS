@@ -49,6 +49,17 @@ public class OpenGLMapControl : OpenGlControlBase
     private bool _isRotating = false;
     private Point _lastMousePosition;
 
+    // Touch interaction state
+    private class TouchPoint
+    {
+        public long Id { get; set; }
+        public Point Position { get; set; }
+    }
+    private TouchPoint? _touch1;
+    private TouchPoint? _touch2;
+    private double _initialPinchDistance;
+    private double _initialPinchZoom;
+
     public OpenGLMapControl()
     {
         // Make control focusable and set to accept all pointer events
@@ -69,6 +80,9 @@ public class OpenGLMapControl : OpenGlControlBase
         PointerMoved += OnPointerMoved;
         PointerReleased += OnPointerReleased;
         PointerWheelChanged += OnPointerWheelChanged;
+
+        // Wire up keyboard events
+        KeyDown += OnKeyDown;
     }
 
     protected override void OnOpenGlInit(GlInterface gl)
@@ -88,6 +102,29 @@ public class OpenGLMapControl : OpenGlControlBase
         // Enable blending for transparency
         _gl.Enable(EnableCap.Blend);
         _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+        // Enable anti-aliasing (MSAA) if supported
+        try
+        {
+            _gl.Enable(EnableCap.Multisample);
+            Console.WriteLine("MSAA (Multisample Anti-Aliasing) enabled");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"MSAA not supported or failed to enable: {ex.Message}");
+        }
+
+        // Enable line smoothing for better line rendering
+        try
+        {
+            _gl.Enable(EnableCap.LineSmooth);
+            _gl.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
+            Console.WriteLine("Line smoothing enabled");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Line smoothing not supported: {ex.Message}");
+        }
 
         // Initialize basic rendering resources
         try
@@ -882,12 +919,97 @@ void main()
         RequestNextFrameRendering();
     }
 
+    // Keyboard event handler for camera control
+    private void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        bool handled = true;
+        const double panStep = 10.0;  // meters
+
+        switch (e.Key)
+        {
+            case Key.Left:
+                Pan(-panStep, 0);
+                break;
+            case Key.Right:
+                Pan(panStep, 0);
+                break;
+            case Key.Up:
+                Pan(0, panStep);
+                break;
+            case Key.Down:
+                Pan(0, -panStep);
+                break;
+            case Key.Add:
+            case Key.OemPlus:
+                Zoom(1.1);  // Zoom in
+                break;
+            case Key.Subtract:
+            case Key.OemMinus:
+                Zoom(0.9);  // Zoom out
+                break;
+            case Key.Home:
+                // Center on vehicle position
+                if (_vehicleX != 0.0 || _vehicleY != 0.0)
+                {
+                    _cameraX = _vehicleX;
+                    _cameraY = _vehicleY;
+                    RequestNextFrameRendering();
+                }
+                break;
+            case Key.R:
+                _rotation = 0.0;  // Reset rotation to north-up
+                RequestNextFrameRendering();
+                break;
+            case Key.F:
+                // Toggle 3D mode as a fallback for "fit to field"
+                // TODO: Implement actual FitToField when boundary bounds are available
+                Toggle3DMode();
+                break;
+            default:
+                handled = false;
+                break;
+        }
+
+        if (handled)
+        {
+            e.Handled = true;
+        }
+    }
+
     // Mouse event handlers for camera control
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         Console.WriteLine("OnPointerPressed called!");
         var point = e.GetCurrentPoint(this);
 
+        // Handle touch input
+        if (e.Pointer.Type == PointerType.Touch)
+        {
+            if (_touch1 == null)
+            {
+                // First touch - start single-finger pan
+                _touch1 = new TouchPoint { Id = e.Pointer.Id, Position = point.Position };
+                _isPanning = true;
+                _lastMousePosition = point.Position;
+            }
+            else if (_touch2 == null)
+            {
+                // Second touch - start pinch-to-zoom
+                _touch2 = new TouchPoint { Id = e.Pointer.Id, Position = point.Position };
+                _isPanning = false; // Disable panning during pinch
+
+                // Calculate initial pinch distance
+                double dx = _touch2.Position.X - _touch1.Position.X;
+                double dy = _touch2.Position.Y - _touch1.Position.Y;
+                _initialPinchDistance = Math.Sqrt(dx * dx + dy * dy);
+                _initialPinchZoom = _zoom;
+            }
+            e.Pointer.Capture(this);
+            e.Handled = true;
+            return;
+        }
+
+        // Handle mouse input
         if (point.Properties.IsLeftButtonPressed)
         {
             Console.WriteLine("Left button pressed - starting pan");
@@ -911,6 +1033,56 @@ void main()
         var point = e.GetCurrentPoint(this);
         var currentPos = point.Position;
 
+        // Handle touch gestures
+        if (e.Pointer.Type == PointerType.Touch)
+        {
+            // Update touch positions
+            if (_touch1 != null && e.Pointer.Id == _touch1.Id)
+            {
+                _touch1.Position = currentPos;
+            }
+            else if (_touch2 != null && e.Pointer.Id == _touch2.Id)
+            {
+                _touch2.Position = currentPos;
+            }
+
+            // Handle pinch-to-zoom (two touches)
+            if (_touch1 != null && _touch2 != null)
+            {
+                double dx = _touch2.Position.X - _touch1.Position.X;
+                double dy = _touch2.Position.Y - _touch1.Position.Y;
+                double currentDistance = Math.Sqrt(dx * dx + dy * dy);
+
+                if (_initialPinchDistance > 0)
+                {
+                    // Calculate zoom factor based on pinch distance change
+                    double distanceRatio = currentDistance / _initialPinchDistance;
+                    _zoom = _initialPinchZoom * distanceRatio;
+                    _zoom = Math.Clamp(_zoom, 0.1, 100.0);
+                    RequestNextFrameRendering();
+                }
+                e.Handled = true;
+                return;
+            }
+
+            // Handle single-finger pan
+            if (_touch1 != null && _touch2 == null && _isPanning)
+            {
+                double deltaX = currentPos.X - _lastMousePosition.X;
+                double deltaY = currentPos.Y - _lastMousePosition.Y;
+
+                float aspect = (float)Bounds.Width / (float)Bounds.Height;
+                double worldDeltaX = -deltaX * (200.0 * aspect / _zoom) / Bounds.Width;
+                double worldDeltaY = deltaY * (200.0 / _zoom) / Bounds.Height;
+
+                Pan(worldDeltaX, worldDeltaY);
+                _lastMousePosition = currentPos;
+                e.Handled = true;
+            }
+            return;
+        }
+
+        // Handle mouse gestures
         if (_isPanning)
         {
             if (_is3DMode)
@@ -950,6 +1122,40 @@ void main()
 
     private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
+        // Handle touch release
+        if (e.Pointer.Type == PointerType.Touch)
+        {
+            if (_touch1 != null && e.Pointer.Id == _touch1.Id)
+            {
+                _touch1 = null;
+                // If there was a second touch, promote it to first
+                if (_touch2 != null)
+                {
+                    _touch1 = _touch2;
+                    _touch2 = null;
+                    _isPanning = true;
+                    _lastMousePosition = _touch1.Position;
+                }
+                else
+                {
+                    _isPanning = false;
+                }
+            }
+            else if (_touch2 != null && e.Pointer.Id == _touch2.Id)
+            {
+                _touch2 = null;
+                _isPanning = true; // Resume panning with remaining touch
+                if (_touch1 != null)
+                {
+                    _lastMousePosition = _touch1.Position;
+                }
+            }
+            e.Pointer.Capture(null);
+            e.Handled = true;
+            return;
+        }
+
+        // Handle mouse release
         if (_isPanning || _isRotating)
         {
             _isPanning = false;

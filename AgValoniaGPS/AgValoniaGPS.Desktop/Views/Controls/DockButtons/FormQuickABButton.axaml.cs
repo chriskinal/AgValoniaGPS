@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using AgValoniaGPS.Desktop.Views.Panels.Guidance;
+using AgValoniaGPS.Desktop.Services;
 using System;
 
 namespace AgValoniaGPS.Desktop.Views.Controls.DockButtons;
@@ -10,63 +10,37 @@ namespace AgValoniaGPS.Desktop.Views.Controls.DockButtons;
 /// </summary>
 public partial class FormQuickABButton : UserControl
 {
-    private FormQuickAB? _panel;
-    private bool _isActive;
+    private readonly IPanelHostingService _panelHostingService;
+    private const string PanelId = "quickAB";
 
-    public FormQuickABButton()
+    public FormQuickABButton(IPanelHostingService panelHostingService)
     {
+        _panelHostingService = panelHostingService ?? throw new ArgumentNullException(nameof(panelHostingService));
         InitializeComponent();
+
+        // Subscribe to panel visibility changes
+        _panelHostingService.PanelVisibilityChanged += OnPanelVisibilityChanged;
     }
 
     private void OnButtonClick(object? sender, RoutedEventArgs e)
     {
-        if (_panel == null || !_panel.IsVisible)
-        {
-            ShowPanel();
-        }
-        else
-        {
-            HidePanel();
-        }
+        _panelHostingService.TogglePanel(PanelId);
     }
 
-    private void ShowPanel()
+    private void OnPanelVisibilityChanged(object? sender, PanelVisibilityChangedEventArgs e)
     {
-        if (_panel == null)
+        if (e.PanelId == PanelId)
         {
-            _panel = new FormQuickAB();
-            if (_panel.DataContext is ViewModels.Base.PanelViewModelBase vm)
-            {
-                vm.CloseRequested += OnPanelCloseRequested;
-            }
+            UpdateButtonState(e.IsVisible);
         }
-
-        _panel.IsVisible = true;
-        _isActive = true;
-        UpdateButtonState();
     }
 
-    private void HidePanel()
-    {
-        if (_panel != null)
-        {
-            _panel.IsVisible = false;
-        }
-        _isActive = false;
-        UpdateButtonState();
-    }
-
-    private void OnPanelCloseRequested(object? sender, EventArgs e)
-    {
-        HidePanel();
-    }
-
-    private void UpdateButtonState()
+    private void UpdateButtonState(bool isActive)
     {
         var button = this.FindControl<Button>("DockButton");
         if (button != null)
         {
-            if (_isActive)
+            if (isActive)
             {
                 button.Classes.Add("Active");
             }

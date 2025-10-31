@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using AgValoniaGPS.Desktop.Views.Panels.Configuration;
+using AgValoniaGPS.Desktop.Services;
 using System;
 
 namespace AgValoniaGPS.Desktop.Views.Controls.DockButtons;
@@ -14,20 +14,18 @@ namespace AgValoniaGPS.Desktop.Views.Controls.DockButtons;
 /// </summary>
 public partial class FormSteerButton : UserControl
 {
-    private FormSteer? _panel;
-    private bool _isActive;
+    private readonly IPanelHostingService _panelHostingService;
     private bool _autoSteerActive;
+    private const string PanelId = "steer";
 
-    public FormSteerButton()
+    public FormSteerButton(IPanelHostingService panelHostingService, object? steeringService = null)
     {
+        _panelHostingService = panelHostingService ?? throw new ArgumentNullException(nameof(panelHostingService));
         InitializeComponent();
-    }
 
-    /// <summary>
-    /// Constructor with steering service for status indicators.
-    /// </summary>
-    public FormSteerButton(object? steeringService) : this()
-    {
+        // Subscribe to panel visibility changes
+        _panelHostingService.PanelVisibilityChanged += OnPanelVisibilityChanged;
+
         // TODO: Subscribe to ISteeringCoordinatorService events when service is available
         // For now, default to inactive
         UpdateSteerStatus(false);
@@ -35,53 +33,23 @@ public partial class FormSteerButton : UserControl
 
     private void OnButtonClick(object? sender, RoutedEventArgs e)
     {
-        if (_panel == null || !_panel.IsVisible)
-        {
-            ShowPanel();
-        }
-        else
-        {
-            HidePanel();
-        }
+        _panelHostingService.TogglePanel(PanelId);
     }
 
-    private void ShowPanel()
+    private void OnPanelVisibilityChanged(object? sender, PanelVisibilityChangedEventArgs e)
     {
-        if (_panel == null)
+        if (e.PanelId == PanelId)
         {
-            _panel = new FormSteer();
-            if (_panel.DataContext is ViewModels.Base.PanelViewModelBase vm)
-            {
-                vm.CloseRequested += OnPanelCloseRequested;
-            }
+            UpdateButtonState(e.IsVisible);
         }
-
-        _panel.IsVisible = true;
-        _isActive = true;
-        UpdateButtonState();
     }
 
-    private void HidePanel()
-    {
-        if (_panel != null)
-        {
-            _panel.IsVisible = false;
-        }
-        _isActive = false;
-        UpdateButtonState();
-    }
-
-    private void OnPanelCloseRequested(object? sender, EventArgs e)
-    {
-        HidePanel();
-    }
-
-    private void UpdateButtonState()
+    private void UpdateButtonState(bool isActive)
     {
         var button = this.FindControl<Button>("DockButton");
         if (button != null)
         {
-            if (_isActive)
+            if (isActive)
             {
                 button.Classes.Add("Active");
             }

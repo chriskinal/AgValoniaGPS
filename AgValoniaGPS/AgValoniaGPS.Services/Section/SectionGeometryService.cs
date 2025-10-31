@@ -1,5 +1,6 @@
 using System;
 using AgValoniaGPS.Models;
+using AgValoniaGPS.Models.Configuration;
 using AgValoniaGPS.Models.Section;
 
 namespace AgValoniaGPS.Services.Section;
@@ -159,5 +160,110 @@ public class SectionGeometryService : ISectionGeometryService
         }
 
         return boundaryPoints;
+    }
+
+    /// <summary>
+    /// Generates section overlay mesh for OpenGL rendering (Wave 11).
+    /// Creates colored rectangles showing section ON/OFF states.
+    /// </summary>
+    public float[] GenerateSectionOverlayMesh(
+        Position vehiclePosition,
+        double vehicleHeading,
+        SectionConfiguration sectionConfig,
+        ToolSettings toolSettings,
+        bool[] sectionStates)
+    {
+        if (vehiclePosition == null)
+            throw new ArgumentNullException(nameof(vehiclePosition));
+
+        if (sectionConfig == null)
+            throw new ArgumentNullException(nameof(sectionConfig));
+
+        if (toolSettings == null)
+            throw new ArgumentNullException(nameof(toolSettings));
+
+        if (sectionStates == null)
+            throw new ArgumentNullException(nameof(sectionStates));
+
+        int sectionCount = sectionConfig.SectionCount;
+
+        if (sectionStates.Length < sectionCount)
+            throw new ArgumentException("Section states array must match section count", nameof(sectionStates));
+
+        // Each section = 2 triangles = 6 vertices
+        // Each vertex = 6 floats (X, Y, R, G, B, A)
+        var vertices = new float[sectionCount * 6 * 6];
+        int index = 0;
+
+        // Calculate perpendicular vector (points left of vehicle)
+        double perpHeading = vehicleHeading - Math.PI / 2.0;
+        double cosPerp = Math.Cos(perpHeading);
+        double sinPerp = Math.Sin(perpHeading);
+
+        // Vehicle length for rectangle depth
+        float vehicleLength = 3.0f; // Standard depth in meters
+        float frontEdge = vehicleLength / 2.0f;
+        float backEdge = -vehicleLength / 2.0f;
+
+        // Calculate forward vector for positioning rectangles
+        double cosHeading = Math.Cos(vehicleHeading);
+        double sinHeading = Math.Sin(vehicleHeading);
+
+        for (int i = 0; i < sectionCount; i++)
+        {
+            double sectionWidth = sectionConfig.SectionWidths[i];
+            double sectionOffset = _configService.GetSectionOffset(i);
+
+            // Calculate left and right edges
+            double leftEdgeOffset = sectionOffset - (sectionWidth / 2.0);
+            double rightEdgeOffset = sectionOffset + (sectionWidth / 2.0);
+
+            // Get color based on section state
+            var (r, g, b, a) = sectionStates[i]
+                ? (0.0f, 1.0f, 0.0f, 0.5f)  // Green with 50% alpha for ON
+                : (1.0f, 0.0f, 0.0f, 0.3f); // Red with 30% alpha for OFF
+
+            // Calculate 4 corner points of the rectangle
+            // Front-left
+            double flX = vehiclePosition.Easting + (leftEdgeOffset * cosPerp) + (frontEdge * cosHeading);
+            double flY = vehiclePosition.Northing + (leftEdgeOffset * sinPerp) + (frontEdge * sinHeading);
+
+            // Front-right
+            double frX = vehiclePosition.Easting + (rightEdgeOffset * cosPerp) + (frontEdge * cosHeading);
+            double frY = vehiclePosition.Northing + (rightEdgeOffset * sinPerp) + (frontEdge * sinHeading);
+
+            // Back-left
+            double blX = vehiclePosition.Easting + (leftEdgeOffset * cosPerp) + (backEdge * cosHeading);
+            double blY = vehiclePosition.Northing + (leftEdgeOffset * sinPerp) + (backEdge * sinHeading);
+
+            // Back-right
+            double brX = vehiclePosition.Easting + (rightEdgeOffset * cosPerp) + (backEdge * cosHeading);
+            double brY = vehiclePosition.Northing + (rightEdgeOffset * sinPerp) + (backEdge * sinHeading);
+
+            // Triangle 1: Front-left, Back-left, Back-right
+            AddVertex(ref vertices, ref index, flX, flY, r, g, b, a);
+            AddVertex(ref vertices, ref index, blX, blY, r, g, b, a);
+            AddVertex(ref vertices, ref index, brX, brY, r, g, b, a);
+
+            // Triangle 2: Front-left, Back-right, Front-right
+            AddVertex(ref vertices, ref index, flX, flY, r, g, b, a);
+            AddVertex(ref vertices, ref index, brX, brY, r, g, b, a);
+            AddVertex(ref vertices, ref index, frX, frY, r, g, b, a);
+        }
+
+        return vertices;
+    }
+
+    /// <summary>
+    /// Helper method to add a vertex to the vertex array.
+    /// </summary>
+    private void AddVertex(ref float[] vertices, ref int index, double x, double y, float r, float g, float b, float a)
+    {
+        vertices[index++] = (float)x;
+        vertices[index++] = (float)y;
+        vertices[index++] = r;
+        vertices[index++] = g;
+        vertices[index++] = b;
+        vertices[index++] = a;
     }
 }

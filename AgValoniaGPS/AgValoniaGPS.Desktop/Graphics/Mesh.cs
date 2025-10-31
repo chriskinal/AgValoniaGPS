@@ -112,18 +112,28 @@ public class Mesh : IDisposable
     /// </summary>
     public unsafe void Draw()
     {
+        Console.WriteLine($"[Mesh.Draw] START - VAO: {_vao}, VertexCount: {_vertexCount}, IndexCount: {_indexCount}, HasIndices: {_hasIndices}, PrimitiveType: {_primitiveType}");
+
         _gl.BindVertexArray(_vao);
+        var error1 = _gl.GetError();
+        Console.WriteLine($"[Mesh.Draw] After BindVertexArray - Error: {error1}");
 
         if (_hasIndices)
         {
+            Console.WriteLine($"[Mesh.Draw] Calling DrawElements with {_indexCount} indices");
             _gl.DrawElements(_primitiveType, (uint)_indexCount, DrawElementsType.UnsignedInt, null);
         }
         else
         {
+            Console.WriteLine($"[Mesh.Draw] Calling DrawArrays with {_vertexCount} vertices");
             _gl.DrawArrays(_primitiveType, 0, (uint)_vertexCount);
         }
 
+        var error2 = _gl.GetError();
+        Console.WriteLine($"[Mesh.Draw] After Draw call - Error: {error2}");
+
         _gl.BindVertexArray(0);
+        Console.WriteLine($"[Mesh.Draw] END");
     }
 
     public void Dispose()

@@ -138,16 +138,14 @@ public partial class FormTramLineViewModel : PanelViewModelBase
         try
         {
             // Generate tram lines based on active AB line
-            // This is a simplified implementation - actual implementation would need active AB line ID
+            // TODO: This requires TrackManagementService (SERVICE_MIGRATION_PLAN task #3) to get active AB line
+            // For now, this feature is not fully implemented
             if (_guidanceService.IsActive)
             {
-                // Placeholder: In real implementation, get active AB line ID from guidance service
-                int activeABLineId = 0; // This would come from guidance service
-                _tramLineService.GenerateFromABLine(activeABLineId, Spacing);
+                // Placeholder: In real implementation, would get active AB line from TrackManagementService
+                // _tramLineService.GenerateFromABLine(activeABLine, Spacing, count: 5, UnitSystem.Metric);
 
-                TramEnabled = true;
-                UpdateTramLineCount();
-                ClearError();
+                SetError("AB line tram generation requires TrackManagementService (not yet implemented).");
             }
             else
             {
