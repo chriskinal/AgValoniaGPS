@@ -81,16 +81,16 @@ public static class GeometryConverter
             AddVertex(vertices, new Vector3(size, y, 0), normal, lineColor, Vector2.Zero);
         }
 
-        // Axis lines (X = red, Y = green)
-        // X-axis
-        Vector4 xAxisColor = new Vector4(0.8f, 0.2f, 0.2f, 0.8f);
-        AddVertex(vertices, new Vector3(-size, 0, 0), normal, xAxisColor, Vector2.Zero);
-        AddVertex(vertices, new Vector3(size, 0, 0), normal, xAxisColor, Vector2.Zero);
+        // Axis lines (X = red, Y = green) - brighter and fully opaque
+        // X-axis (East-West) - Bright red
+        Vector4 xAxisColor = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+        AddVertex(vertices, new Vector3(-size, 0, 0.01f), normal, xAxisColor, Vector2.Zero);
+        AddVertex(vertices, new Vector3(size, 0, 0.01f), normal, xAxisColor, Vector2.Zero);
 
-        // Y-axis
-        Vector4 yAxisColor = new Vector4(0.2f, 0.8f, 0.2f, 0.8f);
-        AddVertex(vertices, new Vector3(0, -size, 0), normal, yAxisColor, Vector2.Zero);
-        AddVertex(vertices, new Vector3(0, size, 0), normal, yAxisColor, Vector2.Zero);
+        // Y-axis (North-South) - Bright green
+        Vector4 yAxisColor = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+        AddVertex(vertices, new Vector3(0, -size, 0.01f), normal, yAxisColor, Vector2.Zero);
+        AddVertex(vertices, new Vector3(0, size, 0.01f), normal, yAxisColor, Vector2.Zero);
 
         lineCount = vertices.Count / 12; // 12 floats per vertex
 

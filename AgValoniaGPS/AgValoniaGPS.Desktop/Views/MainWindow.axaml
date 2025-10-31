@@ -87,10 +87,14 @@
             <!-- 2D Field Map Control (Default) -->
             <!-- To use OpenGL 3D renderer, uncomment the line below and comment out the 2D control -->
             <Border x:Name="MapContainer"
-                    Background="Black">
+                    Background="Black"
+                    ZIndex="0">
                 <!-- <controls:FieldMapControl /> -->
                 <!-- 3D OpenGL Renderer (uncomment to use): -->
-                <controls:OpenGLFieldMapControl />
+                <controls:OpenGLFieldMapControl
+                    x:Name="OpenGLControl"
+                    IsHitTestVisible="True"
+                    Focusable="True"/>
             </Border>
 
         </Grid>

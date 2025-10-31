@@ -71,6 +71,24 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        // Forward mouse events from MapContainer to OpenGL control
+        // (OpenGlControlBase doesn't properly route pointer events, so we attach to the parent Border)
+        var mapContainer = this.FindControl<Border>("MapContainer");
+        var openGLControl = this.FindControl<Controls.OpenGLFieldMapControl>("OpenGLControl");
+
+        if (mapContainer != null && openGLControl != null)
+        {
+            mapContainer.PointerPressed += (s, e) => openGLControl.OnPointerPressed(s, e);
+            mapContainer.PointerMoved += (s, e) => openGLControl.OnPointerMoved(s, e);
+            mapContainer.PointerReleased += (s, e) => openGLControl.OnPointerReleased(s, e);
+            mapContainer.PointerWheelChanged += (s, e) => openGLControl.OnPointerWheelChanged(s, e);
+            Console.WriteLine("[MainWindow] Mouse event forwarding from MapContainer to OpenGL control configured");
+        }
+        else
+        {
+            Console.WriteLine($"[MainWindow] WARNING: Could not find MapContainer ({mapContainer != null}) or OpenGLControl ({openGLControl != null})");
+        }
+
         // Set DataContext from DI
         if (App.Services != null)
         {

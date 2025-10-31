@@ -5,6 +5,7 @@ using System.Numerics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
 using Avalonia.Threading;
@@ -26,8 +27,10 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     // OpenGL context
     private GL? _gl;
 
-    // Shader program
+    // Shader programs
     private ShaderProgram? _shader;
+    private ShaderProgram? _testShader;
+    private ShaderProgram? _simple3DShader;
 
     // Meshes
     private Mesh? _gridMesh;
@@ -45,9 +48,9 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     // Camera state (synced with CameraService)
     private Vector3 _cameraPosition = new Vector3(0, -100, 100); // Start behind and above origin
     private Vector3 _cameraTarget = Vector3.Zero;
-    private float _cameraPitch = 0.5f; // radians (about 30 degrees)
+    private float _cameraPitch = 1.3f; // radians (about 75 degrees - more top-down)
     private float _cameraYaw = 0.0f;
-    private float _cameraDistance = 100.0f;
+    private float _cameraDistance = 600.0f;  // Further back to see more of grid
 
     // Input state
     private bool _isPanning = false;
@@ -69,6 +72,8 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     {
         // Make control focusable for keyboard input
         Focusable = true;
+        IsHitTestVisible = true;  // Enable hit testing & visual tree integration
+        ClipToBounds = false;     // Don't clip OpenGL content
 
         // Get services from DI
         if (!Design.IsDesignMode)
@@ -101,11 +106,11 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             }
         }
 
-        // Input handlers
-        PointerPressed += OnPointerPressed;
-        PointerMoved += OnPointerMoved;
-        PointerReleased += OnPointerReleased;
-        PointerWheelChanged += OnPointerWheelChanged;
+        // Input handlers - use AddHandler to force event routing for native OpenGL control
+        AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Bubble | RoutingStrategies.Tunnel);
+        AddHandler(PointerMovedEvent, OnPointerMoved, RoutingStrategies.Bubble | RoutingStrategies.Tunnel);
+        AddHandler(PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Bubble | RoutingStrategies.Tunnel);
+        AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Bubble | RoutingStrategies.Tunnel);
 
         // Start render loop (30 FPS)
         _renderTimer = new DispatcherTimer
@@ -129,6 +134,8 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
         // OpenGL settings
         _gl.ClearColor(0.05f, 0.05f, 0.05f, 1.0f); // Dark background
         _gl.Enable(EnableCap.DepthTest);
+        _gl.DepthFunc(DepthFunction.Less);
+        _gl.Disable(EnableCap.CullFace);  // Don't cull faces (we have 2D geometry)
         _gl.Enable(EnableCap.Blend);
         _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
@@ -144,8 +151,10 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             Console.WriteLine("Anti-aliasing not supported");
         }
 
-        // Initialize shader
+        // Initialize shaders
         InitializeShader();
+        InitializeTestShader();
+        InitializeSimple3DShader();
 
         // Initialize meshes
         InitializeGridMesh();
@@ -167,12 +176,54 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             _shader = new ShaderProgram(_gl);
             _shader.LoadFromFiles(vertPath, fragPath);
 
-            Console.WriteLine("Shaders compiled successfully");
+            Console.WriteLine("Field3D shaders compiled successfully");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Shader compilation failed: {ex.Message}");
             throw;
+        }
+    }
+
+    private void InitializeTestShader()
+    {
+        if (_gl == null) return;
+
+        try
+        {
+            string shaderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shaders");
+            string vertPath = Path.Combine(shaderPath, "Test.vert");
+            string fragPath = Path.Combine(shaderPath, "Test.frag");
+
+            _testShader = new ShaderProgram(_gl);
+            _testShader.LoadFromFiles(vertPath, fragPath);
+
+            Console.WriteLine("Test shaders compiled successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Test shader compilation failed: {ex.Message}");
+        }
+    }
+
+    private void InitializeSimple3DShader()
+    {
+        if (_gl == null) return;
+
+        try
+        {
+            string shaderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shaders");
+            string vertPath = Path.Combine(shaderPath, "Simple3D.vert");
+            string fragPath = Path.Combine(shaderPath, "Simple3D.frag");
+
+            _simple3DShader = new ShaderProgram(_gl);
+            _simple3DShader.LoadFromFiles(vertPath, fragPath);
+
+            Console.WriteLine("Simple3D shaders compiled successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Simple3D shader compilation failed: {ex.Message}");
         }
     }
 
@@ -198,15 +249,11 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     protected override void OnOpenGlRender(GlInterface gl, int fb)
     {
         if (_gl == null || _shader == null)
-        {
-            Console.WriteLine("[OpenGL Render] Skipped - gl or shader is null");
             return;
-        }
 
         try
         {
             // Bind the framebuffer provided by Avalonia
-            Console.WriteLine($"[OpenGL Render] Binding framebuffer: {fb}");
             _gl.BindFramebuffer(FramebufferTarget.Framebuffer, (uint)fb);
 
             // Update meshes if needed
@@ -219,20 +266,15 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             // Set viewport
             _gl.Viewport(0, 0, (uint)Bounds.Width, (uint)Bounds.Height);
 
-            // Clear buffers (black background)
-            _gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            // Clear buffers
             _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            Console.WriteLine($"[OpenGL Render] Clearing screen, viewport: {Bounds.Width}x{Bounds.Height}");
 
             // Calculate matrices
             var viewMatrix = CalculateViewMatrix();
             var projectionMatrix = CalculateProjectionMatrix();
+            var mvpMatrix = viewMatrix * projectionMatrix;  // Combined MVP for Simple3D shader
 
-            Console.WriteLine($"[OpenGL Render] Camera position: {_cameraPosition}, target: {_cameraTarget}");
-            Console.WriteLine($"[OpenGL Render] Camera distance: {_cameraDistance}, pitch: {_cameraPitch}, yaw: {_cameraYaw}");
-
-            // Set up shader
+            // Set up shader (keep for legacy mesh rendering)
             _shader.Use();
 
             // Set lighting uniforms
@@ -247,39 +289,20 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             _shader.SetUniform("uView", viewMatrix);
             _shader.SetUniform("uProjection", projectionMatrix);
 
-            // TEST: Render a simple triangle at origin to verify rendering works
-            // Create test triangle if not exists
-            if (_vehicleMesh == null)
-            {
-                Console.WriteLine("[OpenGL Render] Creating test triangle");
-                var testVerts = new List<float>();
-                // Big triangle at origin, bright red
-                testVerts.AddRange(new float[] { 0f, 50f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f }); // Top (red)
-                testVerts.AddRange(new float[] { -50f, -50f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f }); // Bottom-left (red)
-                testVerts.AddRange(new float[] { 50f, -50f, 0f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f, 0f }); // Bottom-right (red)
-                _vehicleMesh = new Mesh(_gl);
-                _vehicleMesh.SetVertexData(testVerts.ToArray(), primitiveType: PrimitiveType.Triangles);
-                Console.WriteLine($"[OpenGL Render] Test triangle created with {testVerts.Count / 12} vertices");
-            }
+            // Test triangle removed - no longer needed
 
-            // Render test triangle
-            if (_vehicleMesh != null)
+            // Render grid with Simple3D shader
+            if (_gridMesh != null && _simple3DShader != null)
             {
-                Console.WriteLine("[OpenGL Render] Drawing TEST TRIANGLE");
-                RenderMesh(_vehicleMesh, Matrix4x4.Identity);
-            }
+                // Switch to Simple3D shader
+                _simple3DShader.Use();
 
-            // Render grid
-            if (_gridMesh != null)
-            {
-                Console.WriteLine("[OpenGL Render] Drawing grid mesh");
-                _gl.LineWidth(2.0f); // Make lines thicker
-                RenderMesh(_gridMesh, Matrix4x4.Identity);
+                // Set combined MVP matrix
+                _simple3DShader.SetUniform("uMVP", mvpMatrix);
+
+                _gl.LineWidth(2.0f);
+                _gridMesh.Draw();
                 _gl.LineWidth(1.0f);
-            }
-            else
-            {
-                Console.WriteLine("[OpenGL Render] Grid mesh is null!");
             }
 
             // Render coverage (lowest layer)
@@ -304,13 +327,17 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
                 _gl.LineWidth(1.0f);
             }
 
-            // Render vehicle
-            if (_vehicleMesh != null && _vehiclePosition.HasValue)
-            {
-                var vehicleTransform = Matrix4x4.CreateRotationZ(_vehicleHeading) *
-                                      Matrix4x4.CreateTranslation(_vehiclePosition.Value.X, _vehiclePosition.Value.Y, 0);
-                RenderMesh(_vehicleMesh, vehicleTransform);
-            }
+            // Render vehicle (when position data available)
+            // Disabled for now since we're testing grid rendering
+            // if (_vehicleMesh != null && _vehiclePosition.HasValue)
+            // {
+            //     var vehicleTransform = Matrix4x4.CreateRotationZ(_vehicleHeading) *
+            //                           Matrix4x4.CreateTranslation(_vehiclePosition.Value.X, _vehiclePosition.Value.Y, 0);
+            //     RenderMesh(_vehicleMesh, vehicleTransform);
+            // }
+
+            // Force GPU to complete all commands (important for ANGLE)
+            _gl.Flush();
         }
         catch (Exception ex)
         {
@@ -321,33 +348,24 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     private void RenderMesh(Mesh mesh, Matrix4x4 modelMatrix)
     {
         if (_shader == null)
-        {
-            Console.WriteLine("[RenderMesh] Shader is null, skipping");
             return;
-        }
-
-        Console.WriteLine($"[RenderMesh] START - Rendering mesh with {mesh.VertexCount} vertices");
 
         // Set model matrix
         _shader.SetUniform("uModel", modelMatrix);
-        Console.WriteLine($"[RenderMesh] Model matrix set");
 
         // Calculate normal matrix (transpose of inverse of model matrix)
         if (Matrix4x4.Invert(modelMatrix, out var invModel))
         {
             var normalMatrix = Matrix4x4.Transpose(invModel);
             _shader.SetUniformMat3("uNormalMatrix", normalMatrix);
-            Console.WriteLine($"[RenderMesh] Normal matrix set (from inverted model)");
         }
         else
         {
             _shader.SetUniformMat3("uNormalMatrix", Matrix4x4.Identity);
-            Console.WriteLine($"[RenderMesh] Normal matrix set (identity - inversion failed)");
         }
 
         // Draw
         mesh.Draw();
-        Console.WriteLine($"[RenderMesh] END");
     }
 
     private Matrix4x4 CalculateViewMatrix()
@@ -373,7 +391,8 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     {
         float aspect = (float)Bounds.Width / (float)Bounds.Height;
         float fov = MathF.PI / 4.0f; // 45 degrees
-        return Matrix4x4.CreatePerspectiveFieldOfView(fov, aspect, 0.1f, 10000.0f);
+        // FIXED: Tighter near/far planes for better depth precision
+        return Matrix4x4.CreatePerspectiveFieldOfView(fov, aspect, 1.0f, 5000.0f);
     }
 
     private void UpdateMeshesFromServices()
@@ -553,25 +572,31 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
     }
 
     // Input handling
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    public void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         var point = e.GetCurrentPoint(this);
+
+        Console.WriteLine($"[Input] Pointer pressed at ({point.Position.X}, {point.Position.Y}), Left={point.Properties.IsLeftButtonPressed}, Right={point.Properties.IsRightButtonPressed}");
 
         if (point.Properties.IsLeftButtonPressed)
         {
             _isPanning = true;
             _lastMousePosition = point.Position;
+            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.SizeAll);
+            Console.WriteLine("[Input] Started panning");
             e.Handled = true;
         }
         else if (point.Properties.IsRightButtonPressed)
         {
             _isRotating = true;
             _lastMousePosition = point.Position;
+            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+            Console.WriteLine("[Input] Started rotating");
             e.Handled = true;
         }
     }
 
-    private void OnPointerMoved(object? sender, PointerEventArgs e)
+    public void OnPointerMoved(object? sender, PointerEventArgs e)
     {
         var point = e.GetCurrentPoint(this);
         var currentPos = point.Position;
@@ -583,6 +608,7 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             _cameraPitch -= (float)(deltaY * 0.005);
             _cameraPitch = Math.Clamp(_cameraPitch, 0.1f, MathF.PI / 2 - 0.1f);
 
+            Console.WriteLine($"[Input] Panning: pitch={_cameraPitch:F2}, deltaY={deltaY:F2}");
             _lastMousePosition = currentPos;
             e.Handled = true;
         }
@@ -592,25 +618,29 @@ public partial class OpenGLFieldMapControl : OpenGlControlBase
             double deltaX = currentPos.X - _lastMousePosition.X;
             _cameraYaw += (float)(deltaX * 0.01);
 
+            Console.WriteLine($"[Input] Rotating: yaw={_cameraYaw:F2}, deltaX={deltaX:F2}");
             _lastMousePosition = currentPos;
             e.Handled = true;
         }
     }
 
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    public void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
+        Console.WriteLine("[Input] Pointer released");
         _isPanning = false;
         _isRotating = false;
+        this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
         e.Handled = true;
     }
 
-    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    public void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
         // Zoom in/out by adjusting camera distance
         float zoomFactor = e.Delta.Y > 0 ? 0.9f : 1.1f;
         _cameraDistance *= zoomFactor;
         _cameraDistance = Math.Clamp(_cameraDistance, 10.0f, 1000.0f);
 
+        Console.WriteLine($"[Input] Wheel: delta={e.Delta.Y:F2}, distance={_cameraDistance:F2}");
         e.Handled = true;
     }
 
